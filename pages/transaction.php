@@ -1,4 +1,5 @@
-
+<?php include '../views/header.php'; ?>
+  <link rel="stylesheet" href="../Tazkya-HTML/css/style2.css">
         <main>
             <div class="head-title">
                 <div class="left">
@@ -70,12 +71,5 @@
             </div>
         </main>
     </section>
-    <footer>
-		<div class="footer-content">
-			<p>&copy; 2025 Nails. All rights reserved.</p>
-		</div>
-	</footer>
-	
-    <script src="transaction.js"></script>
-</body>
-</html>
+    
+    <?php include '../views/footer.php'; ?>
