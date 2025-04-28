@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+	<link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="style2.css">
+	<title>Nails</title>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+
+
+	<section id="sidebar">
+		<div class="container">
+			<div class="navigation">
+				<ul>
+					<li>
+						<a href="#home"> <img src="logo.png" alt="logo" height="50" width="70"></a>
+					</li>
+		<ul class="side-menu top">
+			<li class="active">
+				<a href="dashboard.html">
+					<i class='bx bxs-dashboard' ></i>
+					<p class="text">Admin Dashboard</p>
+				</a>
+			</li>
+			<li>
+				<a href="product.html">
+					<i class='bx bxs-shopping-bag-alt' ></i>
+					<p class="text">Product</p>
+				</a>
+			</li>
+			<li>
+				<a href="analytics.html">
+					<i class='bx bxs-doughnut-chart' ></i>
+					<p class="text">Analytics</p>
+				</a>
+			</li>
+			<li>
+				<a href="message.html">
+					<i class='bx bxs-message-dots' ></i>
+					<p class="text">Message</p>
+				</a>
+			</li>
+			<li>
+				<a href="transaction.html">
+					<i class='bx bxs-credit-card-front'></i>
+					<p class="text">Transaction</p>
+				</a>
+			</li>
+		</ul>
+		<ul class="side-menu">
+			
+			<li>
+				<a href="#" class="logout">
+					<i class='bx bxs-log-out-circle' ></i>
+					
+					<p class="text">Logout</p>
+				</a>
+			</li>
+		</ul>
+	</div>
+</div>
+	
+	</section>
+
+    <section id="content">
+		
+		<nav>
+			<i class='bx bx-menu' ></i>
+			<a href="#" class="nav-link"></a>
+			<form action="#">
+				<div class="form-input">
+					<input type="search" placeholder="Search...">
+					<button class="search-btn" type="submit"><i class='bx bx-search' ></i></button>
+				</div>
+			</form>
+			<input type="checkbox" id="switch-mode" hidden>
+			<a href="#" class="notification">
+				<i class='bx bxs-bell' ></i>
+				<p class="num">10</p>
+			</a>
+			<a href="#" class="profile">
+				<img src="profile.jpg">
+			</a>
+		</nav>
+		<main>
+			<div class="head-title">
+				<div class="left">
+					<h1>Dashboard</h1>
+					<ul class="breadcrumb">
+						<li>
+							<a href="#">Dashboard</a>
+						</li>
+						<li><i class='bx bx-chevron-right' ></i></li>
+						<li>
+							<a class="active" href="#">Messages</a>
+						</li>
+					</ul>
+				</div>
+				
+			</div>
+
+            <div class="chat-container">
+				<div class="chat-header">
+					<h2>Messages</h2>
+				</div>
+				<div class="toggle">
+					<span id="toggle-user">Switch to Receiver</span>
+				</div>
+				<div class="chat-messages" id="chat-messages"></div>
+				<div class="chat-input">
+					<input type="text" id="message-input" placeholder="Type your message here...">
+					<button id="send-button">Send</button>
+				</div>
+			</div>
+        
+    </section>
+	<footer>
+		<div class="footer-content">
+			<p>&copy; 2025 Nails. All rights reserved.</p>
+		</div>
+	</footer>
+    
+	<script src="message.js"></script>
+	
+</body>
+</html>

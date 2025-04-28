@@ -1,0 +1,81 @@
+
+        <main>
+            <div class="head-title">
+                <div class="left">
+                    <h1>Dashboard</h1>
+                    <ul class="breadcrumb">
+                        <li>
+                            <a href="#">Dashboard</a>
+                        </li>
+                        <li><i class='bx bx-chevron-right'></i></li>
+                        <li>
+                            <a class="active" href="#">Transaction</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="container">
+                <div class="header"></div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID Transaksi</th>
+                                <th>Nama Pembeli</th>
+                                <th>Daftar Barang</th>
+                                <th>Harga per Item</th>
+                                <th>Total Harga</th>
+                                <th>Rating</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionTable">
+                            <tr>
+                                <td>#001</td>
+                                <td>Kamila</td>
+                                <td>
+                                    <ul>
+                                        <li>Pink Perfection</li>
+                                        <li>Green Elegance</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <ul>
+                                        <li>Rp 120.000</li>
+                                        <li>Rp 130.000</li>
+                                    </ul>
+                                </td>
+                                <td>Rp 250.000</td>
+                                <td class="rating">★★★★★</td>
+                            </tr>
+                            <tr>
+                                <td>#002</td>
+                                <td>Zahara</td>
+                                <td>
+                                    <ul>
+                                        <li>Glamour's</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <ul>
+                                        <li>Rp 165.000</li>
+                                    </ul>
+                                </td>
+                                <td>Rp 165.000</td>
+                                <td class="rating">★★★★☆</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button class="load-more" id="loadMore">Fit More</button>
+            </div>
+        </main>
+    </section>
+    <footer>
+		<div class="footer-content">
+			<p>&copy; 2025 Nails. All rights reserved.</p>
+		</div>
+	</footer>
+	
+    <script src="transaction.js"></script>
+</body>
+</html>
