@@ -11,61 +11,6 @@
 </head>
 <body>
 
-
-	<section id="sidebar">
-		<div class="container">
-			<div class="navigation">
-				<ul>
-					<li>
-						<a href="#home"> <img src="../Tazkya-HTML/images/logo.png" alt="logo" height="50" width="70"></a>
-					</li>
-				</ul>
-		<ul class="side-menu top">
-			<li class="active">
-				<a href="#">
-					<i class='bx bxs-dashboard' ></i>
-					<p class="text">Admin Dashboard</p>
-				</a>
-			</li>
-			<li>
-				<a href="product.php">
-					<i class='bx bxs-shopping-bag-alt' ></i>
-					<p class="text">Product</p>
-
-				</a>
-			</li>
-			<li>
-				<a href="analytics.php">
-					<i class='bx bxs-doughnut-chart' ></i>
-					<p class="text">Analytics</p>
-				</a>
-			</li>
-			<li>
-				<a href="message.php">
-					<i class='bx bxs-message-dots' ></i>
-					<p class="text">Message</p>
-				</a>
-			</li>
-			<li>
-				<a href="transaction.php">
-					<i class='bx bxs-credit-card-front'></i>
-					<p class="text">Transaction</p>
-				</a>
-			</li>
-		</ul>
-		<ul class="side-menu">
-			
-			<li>
-				<a href="#" class="logout">
-					<i class='bx bxs-log-out-circle' ></i>
-					
-					<p class="text">Logout</p>
-				</a>
-			</li>
-		</ul>
-		</div>
-	</section>
-	
 	<section id="content">
 		<nav>
 			<i class='bx bx-menu' ></i>
