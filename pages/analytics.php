@@ -1,8 +1,9 @@
+
 <?php include '../views/header.php'; ?>
 <?php include '../views/sidebar.php'; ?>
 	<link rel="stylesheet" href="../Tazkya-HTML/css/style2.css">
+    
 	
-
         <main>
             <div class="analytics">
                 <div class="chart-container">
@@ -31,5 +32,12 @@
 
         
     </section>
-	
+
+    <?php include '../views/footer.php'; ?>
+
+
 <?php include '../views/footer.php'; ?>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../Tazkya-HTML/js/dashboard.js"></script>
+    
+	
