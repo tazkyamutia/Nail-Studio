@@ -1,4 +1,3 @@
-
 <?php include '../views/header.php'; ?>
 <?php include '../views/sidebar.php'; ?>
 	<link rel="stylesheet" href="../Tazkya-HTML/css/style2.css">

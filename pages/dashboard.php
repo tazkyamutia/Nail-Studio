@@ -118,3 +118,5 @@
 	
 
 <?php include '../views/footer.php'; ?>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../Tazkya-HTML/js/dashboard.js"></script>
