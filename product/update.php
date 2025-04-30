@@ -17,11 +17,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_product = $_POST['id_product'];
     $namaproduct = $_POST['namaproduct'];
     $price = $_POST['price'];
-    $stok = $_POST['status'];
+    $status = $_POST['status'];
     $id_kategori = $_POST['id_kategori'];
 
     // Query update dengan prepared statement
-    $stmt = $conn->prepare("UPDATE produk SET nama_produk=?, harga=?, stok=?, id_kategori=? WHERE id_produk=?");
+    $stmt = $conn->prepare("UPDATE produk SET nama_produk=?, harga=?, status=?, id_kategori=? WHERE id_produk=?");
     $stmt->bind_param("sdiii", $id_product, $namaproduct, $stok, $price, $status, $added, $foto);
 
     if ($stmt->execute()) {
