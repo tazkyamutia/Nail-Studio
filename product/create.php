@@ -11,7 +11,7 @@ if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
 
-// Membuat database 'toko_online'
+// Membuat database 'nailstudio_db'
 $sql = "CREATE DATABASE IF NOT EXISTS nailstudio_db";
 if ($conn->query($sql) === TRUE) {
     echo "Database 'nailstudio_db' berhasil dibuat.<br>";
@@ -23,14 +23,14 @@ if ($conn->query($sql) === TRUE) {
 $conn->select_db("nailstudio_db");
 
 // Membuat tabel 'kategori_barang'
-$sql = "CREATE TABLE IF NOT EXISTS kategori_barang (
-    id_kategori INT AUTO_INCREMENT PRIMARY KEY,
-    nama_kategori VARCHAR(50) NOT NULL
+$sql = "CREATE TABLE IF NOT EXISTS product (
+    id_product INT AUTO_INCREMENT PRIMARY KEY,
+    namaproduct VARCHAR(255) NOT NULL
 )";
 if ($conn->query($sql) === TRUE) {
-    echo "Tabel 'kategori_barang' berhasil dibuat.<br>";
+    echo "Tabel 'product' berhasil dibuat.<br>";
 } else {
-    echo "Error membuat tabel 'kategori_barang': " . $conn->error;
+    echo "Error membuat tabel 'product': " . $conn->error;
 }
 
 // Membuat tabel 'produk'
