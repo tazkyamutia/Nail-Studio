@@ -104,3 +104,7 @@ if ($result === FALSE) {
 
  </body>
 </html>
+<br>
+<br>
+
+<?php include '../views/footers.php'; ?>
