@@ -27,6 +27,9 @@ if ($result === FALSE) {
 }
 
 ?>
+
+<?php include '../views/headers.php'; ?>
+
 <!DOCTYPE html>
 <html lang="id">
  <head>
