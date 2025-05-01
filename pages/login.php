@@ -28,17 +28,170 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-    <!-- FIX: path CSS diperbaiki -->
-    <link rel="stylesheet" href="../Tazkya-HTML/css/login.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login & Sign Up</title>
+  <link rel="stylesheet" href="../Tazkya-HTML/css/login.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
 
+    body {
+      background: linear-gradient(120deg, #ff69b4, #ffb6c1);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      width: 95%;
+      max-width: 950px;
+      height: 90vh;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      background: white;
+      display: flex;
+      flex-direction: row;
+    }
+
+    .left-panel {
+      flex: 1;
+      background: #fce4ec;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .left-panel img {
+      max-width: 200px;
+      margin-bottom: 30px;
+    }
+
+    .left-panel p {
+      font-size: 14px;
+      color: #555;
+    }
+
+    .right-panel {
+      flex: 1.2;
+      padding: 30px;
+      position: relative;
+      overflow-y: auto;
+    }
+
+    .welcome-box {
+      background: #f06292;
+      color: white;
+      padding: 8px 20px;
+      border-radius: 20px;
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 14px;
+    }
+
+    h2 {
+      margin-top: 60px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      margin-bottom: 5px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    input, select {
+      padding: 10px;
+      margin-bottom: 18px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 12px;
+      border: none;
+      border-radius: 25px;
+      background: linear-gradient(to right, #ec407a, #f06292);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #d81b60, #ec407a);
+    }
+
+    .bottom-links {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
+
+    .bottom-links a {
+      font-size: 12px;
+      color: #d81b60;
+      text-decoration: none;
+    }
+
+    .bottom-links a:hover {
+      text-decoration: underline;
+    }
+
+    .toggle-link {
+      margin-top: 10px;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .toggle-link a {
+      color: #d81b60;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .toggle-link a:hover {
+      text-decoration: underline;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Scroll fix for small screens */
+    .right-panel::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .right-panel::-webkit-scrollbar-thumb {
+      background-color: #ccc;
+      border-radius: 3px;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
     <div class="left-panel">
-      <img src="logo nails.png" alt="Illustration" />
+      <img src="../Tazkya-HTML/images/logonails.png" alt="Illustration" />
       <p>Selamat datang di platform kami! Login atau daftar untuk melanjutkan.</p>
     </div>
 
@@ -52,7 +205,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <label for="login-role">Login as</label>
           <select id="login-role" name="login-role">
             <option value="admin">Admin</option>
-            <option value="pelanggan">Pelanggan</option>
+            <option value="pelanggan">Member</option>
           </select>
 
           <label for="login-username">Username</label>
@@ -119,3 +272,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   </script>
 </body>
 </html>
+
