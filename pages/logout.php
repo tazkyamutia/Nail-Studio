@@ -1,4 +1,4 @@
-<?php
+<?php p
 session_start();
 
 // Menghancurkan sesi login
