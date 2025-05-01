@@ -3,7 +3,7 @@ $host = "localhost";
 $user = "root";
 $password = "";
 
-// Koneksi ke database
+// Membuat Koneksi ke database
 $conn = new mysqli($host, $user, $password);
 
 // Cek koneksi
@@ -15,7 +15,7 @@ if ($conn->connect_error) {
 $id_produk = 1; // Kamu bisa ganti nilainya manual atau ambil dari input
 
 // Query DELETE
-$sql = "DELETE FROM produk WHERE id_produk = $id_produk";
+$sql = "DELETE FROM product WHERE id_product = $id_produk";
 
 if ($conn->query($sql) === TRUE) {
     echo "Produk dengan ID $id_produk berhasil dihapus.";
