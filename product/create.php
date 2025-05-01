@@ -47,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     
     Foto: <br>
-    <input type="text" name="foto" required><br><br> <!-- ubah ke text jika itu nama file -->
+    <input type="file" name="foto" required><br><br> <!-- ubah ke text jika itu nama file -->
     
     <input type="submit" value="Tambah Produk">
 </form>
