@@ -1,29 +1,5 @@
-<?php
-session_start();
-include '../configdb.php'; // pastikan file ini ada di root folder
+<?php include '../views/header1.php'; ?>
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
-    $sql = "SELECT * FROM users WHERE email = '$email'";
-    $result = $conn->query($sql);
-
-    if ($result && $result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        if (password_verify($password, $row['password'])) {
-            $_SESSION['user_id'] = $row['id'];
-            $_SESSION['role'] = $row['role'];
-            header("Location: ../views/dashboard.php"); // pastikan file ini ada
-            exit();
-        } else {
-            $error = "Password salah!";
-        }
-    } else {
-        $error = "Email tidak ditemukan!";
-    }
-}
-?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -270,6 +246,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       document.getElementById('login-form').classList.remove('hidden');
     }
   </script>
+<?php include '../views/footer1.php'; ?>
 </body>
 </html>
 
