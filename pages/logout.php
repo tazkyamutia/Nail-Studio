@@ -1,5 +1,5 @@
 <?php
-session_start();
+session_start();p
 
 // Menghancurkan sesi login
 session_destroy();
