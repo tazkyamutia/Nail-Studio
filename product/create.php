@@ -1,53 +1,56 @@
 <?php
-$host = "localhost";
-$user = "root";
-$password = "";
+include 'koneksi.php';
 
-// Membuat koneksi ke MySQL
-$conn = new mysqli($host, $user, $password);
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $namaproduct = $_POST['namaproduct'];
+    $stock = $_POST['stock'];
+    $price = $_POST['price'];
+    $status = $_POST['status'];
+    $foto = $_POST['foto'];
 
-// Cek koneksi
-if ($conn->connect_error) {
-    die("Koneksi gagal: " . $conn->connect_error);
+    $sql = "INSERT INTO product (namaproduct, stock, price, status, added, foto) 
+            VALUES ('$namaproduct', '$stock', '$price', '$status', NOW(), '$foto')";
+
+    if ($conn->query($sql) === TRUE) {
+        echo "Produk berhasil ditambahkan. <a href='index.php'>Kembali ke Daftar Produk</a>";
+    } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
 }
-
-// Membuat database 'nailstudio_db'
-$sql = "CREATE DATABASE IF NOT EXISTS nailstudio_db";
-if ($conn->query($sql) === TRUE) {
-    echo "Database 'nailstudio_db' berhasil dibuat.<br>";
-} else {
-    echo "Error membuat database: " . $conn->error;
-}
-
-// Menggunakan database 'toko_online'
-$conn->select_db("nailstudio_db");
-
-// Membuat tabel 'kategori_barang'
-$sql = "CREATE TABLE IF NOT EXISTS product (
-    id_product INT AUTO_INCREMENT PRIMARY KEY,
-    namaproduct VARCHAR(255) NOT NULL
-)";
-if ($conn->query($sql) === TRUE) {
-    echo "Tabel 'product' berhasil dibuat.<br>";
-} else {
-    echo "Error membuat tabel 'product': " . $conn->error;
-}
-
-// Membuat tabel 'produk'
-$sql = "CREATE TABLE IF NOT EXISTS produk (
-    id_produk INT AUTO_INCREMENT PRIMARY KEY,
-    nama_produk VARCHAR(100) NOT NULL,
-    harga DECIMAL(10,2) NOT NULL,
-    stok INT NOT NULL,
-    id_kategori INT,
-    FOREIGN KEY (id_kategori) REFERENCES kategori_barang(id_kategori)
-)";
-if ($conn->query($sql) === TRUE) {
-    echo "Tabel 'produk' berhasil dibuat.<br>";
-} else {
-    echo "Error membuat tabel 'produk': " . $conn->error;
-}
-
-// Menutup koneksi
-$conn->close();
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tambah Produk</title>
+</head>
+<body>
+<h2>Tambah Produk</h2>
+<form method="POST" action="">
+    Nama Produk: <br>
+    <input type="text" name="namaproduct" required><br>
+    
+    Stok: <br>
+    <input type="number" name="stock" required><br>
+    
+    Price: <br>
+    <input type="number" name="price" required><br><br>
+    
+    Status: <br>
+    <select name="status" required>
+      <option value="Low Stock">-- Low Stock --</option>
+      <option value="Published">Published</option>
+      <option value="Draft">Draft</option>
+    </select><br><br>
+
+    
+    
+    Foto: <br>
+    <input type="text" name="foto" required><br><br> <!-- ubah ke text jika itu nama file -->
+    
+    <input type="submit" value="Tambah Produk">
+</form>
+
+</body>
+</html>
