@@ -35,8 +35,8 @@ ini_set('display_errors', 1);
 </head>
 <body class="bg-white">
 
-  <!-- Panggil navbar -->
-  <?php include '../views/navbar.php'; ?>
+<!-- Panggil navbar -->
+<?php include 'views/navbar.php'; ?> 
 
 
 </body>
