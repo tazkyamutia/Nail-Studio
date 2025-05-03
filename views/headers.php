@@ -32,8 +32,14 @@ ini_set('display_errors', 1);
     FREE shipping and FREE gift when you spend over $75*
   </div>
 
+<<<<<<< HEAD
   <!-- Panggil navbar -->
   <?php include 'views/navbar.php'; ?>
+=======
+<!-- Panggil navbar -->
+<?php include(__DIR__ . '/navbar.php'); ?> 
+
+>>>>>>> e04785ff86a8c39e157224e094f86a5a9a05af94
 
 </body>
 </html>

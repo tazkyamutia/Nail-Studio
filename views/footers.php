@@ -110,7 +110,7 @@
       <div class="text-[#4b4b4b] space-y-3 text-xs max-w-[180px]">
        <div>
         <p class="font-semibold text-[10px] mb-0.5">Address</p>
-        <p>Jakarta, Indonesia</p>
+        <p>Bandung, Indonesia</p>
        </div>
        <div>
         <p class="font-semibold text-[10px] mb-0.5">Email</p>

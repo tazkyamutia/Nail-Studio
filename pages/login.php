@@ -1,3 +1,4 @@
+<?php include '../views/headers.php'; ?>
 <link rel="stylesheet" href="../css/login.css">
 
 <div class="container">
