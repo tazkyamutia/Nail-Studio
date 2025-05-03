@@ -54,9 +54,9 @@ $conn->close();
         $productStock = $product['stock'];
         $productStatus = $product['status'];
         ?>
-        <div class="border border-gray-300 rounded-lg p-4 flex flex-col bg-white shadow">
+        <div class="border border-gray-300 rounded-lg p-4 flex flex-col bg-white shadow-lg">
             <div class="flex justify-center mb-4 h-48">
-                <img src="<?= $imageURL ?>" alt="<?= $productName ?>" class="h-full w-auto object-contain"/>
+                <img src="<?= $imageURL ?>" alt="<?= $productName ?>" class="h-full w-auto object-contain rounded-lg"/>
             </div>
 
             <?php if ($productStatus == 'Low stock' && $productStock > 0) : ?>
@@ -73,16 +73,16 @@ $conn->close();
                 <span>Rp <?= $productPrice ?></span>
             </div>
 
-            <div class="flex gap-2 mt-auto">
+            <div class="flex flex-col sm:flex-row gap-2 mt-auto">
                 <!-- Add to cart button -->
-                <button class="w-5/6 font-semibold rounded-md py-2 px-3 transition
+                <button class="w-full sm:w-5/6 font-semibold rounded-md py-2 px-3 transition
                                <?= ($productStock <= 0) ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-pink-600 hover:bg-pink-700 text-white' ?>"
                         <?= ($productStock <= 0) ? 'disabled' : '' ?>>
                     <?= ($productStock <= 0) ? 'Stok Habis' : 'Tambah ke Keranjang' ?>
                 </button>
 
                 <!-- Wishlist button -->
-                <button class="w-1/6 flex items-center justify-center border border-gray-300 rounded-md text-pink-600 hover:text-pink-800 transition
+                <button class="w-full sm:w-1/6 flex items-center justify-center border border-gray-300 rounded-md text-pink-600 hover:text-pink-800 transition
                                <?= ($productStock <= 0) ? 'opacity-50 cursor-not-allowed' : '' ?>"
                         <?= ($productStock <= 0) ? 'disabled' : '' ?>>
                     <i class="far fa-heart"></i>
