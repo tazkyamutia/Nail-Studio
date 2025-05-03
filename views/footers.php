@@ -168,7 +168,7 @@
       <img alt="Mastercard logo black" class="h-5 w-auto" height="20" src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo-black.svg" width="40"/>
      </div>
     </div>
-    <div class="about-section bg-[#fff0f3] rounded-lg p-2 text-gray-1100 text-sm sm:text-base mt-12" style="font-feature-settings: 'liga' 0">
+    <!-- <div class="about-section bg-[#fff0f3] rounded-lg p-2 text-gray-1100 text-sm sm:text-base mt-12" style="font-feature-settings: 'liga' 0">
      <p class="font-semibold mb-3 text-base sm:text-lg">
       About Nail Art Studio
      </p>
@@ -184,7 +184,7 @@
      <p class="mb-3 leading-relaxed">
       Visit us for a relaxing and enjoyable nail care experience. Our studio maintains the highest standards of hygiene and customer service to ensure your visit is safe and pleasant. Discover the art of beautiful nails with Nail Art Studio today!
      </p>
-    </div>
+    </div> -->
    </footer>
   </div>
  </body>
