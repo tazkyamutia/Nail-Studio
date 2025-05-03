@@ -3,49 +3,13 @@
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1" name="viewport"/>
   <title>
-   Nail Art Studio Footer
+   NailStudio Footer
   </title>
   <script src="https://cdn.tailwindcss.com">
   </script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
-  <style>
-   body {
-      font-family: 'Inter', sans-serif;
-      margin: 0; /* Remove default body margin */
-    }
-   /* Gradient background only for the footer container - bright pastel pink and blue, lighter */
-   #footer-wrapper {
-     background: linear-gradient(90deg, #f7d6e0 0%, #c7d9fb 100%);
-     width: 100%; /* Ensure full width */
-   }
-   /* Make payment and other icons black with proper opacity and no color inversion */
-   .payment-icons img {
-     filter: none;
-     opacity: 1;
-   }
-   /* Ensure footer content uses full width with padding */
-   footer {
-     max-width: 100%;
-     padding-left: 16px;
-     padding-right: 16px;
-   }
-   /* Newsletter section with explicit margins */
-   .newsletter-container {
-     margin-left: 32px; /* Explicit left margin */
-     margin-right: 32px; /* Explicit right margin */
-     padding-left: 16px;
-     padding-right: 16px;
-   }
-   /* Remove margins for footer grid, bottom bar, and about section */
-   .footer-grid, .bottom-bar, .about-section {
-     width: 100%; /* Full width */
-     margin-left: 0;
-     margin-right: 0;
-     padding-left: 16px; /* Optional: Add padding for content spacing */
-     padding-right: 16px;
-   }
-  </style>
+  <link href="../css/footers.css" rel="stylesheet"/>
  </head>
  <body>
   <div id="footer-wrapper" class="w-full pt-10 pb-20 bg-gradient-to-r from-pink-200 to-blue-200">

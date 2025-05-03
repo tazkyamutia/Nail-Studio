@@ -25,7 +25,7 @@
 
       <!-- Logo text -->
       <div class="font-serif font-semibold text-2xl text-black select-none">
-        Nail Art Studio
+        Nails Studio
       </div>
     </div>
 
