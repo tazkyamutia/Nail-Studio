@@ -1,14 +1,17 @@
 <?php
-$host = 'localhost';  // Host database (biasanya localhost)
-$user = 'root';       // Username database (untuk XAMPP biasanya 'root')
-$password = '';       // Password database (untuk XAMPP biasanya kosong)
-$dbname = 'nailstudio_db';  // Nama database yang sudah dibuat
+// Database configuration
+$host = 'localhost';
+$dbname = 'nailstudio_db';
+$username = 'root';
+$password = '';
 
-// Membuat koneksi
-$conn = new mysqli($host, $user, $password, $dbname);
-
-// Cek koneksi
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+// Create database connection
+try {
+    $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    // Set the PDO error mode to exception
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch(PDOException $e) {
+    echo "Connection failed: " . $e->getMessage();
+    die();
 }
 ?>

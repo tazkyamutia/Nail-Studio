@@ -9,13 +9,7 @@ ini_set('display_errors', 1);
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Nail Art Studio</title>
-  
-  <body class="bg-white">
-  <!-- Top pink bar -->
-  <div class="bg-pink-300 text-black text-center text-xs py-2 select-none no-scrollbar">
-    FREE shipping and FREE gift when you spend over $75*
-  </div>
-  
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -23,7 +17,6 @@ ini_set('display_errors', 1);
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 
   <style>
-    /* Custom scrollbar hidden for the top pink bar */
     .no-scrollbar::-webkit-scrollbar {
       display: none;
     }
@@ -34,10 +27,13 @@ ini_set('display_errors', 1);
   </style>
 </head>
 <body class="bg-white">
+  <!-- Top pink bar -->
+  <div class="bg-pink-300 text-black text-center text-xs py-2 select-none no-scrollbar">
+    FREE shipping and FREE gift when you spend over $75*
+  </div>
 
-<!-- Panggil navbar -->
-<?php include 'views/navbar.php'; ?> 
-
+  <!-- Panggil navbar -->
+  <?php include 'views/navbar.php'; ?>
 
 </body>
 </html>
