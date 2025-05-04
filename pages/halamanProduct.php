@@ -1,27 +1,28 @@
 <?php
-$db_host = 'localhost';
-$db_user = 'root';
-$db_pass = '';
-$db_name = 'nailstudio_db';
+require_once '../configdb.php'; // sesuaikan path kalau beda folder
 
-$conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+// Pagination setup
+$limit = 12;
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($page - 1) * $limit;
 
-if ($conn->connect_error) {
-    die("Koneksi Gagal: " . $conn->connect_error);
-}
+// Total products count
+$countSql = "SELECT COUNT(*) AS total FROM product WHERE status = 'Published' OR status = 'Low stock'";
+$countResult = $conn->query($countSql);
+$totalRows = ($countResult !== false) ? $countResult->fetch(PDO::FETCH_ASSOC)['total'] : 0;
+$totalPages = ceil($totalRows / $limit);
 
-$conn->set_charset("utf8mb4");
-
+// Product data query
 $sql = "SELECT id_product, namaproduct, stock, price, status, foto
         FROM product
         WHERE status = 'Published' OR status = 'Low stock'
-        ORDER BY added DESC";
+        ORDER BY added DESC
+        LIMIT $limit OFFSET $offset";
 
 $result = $conn->query($sql);
+$products = ($result !== FALSE) ? $result->fetchAll(PDO::FETCH_ASSOC) : [];
 
-$products = ($result !== FALSE) ? $result->fetch_all(MYSQLI_ASSOC) : [];
-
-$conn->close();
+$conn = null;
 ?>
 
 <?php include '../views/headers.php'; ?>
@@ -44,7 +45,6 @@ $conn->close();
 <body class="bg-gray-50 p-6">
 
 <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12 mt-12">
-
 <?php if (!empty($products)) : ?>
     <?php foreach ($products as $product) : ?>
         <?php
@@ -74,14 +74,12 @@ $conn->close();
             </div>
 
             <div class="flex flex-col sm:flex-row gap-2 mt-auto">
-                <!-- Add to cart button -->
                 <button class="w-full sm:w-5/6 font-semibold rounded-md py-2 px-3 transition
                                <?= ($productStock <= 0) ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-pink-600 hover:bg-pink-700 text-white' ?>"
                         <?= ($productStock <= 0) ? 'disabled' : '' ?>>
                     <?= ($productStock <= 0) ? 'Stok Habis' : 'Tambah ke Keranjang' ?>
                 </button>
 
-                <!-- Wishlist button -->
                 <button class="w-full sm:w-1/6 flex items-center justify-center border border-gray-300 rounded-md text-pink-600 hover:text-pink-800 transition
                                <?= ($productStock <= 0) ? 'opacity-50 cursor-not-allowed' : '' ?>"
                         <?= ($productStock <= 0) ? 'disabled' : '' ?>>
@@ -93,8 +91,41 @@ $conn->close();
 <?php else : ?>
     <p class="col-span-full text-center text-gray-500">Tidak ada produk yang tersedia saat ini.</p>
 <?php endif; ?>
-
 </div>
+
+<?php if ($totalPages > 1): ?>
+    <div class="flex justify-center mt-8 space-x-2 mb-12">
+        <?php if ($page > 1): ?>
+            <a href="?page=<?= $page - 1 ?>" class="px-4 py-2 rounded-md border bg-white text-pink-600 border-pink-300 hover:bg-pink-50">
+                &laquo; Prev
+            </a>
+        <?php else: ?>
+            <span class="px-4 py-2 rounded-md border bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed">
+                &laquo; Prev
+            </span>
+        <?php endif; ?>
+
+        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+            <a href="?page=<?= $i ?>" 
+               class="px-4 py-2 rounded-md border text-sm font-semibold 
+                      <?= ($i == $page) 
+                          ? 'bg-pink-600 text-white border-pink-600' 
+                          : 'bg-white text-pink-600 border-pink-300 hover:bg-pink-50' ?>">
+                <?= $i ?>
+            </a>
+        <?php endfor; ?>
+
+        <?php if ($page < $totalPages): ?>
+            <a href="?page=<?= $page + 1 ?>" class="px-4 py-2 rounded-md border bg-white text-pink-600 border-pink-300 hover:bg-pink-50">
+                Next &raquo;
+            </a>
+        <?php else: ?>
+            <span class="px-4 py-2 rounded-md border bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed">
+                Next &raquo;
+            </span>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>
 
 </body>
 </html>
