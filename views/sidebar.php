@@ -11,31 +11,31 @@
 
 			<ul class="side-menu top">
 				<li class="active">
-					<a href="#">
+					<a href="../pages/dashboard.php">  <!-- Fixed link to dashboard page -->
 						<i class='bx bxs-dashboard'></i>
 						<p class="text">Admin Dashboard</p>
 					</a>
 				</li>
 				<li>
-					<a href="product.php">
+					<a href="../pages/product.php">
 						<i class='bx bxs-shopping-bag-alt'></i>
 						<p class="text">Product</p>
 					</a>
 				</li>
 				<li>
-					<a href="analytics.php">
+					<a href="../pages/analytics.php">
 						<i class='bx bxs-doughnut-chart'></i>
 						<p class="text">Analytics</p>
 					</a>
 				</li>
 				<li>
-					<a href="message.php">
+					<a href="../pages/message.php">
 						<i class='bx bxs-message-dots'></i>
 						<p class="text">Message</p>
 					</a>
 				</li>
 				<li>
-					<a href="transaction.php">
+					<a href="../pages/transaction.php">
 						<i class='bx bxs-credit-card-front'></i>
 						<p class="text">Transaction</p>
 					</a>
@@ -54,3 +54,5 @@
 		</div> <!-- end navigation -->
 	</div> <!-- end container -->
 </section>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../js/dashboard.js"></script>

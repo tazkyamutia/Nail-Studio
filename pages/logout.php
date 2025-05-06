@@ -1,10 +1,9 @@
 <<<<<<< HEAD
 <?php
-session_start();
+session_start();p
 =======
-<?php p
+<?php
 session_start();
->>>>>>> caa486b9bc095ce5f9cac74e43bebdda0757a2e6
 
 // Menghancurkan sesi login
 session_destroy();

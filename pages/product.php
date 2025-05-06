@@ -1,255 +1,259 @@
 <?php include '../views/header.php'; ?>
 <?php include '../views/sidebar.php'; ?>
-	<link rel="stylesheet" href="../Tazkya-HTML/css/style2.css">
-        <main>
-			<div class="head-title">
-				<div class="left">
-					<h1>Dashboard</h1>
-					<ul class="breadcrumb">
-						<li>
-							<a href="#">Dashboard</a>
-						</li>
-						<li><i class='bx bx-chevron-right' ></i></li>
-						<li>
-							<a class="active" href="#">Product</a>
-						</li>
-					</ul>
-				</div>
-				
-			</div>
-		</main>
-		
-<header>
-    <h1></h1>
-    <div>
-        <button style="padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px;">+ Add Product</button>
-    </div>
-</header>
+<?php include '../configdb.php'; ?>
+<link rel="stylesheet" href="../css/style2.css">
 
-<div class="search-bar">
-    <input type="text" id="search" placeholder="Search products...">
+<main>
+    <div class="head-title">
+        <div class="left">
+            <h1>Dashboard</h1>
+            <ul class="breadcrumb">
+                <li><a href="#">Dashboard</a></li>
+                <li><i class='bx bx-chevron-right'></i></li>
+                <li><a class="active" href="#">Product</a></li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (isset($_SESSION['success'])) {
+    echo '<div class="alert alert-success">' . $_SESSION['success'] . '</div>';
+    unset($_SESSION['success']);
+}
+
+if (isset($_SESSION['error'])) {
+    echo '<div class="alert alert-danger">' . $_SESSION['error'] . '</div>';
+    unset($_SESSION['error']);
+}
+?>
+
+<div class="product-page">
+    <div class="header-actions">
+        <h2>Product Management</h2>
+        <a href="addproduct.php" class="btn-add"> Add Product</a>
+    </div>
+
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search products..." onkeyup="searchProducts()">
+    </div>
+
+    <div class="table-container">
+        <table id="productTable">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>Stock</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Added</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                try {
+                    $sql = "SELECT * FROM product ORDER BY id_product DESC";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->execute();
+                    
+                    if ($stmt->rowCount() > 0) {
+                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                            // Set default added date if not available
+                            $formattedDate = isset($row['added']) ? date('d M Y', strtotime($row['added'])) : date('d M Y');
+                            
+                            // Set the status class and text
+                            $statusClass = '';
+                            $statusText = '';
+                            
+                            switch ($row['status']) {
+                                case 'published':
+                                    $statusClass = 'status-published';
+                                    $statusText = 'Published';
+                                    break;
+                                case 'low stock':
+                                    $statusClass = 'status-low';
+                                    $statusText = 'Low Stock';
+                                    break;
+                                default:
+                                    $statusClass = 'status-draft';
+                                    $statusText = 'Draft';
+                                    break;
+                            }
+                            
+                            echo '<tr>
+                                <td>
+                                    <div class="product-info">
+                                        <img src="../uploads/' . $row['image'] . '" alt="' . htmlspecialchars($row['namaproduct']) . '">
+                                        <span>' . htmlspecialchars($row['namaproduct']) . '</span>
+                                    </div>
+                                </td>
+                                <td>' . htmlspecialchars($row['category']) . '</td>
+                                <td>' . htmlspecialchars($row['stock']) . '</td>
+                                <td>Rp' . number_format($row['price'], 0, ',', '.') . '</td>
+                                <td><span class="status-badge ' . $statusClass . '">' . $statusText . '</span></td>
+                                <td>' . $formattedDate . '</td>
+                                <td class="action-buttons">
+                                    <a href="editproduct.php?id=' . $row['id_product'] . '" class="btn-edit">Edit</a>
+                                    <a href="deleteproduct.php?id=' . $row['id_product'] . '" class="btn-delete" onclick="return confirm(\'Are you sure you want to delete this product?\')">Delete</a>
+                                </td>
+                            </tr>';
+                        }
+                    } else {
+                        echo '<tr><td colspan="7" class="no-data">No products found</td></tr>';
+                    }
+                } catch (PDOException $e) {
+                    echo '<tr><td colspan="7" class="error-message">Database error: ' . $e->getMessage() . '</td></tr>';
+                }
+                ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<table id="product-table">
-    <thead>
-        <tr>
-            <th>Product</th>
-            <th>Category</th>
-            <th>Stock</th>
-            <th>Price</th>
-            <th>Status</th>
-            <th>Added</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>
-                <div style="display: flex; align-items: center;">
-                    <img src="nail-art-1.jpg" alt="Pink Perfection">
-                    <span>PINK PERFECTION</span>
-                </div>
-            </td>
-            <td>Almond Nails</td>
-            <td>10</td>
-            <td>Rp120.000</td>
-            <td><span class="status low-stock">Low Stock</span></td>
-            <td>29 Dec 2024</td>
-            <td class="action-buttons">
-                <button class="edit">Edit</button>
-                <button class="delete">Delete</button>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <div style="display: flex; align-items: center;">
-                    <img src="nail-art-2.jpg" alt="Green Elegance">
-                    <span>GREEN ELEGANCE</span>
-                </div>
-            </td>
-            <td>Oval Nails</td>
-            <td>30</td>
-            <td>Rp130.000</td>
-            <td><span class="status published">Published</span></td>
-            <td>24 Nov 2024</td>
-            <td class="action-buttons">
-                <button class="edit">Edit</button>
-                <button class="delete">Delete</button>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <div style="display: flex; align-items: center;">
-                    <img src="nail-art-3.jpg" alt="Tropical Bloom Nails">
-                    <span>TROPICAL BLOOM NAILS</span>
-                </div>
-            </td>
-            <td>Lipstick Nails</td>
-            <td>25</td>
-            <td>Rp140.000</td>
-            <td><span class="status draft">Draft</span></td>
-            <td>12 Dec 2024</td>
-            <td class="action-buttons">
-                <button class="edit">Edit</button>
-                <button class="delete">Delete</button>
-            </td>
-        </tr>
-		<tr>
-            <td>
-                <div style="display: flex; align-items: center;">
-                    <img src="nail-art-4.jpg" alt="Elegant Ruby Glam Nails">
-                    <span>ELEGANT RUBY GLAM NAILS</span>
-                </div>
-            </td>
-            <td>Oval Nails</td>
-            <td>35</td>
-            <td>Rp110.000</td>
-            <td><span class="status draft">Draft</span></td>
-            <td>9 Oct 2024</td>
-            <td class="action-buttons">
-                <button class="edit">Edit</button>
-                <button class="delete">Delete</button>
-            </td>
-        </tr>
-		<tr>
-            <td>
-                <div style="display: flex; align-items: center;">
-                    <img src="nail-art-5.jpg" alt="Black Cute Nails">
-                    <span>BLACK CUTE NAILS</span>
-                </div>
-            </td>
-            <td>Almond Nails</td>
-            <td>55</td>
-            <td>Rp125.000</td>
-            <td><span class="status draft">Draft</span></td>
-            <td>15 Aug 2024</td>
-            <td class="action-buttons">
-                <button class="edit">Edit</button>
-                <button class="delete">Delete</button>
-            </td>
-        </tr>
-		<tr>
-            <td>
-                <div style="display: flex; align-items: center;">
-                    <img src="nail-art-6.jpg" alt="Glamour's">
-                    <span>GLAMOUR'S</span>
-                </div>
-            </td>
-            <td>Lipstick Nails</td>
-            <td>15</td>
-            <td>Rp165.000</td>
-            <td><span class="status low-stock">Low Stock</span></td>
-            <td>29 Nov 2024</td>
-            <td class="action-buttons">
-                <button class="edit">Edit</button>
-                <button class="delete">Delete</button>
-            </td>
-        </tr>
-		<tr>
-            <td>
-                <div style="display: flex; align-items: center;">
-                    <img src="nail-art-7.jpg" alt="Fake Pink's">
-                    <span>FAKE PINK'S</span>
-                </div>
-            </td>
-            <td>Almond Nails</td>
-            <td>45</td>
-            <td>Rp200.000</td>
-            <td><span class="status published">Published</span></td>
-            <td>12 Sept 2024</td>
-            <td class="action-buttons">
-                <button class="edit">Edit</button>
-                <button class="delete">Delete</button>
-            </td>
-        </tr>
-		<tr>
-            <td>
-                <div style="display: flex; align-items: center;">
-                    <img src="nail-art-8.jpg" alt="Cow's">
-                    <span>COW'S</span>
-                </div>
-            </td>
-            <td>Oval nails</td>
-            <td>26</td>
-            <td>Rp135.000</td>
-            <td><span class="status published">Published</span></td>
-            <td>10 Oct 2024</td>
-            <td class="action-buttons">
-                <button class="edit">Edit</button>
-                <button class="delete">Delete</button>
-            </td>
-        </tr>
-		<tr>
-            <td>
-                <div style="display: flex; align-items: center;">
-                    <img src="nail-art-9.jpg" alt="Flower's">
-                    <span>FLOWER'S</span>
-                </div>
-            </td>
-            <td>Almond Nails</td>
-            <td>45</td>
-            <td>Rp170.000</td>
-            <td><span class="status low-stock">Low Stock</span></td>
-            <td>25 Oct 2024</td>
-            <td class="action-buttons">
-                <button class="edit">Edit</button>
-                <button class="delete">Delete</button>
-            </td>
-        </tr>
-		<tr>
-            <td>
-                <div style="display: flex; align-items: center;">
-                    <img src="nail-art-10.jpg" alt="Blackie's">
-                    <span>BLACKIE'S</span>
-                </div>
-            </td>
-            <td>Lipstick Nails</td>
-            <td>65</td>
-            <td>Rp115.000</td>
-            <td><span class="status published">Published</span></td>
-            <td>10 Oct 2024</td>
-            <td class="action-buttons">
-                <button class="edit">Edit</button>
-                <button class="delete">Delete</button>
-            </td>
-        </tr>
-		<tr>
-            <td>
-                <div style="display: flex; align-items: center;">
-                    <img src="nail-art-11.jpg" alt="Azure Dream">
-                    <span>AZURE DREAM</span>
-                </div>
-            </td>
-            <td>Oval Nails</td>
-            <td>15</td>
-            <td>Rp115.000</td>
-            <td><span class="status draft">Draft</span></td>
-            <td>15 Aug 2024</td>
-            <td class="action-buttons">
-                <button class="edit">Edit</button>
-                <button class="delete">Delete</button>
-            </td>
-        </tr>
-		<tr>
-            <td>
-                <div style="display: flex; align-items: center;">
-                    <img src="nail-art-12.jpg" alt="Crimson Noir">
-                    <span>CRIMSON NOIR</span>
-                </div>
-            </td>
-            <td>Lipstick Nails</td>
-            <td>67</td>
-            <td>Rp105.000</td>
-            <td><span class="status published">Published</span></td>
-            <td>7 Nov 2024</td>
-            <td class="action-buttons">
-                <button class="edit">Edit</button>
-                <button class="delete">Delete</button>
-            </td>
-        </tr>
+<script>
+function searchProducts() {
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("searchInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("productTable");
+    tr = table.getElementsByTagName("tr");
 
+    for (i = 1; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[0];
+        if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}
+</script>
 
-    </tbody>
-</table>
+<style>
+.product-page {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.btn-add {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.search-bar {
+    margin-bottom: 20px;
+    text-align: right;
+}
+
+#searchInput {
+    padding: 8px 12px;
+    width: 250px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+#productTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#productTable th, #productTable td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#productTable th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.product-info {
+    display: flex;
+    align-items: center;
+}
+
+.product-info img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-block;
+    text-align: center;
+    min-width: 100px;
+}
+
+.status-published {
+    background-color: #28a745;
+    color: white;
+}
+
+.status-draft {
+    background-color: #6c757d;
+    color: white;
+}
+
+.status-low {
+    background-color: #ffc107;
+    color: white;
+}
+
+.action-buttons a {
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+.btn-edit {
+    color: #007bff;
+}
+
+.btn-delete {
+    color: #dc3545;
+}
+
+.no-data, .error-message {
+    text-align: center;
+    padding: 20px;
+    color: #6c757d;
+}
+
+.error-message {
+    color: #dc3545;
+}
+</style>
 
 <?php include '../views/footer.php'; ?>
