@@ -1,6 +1,6 @@
 <<<<<<< HEAD
 <?php
-session_start();p
+session_start();
 =======
 <?php p
 session_start();
