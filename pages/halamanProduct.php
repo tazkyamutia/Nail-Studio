@@ -1,5 +1,5 @@
 <?php
-require_once '../configdb.php'; // sesuaikan path kalau beda folder
+include '../configdb.php';
 
 // Pagination setup
 $limit = 12;
