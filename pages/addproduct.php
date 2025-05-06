@@ -194,7 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     
                     <div class="form-group">
                         <label for="image">Product Image</label>
-                        <input type="file" id="image" name="image" accept="image/*">
+                        <input type="text" id="image" name="image" accept="image/*">
                         <small>Recommended size: 220x220 pixels</small>
                     </div>
                     

@@ -1,0 +1,35 @@
+body {
+   font-family: 'Inter', sans-serif;
+   margin: 0; /* Remove default body margin */
+ }
+/* Gradient background only for the footer container - bright pastel pink and blue, lighter */
+#footer-wrapper {
+  background: linear-gradient(90deg, #f7d6e0 0%, #c7d9fb 100%);
+  width: 100%; /* Ensure full width */
+}
+/* Make payment and other icons black with proper opacity and no color inversion */
+.payment-icons img {
+  filter: none;
+  opacity: 1;
+}
+/* Ensure footer content uses full width with padding */
+footer {
+  max-width: 100%;
+  padding-left: 124px;
+  padding-right: 124px;
+}
+/* Newsletter section with explicit margins */
+.newsletter-container {
+  margin-left: 124px; /* Explicit left margin */
+  margin-right: 124px; /* Explicit right margin */
+  padding-left: 16px;
+  padding-right: 16px;
+}
+/* Remove margins for footer grid, bottom bar, and about section */
+.footer-grid, .bottom-bar, .about-section {
+  width: 100%; /* Full width */
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 16px; /* Optional: Add padding for content spacing */
+  padding-right: 16px;
+}
