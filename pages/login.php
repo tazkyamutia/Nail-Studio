@@ -113,9 +113,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 
                 <button type="submit">Login</button>
                 
-                <div class="bottom-links">
-                    <a href="resetpassword.php">Forgot Password?</a>
-                </div>
                 
                 <div class="toggle-link">
                     Don't have an account? <a href="register.php">Sign Up</a>
