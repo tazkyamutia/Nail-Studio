@@ -44,7 +44,7 @@
 
 			<ul class="side-menu">
 				<li>
-					<a href="#" class="logout">
+					<a href="../pages/logout.php" class="logout">
 						<i class='bx bxs-log-out-circle'></i>
 						<p class="text">Logout</p>
 					</a>
