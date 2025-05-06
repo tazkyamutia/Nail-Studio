@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-<?php
-session_start();p
-=======
-<?php
+<?php 
 session_start();
 
 // Menghancurkan sesi login
