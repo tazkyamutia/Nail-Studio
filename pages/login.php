@@ -120,6 +120,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="toggle-link">
                     Don't have an account? <a href="register.php">Sign Up</a>
                 </div>
+                
             </form>
         </div>
     </div>
