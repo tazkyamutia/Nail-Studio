@@ -257,3 +257,5 @@ function searchProducts() {
 </style>
 
 <?php include '../views/footer.php'; ?>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../js/dashboard.js"></script>

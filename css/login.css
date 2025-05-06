@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
 * {
   box-sizing: border-box;
@@ -8,7 +8,7 @@
 }
 
 body {
-  background: linear-gradient(120deg, #ff69b4, #ffb6c1);
+  background: #ff88af;
   height: 100vh;
   display: flex;
   align-items: center;
@@ -17,19 +17,18 @@ body {
 
 .container {
   width: 95%;
-  max-width: 950px;
+  max-width: 1200px;
   height: 90vh;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  background: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   display: flex;
-  flex-direction: row;
 }
 
+/* Left Panel Styles */
 .left-panel {
   flex: 1;
-  background: #fce4ec;
+  background: #ffeef4;
   padding: 40px;
   display: flex;
   flex-direction: column;
@@ -39,24 +38,27 @@ body {
 }
 
 .left-panel img {
-  max-width: 200px;
-  margin-bottom: 30px;
+  width: 250px;
+  margin-bottom: 40px;
 }
 
 .left-panel p {
-  font-size: 14px;
-  color: #555;
+  color: #666;
+  font-size: 16px;
+  line-height: 1.6;
 }
 
+/* Right Panel Styles */
 .right-panel {
   flex: 1.2;
-  padding: 30px;
+  background: white;
+  padding: 40px;
   position: relative;
   overflow-y: auto;
 }
 
 .welcome-box {
-  background: #f06292;
+  background: #ec4c93;
   color: white;
   padding: 8px 20px;
   border-radius: 20px;
@@ -64,90 +66,118 @@ body {
   top: 20px;
   right: 30px;
   font-size: 14px;
+  font-weight: 500;
 }
 
-h2 {
-  margin-top: 60px;
-  margin-bottom: 20px;
+/* Signup Form Styles */
+#signup-form {
+  max-width: 550px;
+  margin: 0 auto;
+  padding-top: 40px;
+}
+
+#signup-form h2 {
+  font-size: 32px;
+  font-weight: 600;
   color: #333;
+  margin-bottom: 30px;
 }
 
-form {
-  display: flex;
-  flex-direction: column;
+.form-group {
+  margin-bottom: 25px;
 }
 
 label {
-  margin-bottom: 5px;
+  display: block;
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #e1e1e1;
+  border-radius: 8px;
+  font-size: 15px;
+  color: #333;
+  background: white;
+  transition: border-color 0.3s;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #ec4c93;
+}
+
+.signup-btn {
+  width: 100%;
+  background: #ec4c93;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-top: 10px;
+}
+
+.signup-btn:hover {
+  background: #d63a7d;
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 20px;
   font-size: 14px;
   color: #666;
 }
 
-input, select {
-  padding: 10px;
-  margin-bottom: 18px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 14px;
-}
-
-button {
-  padding: 12px;
-  border: none;
-  border-radius: 25px;
-  background: linear-gradient(to right, #ec407a, #f06292);
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-button:hover {
-  background: linear-gradient(to right, #d81b60, #ec407a);
-}
-
-.bottom-links {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 15px;
-}
-
-.bottom-links a {
-  font-size: 12px;
-  color: #d81b60;
+.login-link a {
+  color: #ec4c93;
   text-decoration: none;
+  font-weight: 500;
 }
 
-.bottom-links a:hover {
+.login-link a:hover {
   text-decoration: underline;
 }
 
-.toggle-link {
-  margin-top: 10px;
-  font-size: 13px;
-  text-align: center;
+/* Responsive Styles */
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .left-panel {
+    padding: 30px;
+  }
+  
+  .right-panel {
+    padding: 30px;
+  }
+  
+  #signup-form {
+    padding-top: 50px;
+  }
 }
 
-.toggle-link a {
-  color: #d81b60;
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.toggle-link a:hover {
-  text-decoration: underline;
-}
-
-.hidden {
-  display: none;
-}
-
-/* Scroll fix for small screens */
-.right-panel::-webkit-scrollbar {
-  width: 6px;
-}
-
-.right-panel::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 3px;
+@media (max-width: 480px) {
+  .welcome-box {
+    position: static;
+    margin-bottom: 20px;
+    display: inline-block;
+  }
+  
+  .right-panel {
+    padding: 20px;
+  }
+  
+  #signup-form h2 {
+    font-size: 24px;
+  }
 }
