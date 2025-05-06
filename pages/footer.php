@@ -3,7 +3,7 @@
 $servername = "localhost"; // Nama server database
 $username = "root"; // Username phpMyAdmin 
 $password = ""; 
-$dbname = "nailart_db"; // Nama database 
+$dbname = "nailstudio_db"; // Nama database 
 
 // Membuat koneksi ke database
 $conn = new mysqli($servername, $username, $password, $dbname);
