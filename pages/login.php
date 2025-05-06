@@ -31,11 +31,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Debug info (can be removed once working)
             $error = "Found user but role is: " . $user_info["role"] . " (you selected: $role)";
             
-            // Now check with role included
-            $sql = "SELECT * FROM user WHERE username = '$username' AND role = '$role'";
+            // Now check with role included - SECURITY FIX: Using proper parameter binding
+            $sql = "SELECT * FROM user WHERE username = :username AND role = :role";
             $stmt = $conn->prepare($sql);
-            // $stmt->bindParam(':username', $username);
-            // $stmt->bindParam(':role', $role);
+            $stmt->bindParam(':username', $username);
+            $stmt->bindParam(':role', $role);
             $stmt->execute();
             
             // Check if user exists with matching role
@@ -50,8 +50,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $_SESSION["username"] = $user["username"];
                     $_SESSION["role"] = $user["role"];
                     
-                    // Redirect to dashboard
-                    header("Location: dashboard.php");
+                    // Redirect based on role
+                    if ($_SESSION["role"] == "admin") {
+                        header("Location: dashboard.php");
+                    } else if ($_SESSION["role"] == "member") {
+                        header("Location: header.php"); // Redirect for members
+                    }
                     exit;
                 } else {
                     $error = "Invalid password";
@@ -113,11 +117,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 
                 <button type="submit">Login</button>
                 
-                
                 <div class="toggle-link">
                     Don't have an account? <a href="register.php">Sign Up</a>
                 </div>
-                
             </form>
         </div>
     </div>
