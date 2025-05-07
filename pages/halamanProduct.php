@@ -1,5 +1,5 @@
 <?php
-include '../configdb.php';
+require_once '../configdb.php';
 if (session_status() == PHP_SESSION_NONE) session_start();
 
 // Pagination setup
@@ -62,7 +62,7 @@ $conn = null;
 
             <?php if ($productStatus == 'Low stock' && $productStock > 0) : ?>
                 <span class="inline-block bg-yellow-500 text-white text-[10px] font-semibold rounded-full px-2 py-0.5 mb-2 self-start">
-                    Stok Menipis
+                    Low Stock
                 </span>
             <?php endif; ?>
 
