@@ -72,32 +72,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php if (!empty($error)) echo "<div class='error'>$error</div>"; ?>
         <?php if (!empty($success)) echo "<div class='success'>$success</div>"; ?>
 
-        <form action="" method="post">
-            <label for="signup-role">Sign up as</label>
-            <select id="signup-role" name="signup-role" required>
-                <option value="">-- Pilih Role --</option>
-                <option value="admin">Admin</option>
-                <option value="member">Member</option>
-            </select>
+        <form action="" method="post" id="signup-form">
+            <div class="form-group">
+                <label for="signup-role">Sign up as</label>
+                <select id="signup-role" name="signup-role" required>
+                    <option value="admin">Admin</option>
+                    <option value="member">Member</option>
+                </select>
+            </div>
 
-            <label for="signup-username">Username</label>
-            <input type="text" id="signup-username" name="username" required>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
 
-            <label for="signup-fullname">Full Name</label>
-            <input type="text" id="signup-fullname" name="fullname" required>
+            <div class="form-group">
+                <label for="fullname">Full Name</label>
+                <input type="text" id="fullname" name="fullname" required>
+            </div>
 
-            <label for="signup-email">Email</label>
-            <input type="email" id="signup-email" name="email" required>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
 
-            <label for="signup-password">Password</label>
-            <input type="password" id="signup-password" name="password" required>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
 
-            <label for="signup-confirm">Confirm Password</label>
-            <input type="password" id="signup-confirm" name="confirm-password" required>
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" name="confirm-password" required>
+            </div>
 
-            <button type="submit">Sign Up</button>
+            <button type="submit" class="signup-btn">Sign Up</button>
 
-            <div class="toggle-link">
+            <div class="login-link">
                 Sudah punya akun? <a href="login.php">Login</a>
             </div>
         </form>

@@ -69,20 +69,14 @@ body {
   font-weight: 500;
 }
 
-/* Signup Form Styles */
-#signup-form {
-  max-width: 550px;
-  margin: 0 auto;
-  padding-top: 40px;
-}
-
-#signup-form h2 {
+h2 {
   font-size: 32px;
   font-weight: 600;
   color: #333;
   margin-bottom: 30px;
 }
 
+/* Form Styles */
 .form-group {
   margin-bottom: 25px;
 }
@@ -177,7 +171,7 @@ input:focus, select:focus {
     padding: 20px;
   }
   
-  #signup-form h2 {
+  h2 {
     font-size: 24px;
   }
 }
