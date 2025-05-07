@@ -1,26 +1,18 @@
 <?php
-// Start session
 session_start();
-
-// Include database connection
 require_once "../configdb.php";
-
-// Show all errors
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Define variables
 $error = "";
 
-// Process login form
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST["username"]);
     $password = trim($_POST["password"]);
     $role = trim($_POST["role"]);
     
     try {
-        // First check if user exists without checking role
         $check_sql = "SELECT * FROM user WHERE username = :username";
         $check_stmt = $conn->prepare($check_sql);
         $check_stmt->bindParam(':username', $username);
@@ -28,33 +20,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         if ($check_stmt->rowCount() > 0) {
             $user_info = $check_stmt->fetch();
-            // Debug info (can be removed once working)
-            $error = "Found user but role is: " . $user_info["role"] . " (you selected: $role)";
             
-            // Now check with role included - SECURITY FIX: Using proper parameter binding
             $sql = "SELECT * FROM user WHERE username = :username AND role = :role";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':username', $username);
             $stmt->bindParam(':role', $role);
             $stmt->execute();
             
-            // Check if user exists with matching role
             if ($stmt->rowCount() == 1) {
                 $user = $stmt->fetch();
-                
-                // Verify password
                 if (password_verify($password, $user['password'])) {
-                    // Password is correct, start session
                     $_SESSION["loggedin"] = true;
                     $_SESSION["id"] = $user["id"];
                     $_SESSION["username"] = $user["username"];
                     $_SESSION["role"] = $user["role"];
                     
-                    // Redirect based on role
                     if ($_SESSION["role"] == "admin") {
                         header("Location: dashboard.php");
                     } else if ($_SESSION["role"] == "member") {
-                        header("Location: header.php"); // Redirect for members
+                        header("Location: header.php");
                     }
                     exit;
                 } else {
@@ -115,9 +99,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
                 
-                <button type="submit">Login</button>
+                <button type="submit" class="signup-btn">Login</button>
                 
-                <div class="toggle-link">
+                <div class="login-link">
                     Don't have an account? <a href="register.php">Sign Up</a>
                 </div>
             </form>
