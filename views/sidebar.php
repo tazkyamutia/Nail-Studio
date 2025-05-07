@@ -4,7 +4,7 @@
 			<ul>
 				<li>
 					<a href="#home">
-						<img src="../Tazkya-HTML/images/logo.png" alt="logo" height="50" width="70">
+						<img src="../Tazkya-HTML/images/logonails.png" alt="logo" height="70" width="70">
 					</a>
 				</li>
 			</ul>

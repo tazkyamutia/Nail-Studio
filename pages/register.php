@@ -76,7 +76,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="form-group">
                 <label for="signup-role">Sign up as</label>
                 <select id="signup-role" name="signup-role" required>
-                    <option value="admin">Admin</option>
                     <option value="member">Member</option>
                 </select>
             </div>
