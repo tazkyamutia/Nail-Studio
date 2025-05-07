@@ -10,7 +10,7 @@ $error = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {     
     $username = trim($_POST["username"]);     
     $password = trim($_POST["password"]);     
-    // The form will only submit "member" as role, but we'll check the actual role in database
+    // The form will only submit "member" as role
      
     try {         
         // First check if the user exists and get their actual role
@@ -59,46 +59,69 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .error {             
             color: red;             
             margin-bottom: 15px;         
-        }     
+        }
+        /* Added custom styles for this page */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .form-container {
+            width: 100%;
+            max-width: 600px;
+        }
+        h2 {
+            text-align: left;
+            margin-bottom: 25px;
+        }
+        .login-link {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        input[type="text"], input[type="password"] {
+            height: 50px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
     </style> 
 </head> 
 <body>     
     <div class="container">         
-        <div class="left-panel">             
-            <img src="../Tazkya-HTML/images/logonails.png" alt="Nail Studio Logo">             
+        <div class="left-panel">
+            <div class="logo-container">
+                <img src="../Tazkya-HTML/images/logonails.png" alt="Nail Studio Logo">
+            </div>
             <p>Selamat datang di platform kami! Login atau daftar untuk melanjutkan.</p>         
         </div>         
                 
         <div class="right-panel">             
             <div class="welcome-box">Welcome!</div>             
                     
-            <h2>Login</h2>             
+            <div class="form-container">
+                <h2>Login</h2>             
+                        
+                <?php if (!empty($error)): ?>                 
+                    <div class="error"><?php echo $error; ?></div>             
+                <?php endif; ?>             
+                        
+                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">                 
+                    <!-- Hidden input for role - always set to "member" -->
+                    <input type="hidden" name="role" value="member">
                     
-            <?php if (!empty($error)): ?>                 
-                <div class="error"><?php echo $error; ?></div>             
-            <?php endif; ?>             
-                    
-            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">                 
-                <!-- Hidden input for role - always set to "member" -->
-                <input type="hidden" name="role" value="member">
+                    <label for="username">Username</label>                 
+                    <input type="text" id="username" name="username" required>                 
+                                    
+                    <label for="password">Password</label>                 
+                    <input type="password" id="password" name="password" required>                 
+                                    
+                    <button type="submit" class="signup-btn">Login</button>                 
+                </form>
                 
-                <!-- Optional: You can keep a label showing they're logging in as a Member -->
-                <div class="role-indicator">
-                    
-                </div>
-                
-                <label for="username">Username</label>                 
-                <input type="text" id="username" name="username" required>                 
-                                
-                <label for="password">Password</label>                 
-                <input type="password" id="password" name="password" required>                 
-                                
-                <button type="submit" class="signup-btn">Login</button>                 
-                                
                 <div class="login-link">                     
                     Don't have an account? <a href="register.php">Sign Up</a>                 
-                </div>             
-            </form>         
+                </div>
+            </div>
         </div>     
     </div> 
 </body> 

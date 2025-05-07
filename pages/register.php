@@ -15,9 +15,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST["email"]);
     $password = $_POST["password"];
     $confirm_password = $_POST["confirm-password"];
-    $role = $_POST["signup-role"];
+    $role = "member"; // Always set role to member
 
-    if (empty($username) || empty($fullname) || empty($email) || empty($password) || empty($confirm_password) || empty($role)) {
+    if (empty($username) || empty($fullname) || empty($email) || empty($password) || empty($confirm_password)) {
         $error = "Semua field wajib diisi.";
     } elseif ($password !== $confirm_password) {
         $error = "Password dan konfirmasi tidak cocok.";
@@ -57,6 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <style>
         .error { color: red; margin-bottom: 10px; }
         .success { color: green; margin-bottom: 10px; }
+        .role-indicator { margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -73,11 +74,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php if (!empty($success)) echo "<div class='success'>$success</div>"; ?>
 
         <form action="" method="post" id="signup-form">
-            <div class="form-group">
-                <label for="signup-role">Sign up as</label>
-                <select id="signup-role" name="signup-role" required>
-                    <option value="member">Member</option>
-                </select>
+            <!-- Hidden input for role - always set to "member" -->
+            <input type="hidden" name="signup-role" value="member">
+            
+            <!-- Display fixed role to user -->
+            <div class="role-indicator">
+                
             </div>
 
             <div class="form-group">
