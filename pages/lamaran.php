@@ -1,14 +1,5 @@
 <?php
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db   = "nailstudio_db";
-
-// Koneksi ke database
-$conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) {
-  die("Connection failed: " . $conn->connect_error);
-}
+require_once '../configdb.php'; 
 
 // Cek jika form disubmit
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -17,6 +8,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $phone       = $_POST['phone'] ?? '';
   $position    = $_POST['position'] ?? '';
   $description = $_POST['description'] ?? '';
+
+
+   // email tidak boleh digunakan 2 q
+   $checkEmail = $conn->prepare("SELECT COUNT(*) FROM job_applications WHERE email = ?");
+   $checkEmail->execute([$email]);
+   $emailExists = $checkEmail->fetchColumn();
+ 
+   if ($emailExists > 0) {
+     echo "<script>alert('alamat email telah digunkan, silakan gunakan email lain.');</script>";
+   } else {
 
   // Simpan file CV
   if (isset($_FILES['cv']) && $_FILES['cv']['error'] === UPLOAD_ERR_OK) {
@@ -48,8 +49,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     echo "<script>alert('Please upload a valid PDF CV.');</script>";
   }
 }
+}
 
-$conn->close();
+$conn = null;
+
 ?>
 
 <?php include 'hehe.php'; ?>
