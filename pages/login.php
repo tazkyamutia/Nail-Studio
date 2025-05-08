@@ -1,111 +1,128 @@
-<?php
-session_start();
-require_once "../configdb.php";
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+<?php 
+session_start(); 
+require_once "../configdb.php"; 
+ini_set('display_errors', 1); 
+ini_set('display_startup_errors', 1); 
+error_reporting(E_ALL);  
 
-$error = "";
+$error = "";  
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = trim($_POST["username"]);
-    $password = trim($_POST["password"]);
-    $role = trim($_POST["role"]);
-    
-    try {
-        $check_sql = "SELECT * FROM user WHERE username = :username";
-        $check_stmt = $conn->prepare($check_sql);
-        $check_stmt->bindParam(':username', $username);
-        $check_stmt->execute();
-        
-        if ($check_stmt->rowCount() > 0) {
-            $user_info = $check_stmt->fetch();
-            
-            $sql = "SELECT * FROM user WHERE username = :username AND role = :role";
-            $stmt = $conn->prepare($sql);
-            $stmt->bindParam(':username', $username);
-            $stmt->bindParam(':role', $role);
-            $stmt->execute();
-            
-            if ($stmt->rowCount() == 1) {
-                $user = $stmt->fetch();
-                if (password_verify($password, $user['password'])) {
-                    $_SESSION["loggedin"] = true;
-                    $_SESSION["id"] = $user["id"];
-                    $_SESSION["username"] = $user["username"];
-                    $_SESSION["role"] = $user["role"];
-                    
-                    if ($_SESSION["role"] == "admin") {
-                        header("Location: dashboard.php");
-                    } else if ($_SESSION["role"] == "member") {
-                        header("Location: header.php");
-                    }
-                    exit;
-                } else {
-                    $error = "Invalid password";
-                }
-            } else {
-                $error = "User found but role does not match. Please select role: " . $user_info["role"];
-            }
-        } else {
-            $error = "Username not found";
+if ($_SERVER["REQUEST_METHOD"] == "POST") {     
+    $username = trim($_POST["username"]);     
+    $password = trim($_POST["password"]);     
+    // The form will only submit "member" as role
+     
+    try {         
+        // First check if the user exists and get their actual role
+        $check_sql = "SELECT * FROM user WHERE username = :username";         
+        $check_stmt = $conn->prepare($check_sql);         
+        $check_stmt->bindParam(':username', $username);         
+        $check_stmt->execute();         
+                
+        if ($check_stmt->rowCount() > 0) {             
+            $user = $check_stmt->fetch();
+                     
+            // Check if password is correct
+            if (password_verify($password, $user['password'])) {                 
+                $_SESSION["loggedin"] = true;                     
+                $_SESSION["id"] = $user["id"];                     
+                $_SESSION["username"] = $user["username"];                     
+                $_SESSION["role"] = $user["role"]; // Set the actual role from database
+                                     
+                // Redirect based on the actual role in database
+                if ($_SESSION["role"] == "admin") {                         
+                    header("Location: dashboard.php");                     
+                } else if ($_SESSION["role"] == "member") {                         
+                    header("Location: header.php");                     
+                }                     
+                exit;                 
+            } else {                     
+                $error = "Invalid password";                 
+            }             
+        } else {             
+            $error = "Username not found";             
+        }         
+    } catch (PDOException $e) {         
+        $error = "Database error: " . $e->getMessage();         
+    } 
+} 
+?>  
+
+<!DOCTYPE html> 
+<html lang="en"> 
+<head>     
+    <meta charset="UTF-8">     
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">     
+    <title>Login - Nail Studio</title>     
+    <link rel="stylesheet" href="../css/login.css">     
+    <style>         
+        .error {             
+            color: red;             
+            margin-bottom: 15px;         
         }
-    } catch (PDOException $e) {
-        $error = "Database error: " . $e->getMessage();
-    }
-}
-?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Nail Studio</title>
-    <link rel="stylesheet" href="../css/login.css">
-    <style>
-        .error {
-            color: red;
-            margin-bottom: 15px;
+        /* Added custom styles for this page */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
-    </style>
-</head>
-<body>
-    <div class="container">
+        .form-container {
+            width: 100%;
+            max-width: 600px;
+        }
+        h2 {
+            text-align: left;
+            margin-bottom: 25px;
+        }
+        .login-link {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        input[type="text"], input[type="password"] {
+            height: 50px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style> 
+</head> 
+<body>     
+    <div class="container">         
         <div class="left-panel">
-            <img src="../Tazkya-HTML/images/logonails.png" alt="Nail Studio Logo">
-            <p>Selamat datang di platform kami! Login atau daftar untuk melanjutkan.</p>
-        </div>
-        
-        <div class="right-panel">
-            <div class="welcome-box">Welcome!</div>
-            
-            <h2>Login</h2>
-            
-            <?php if (!empty($error)): ?>
-                <div class="error"><?php echo $error; ?></div>
-            <?php endif; ?>
-            
-            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-                <label for="role">Login as</label>
-                <select id="role" name="role">
-                    <option value="admin">Admin</option>
-                    <option value="member">Member</option>
-                </select>
+            <div class="logo-container">
+                <img src="../Tazkya-HTML/images/logonails.png" alt="Nail Studio Logo">
+            </div>
+            <p>Selamat datang di platform kami! Login atau daftar untuk melanjutkan.</p>         
+        </div>         
                 
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
+        <div class="right-panel">             
+            <div class="welcome-box">Welcome!</div>             
+                    
+            <div class="form-container">
+                <h2>Login</h2>             
+                        
+                <?php if (!empty($error)): ?>                 
+                    <div class="error"><?php echo $error; ?></div>             
+                <?php endif; ?>             
+                        
+                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">                 
+                    <!-- Hidden input for role - always set to "member" -->
+                    <input type="hidden" name="role" value="member">
+                    
+                    <label for="username">Username</label>                 
+                    <input type="text" id="username" name="username" required>                 
+                                    
+                    <label for="password">Password</label>                 
+                    <input type="password" id="password" name="password" required>                 
+                                    
+                    <button type="submit" class="signup-btn">Login</button>                 
+                </form>
                 
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-                
-                <button type="submit" class="signup-btn">Login</button>
-                
-                <div class="login-link">
-                    Don't have an account? <a href="register.php">Sign Up</a>
+                <div class="login-link">                     
+                    Don't have an account? <a href="register.php">Sign Up</a>                 
                 </div>
-            </form>
-        </div>
-    </div>
-</body>
+            </div>
+        </div>     
+    </div> 
+</body> 
 </html>

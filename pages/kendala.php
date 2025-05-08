@@ -36,138 +36,171 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Hubungi Kami - Nail Art Studio</title>
+  <title>Contact Us - Nail Art Studio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #fff;
+      margin: 0;
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(to right, #ffe6f0, #fff0f5);
       color: #333;
-      padding: 20px;
+      padding: 40px 20px;
     }
 
     .container {
-      display: flex;
-      flex-wrap: wrap;
-      max-width: 1000px;
+      max-width: 1100px;
       margin: auto;
-      gap: 30px;
+      display: flex;
+      gap: 40px;
+      background: #fff;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+      border-radius: 20px;
+      overflow: hidden;
     }
 
     .info {
       flex: 1;
-      min-width: 300px;
+      padding: 40px;
+      background: linear-gradient(to bottom right, #fcd6e6, #f8bbd0);
+      color: #4a4a4a;
     }
 
     .info h2 {
-      font-size: 24px;
-      margin-bottom: 10px;
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #7b004c;
     }
 
     .info p {
-      margin-bottom: 20px;
+      margin-bottom: 30px;
+      font-size: 16px;
     }
 
-    table {
+    table td {
+      padding: 5px 0;
       font-size: 16px;
     }
 
     .form {
       flex: 1;
-      min-width: 300px;
+      padding: 40px;
     }
 
     label {
       display: block;
-      margin: 10px 0 5px;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      font-weight: 600;
     }
 
     input, select, textarea {
       width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      box-sizing: border-box;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      outline: none;
+      font-size: 16px;
+      transition: 0.3s;
     }
 
-    span {
-      color: red;
+    input:focus, select:focus, textarea:focus {
+      border-color: #ff8ac3;
+      box-shadow: 0 0 8px #ffd6eb;
     }
 
     button {
-      margin-top: 15px;
-      background-color: rgb(71, 37, 241);
-      color: white;
+      margin-top: 25px;
+      padding: 14px 25px;
       border: none;
-      padding: 12px 20px;
-      border-radius: 5px;
-      cursor: pointer;
+      border-radius: 10px;
       font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
     }
 
-    button:hover {
-      background-color: rgb(59, 30, 200);
+    button[type="submit"] {
+      background: #ff99cc;
+      color: #fff;
+    }
+
+    button[type="submit"]:hover {
+      background: #ff66b2;
+    }
+
+    button[type="button"] {
+      margin-left: 10px;
+      background: #999;
+      color: white;
     }
 
     .result {
       max-width: 800px;
       margin: 20px auto;
+      padding: 15px;
+      border-radius: 12px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .result.success {
       background: #e6ffe6;
       color: #006600;
-      padding: 15px;
-      border-radius: 6px;
       border: 1px solid #b3ffb3;
+    }
+
+    .result.error {
+      background: #ffe6e6;
+      color: #cc0000;
+      border: 1px solid #ffb3b3;
     }
   </style>
 </head>
 <body>
 
 <?php if (isset($sukses) && $sukses): ?>
-  <div class="result">✅ Terima kasih! Pesan Anda telah berhasil dikirim.</div>
+  <div class="result success">✅ Terima kasih! Pesan Anda telah berhasil dikirim.</div>
 <?php elseif (isset($sukses) && !$sukses): ?>
-  <div class="result" style="background:#ffe6e6; color:#cc0000; border-color:#ffb3b3;">❌ Gagal mengirim pesan. Silakan coba lagi.</div>
+  <div class="result error">❌ Gagal mengirim pesan. Silakan coba lagi.</div>
 <?php endif; ?>
 
 <div class="container">
   <div class="info">
-    <h2>Apakah Anda mengalami kendala?</h2>
-    <p>Jika ya, silakan isi form berikut dan tim kami akan membantu Anda secepat mungkin.</p>
-
+    <h2>Are you experiencing any issues?</h2>
+    <p>If yes, please fill out the form below and our team will assist you as soon as possible..</p>
     <table>
-      <tr>
-        <td>Studio</td>
-        <td>: Nail Art Studio</td>
-      </tr>
-      <tr>
-        <td>Alamat</td>
-        <td>: Jl. TELEKOMUNIKASI</td>
-      </tr>
+      <tr><td>Studio</td><td>: Nail Art Studio</td></tr>
+      <tr><td>address</td><td>: Jl. TELEKOMUNIKASI</td></tr>
     </table>
   </div>
 
   <div class="form">
     <form method="POST" action="">
-      <label>Nama <span>*</span></label>
+      <label>Nama <span style="color:red">*</span></label>
       <input type="text" name="nama" required>
 
-      <label>Email <span>*</span></label>
+      <label>Email <span style="color:red">*</span></label>
       <input type="email" name="email" required>
 
-      <label>Telepon <span>*</span></label>
+      <label>Telepon <span style="color:red">*</span></label>
       <input type="text" name="telepon" required>
 
-      <label>Kategori Kendala <span>*</span></label>
+      <label>Kategori Kendala <span style="color:red">*</span></label>
       <select name="kategori" required>
         <option value="">-- Pilih Kendala --</option>
-        <option value="Pembayaran">kurangnya info</option>
-        <option value="Pelayanan">Pelayanan</option>
-        <option value="Lainnya">Lainnya</option>
+        <option value="kurangnya info">Kurangnya Info</option>
+        <option value="pelayanan">Pelayanan</option>
+        <option value="lainnya">Lainnya</option>
       </select>
 
-      <label>Pesan <span>*</span></label>
+      <label>Pesan <span style="color:red">*</span></label>
       <textarea name="pesan" rows="5" required></textarea>
 
       <button type="submit">KIRIM PESAN</button>
-      <button type="button" onclick="history.back()" style="margin-left: 10px; background-color: gray;">KEMBALI</button>
+      <button type="button" onclick="history.back()">KEMBALI</button>
     </form>
   </div>
 </div>
