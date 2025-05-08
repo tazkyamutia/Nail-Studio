@@ -1,11 +1,11 @@
 <?php
-// Koneksi ke database
-$servername = "localhost"; // Nama server database
-$username = "root"; // Username phpMyAdmin 
-$password = ""; 
-$dbname = "nailstudio_db"; // Nama database 
 
-// Membuat koneksi ke database
+$servername = "localhost"; 
+$username = "root"; 
+$password = ""; 
+$dbname = "nailstudio_db";
+
+// koneksi 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Memeriksa koneksi
@@ -19,27 +19,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Validasi email
     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        // Menggunakan prepared statement untuk menghindari SQL Injection
         $stmt = $conn->prepare("INSERT INTO newsletter_subscribers (email) VALUES (?)");
-        $stmt->bind_param("s", $email); // "s" untuk string
+        $stmt->bind_param("s", $email); 
 
         if ($stmt->execute()) {
-            // Setelah berhasil, redirect kembali dengan pesan sukses
             header("Location: footer.php?message=success");
         } else {
-            // Jika ada error, redirect dengan pesan error
             header("Location: footer.php?message=error");
         }
 
-        // Menutup statement
         $stmt->close();
     } else {
-        // Jika email tidak valid
         header("Location: footer.php?message=invalid_email");
     }
 }
 
-// Menutup koneksi
 $conn->close();
 ?>
 
