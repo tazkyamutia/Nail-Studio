@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $description = $_POST['description'] ?? '';
 
 
-   // email tidak boleh digunakan 2 q
+   // email tidak boleh  2 q
    $checkEmail = $conn->prepare("SELECT COUNT(*) FROM job_applications WHERE email = ?");
    $checkEmail->execute([$email]);
    $emailExists = $checkEmail->fetchColumn();
