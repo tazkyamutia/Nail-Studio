@@ -1,5 +1,6 @@
 <?php
-include '../configdb.php';
+require_once '../configdb.php';
+if (session_status() == PHP_SESSION_NONE) session_start();
 
 // Pagination setup
 $limit = 12;
@@ -61,7 +62,7 @@ $conn = null;
 
             <?php if ($productStatus == 'Low stock' && $productStock > 0) : ?>
                 <span class="inline-block bg-yellow-500 text-white text-[10px] font-semibold rounded-full px-2 py-0.5 mb-2 self-start">
-                    Stok Menipis
+                    Low Stock
                 </span>
             <?php endif; ?>
 
@@ -76,7 +77,8 @@ $conn = null;
             <div class="flex flex-col sm:flex-row gap-2 mt-auto">
                 <button class="w-full sm:w-5/6 font-semibold rounded-md py-2 px-3 transition
                                <?= ($productStock <= 0) ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-pink-600 hover:bg-pink-700 text-white' ?>"
-                        <?= ($productStock <= 0) ? 'disabled' : '' ?>>
+                        <?= ($productStock <= 0) ? 'disabled' : '' ?>
+                        onclick="<?= ($productStock > 0) ? "addToCart({$product['id_product']})" : "" ?>">
                     <?= ($productStock <= 0) ? 'Stok Habis' : 'Tambah ke Keranjang' ?>
                 </button>
 
@@ -126,6 +128,22 @@ $conn = null;
         <?php endif; ?>
     </div>
 <?php endif; ?>
+
+<script>
+function addToCart(productId) {
+  let fd = new FormData();
+  fd.append('action','add');
+  fd.append('product_id',productId);
+  fetch('../cart/cart_api.php', {method:'POST',body:fd})
+  .then(res=>res.json())
+  .then(data=>{
+    if(data.success) {
+      if(typeof updateCartBadge==="function") updateCartBadge(data.cart_count);
+      if(typeof openCartModal==="function") openCartModal();
+    }
+  });
+}
+</script>
 
 </body>
 </html>
