@@ -1,3 +1,7 @@
+<?php include 'hehe.php'; ?>
+<?php include 'navbar.php'; ?>
+
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -5,6 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Lowongan Nailist - Nail Art Studio</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Quicksand&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
@@ -13,20 +18,21 @@
     }
 
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f9fafb;
-      padding: 30px;
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(135deg, #fdf0f5, #fce4ec);
+      color: #5a4b51;
     }
 
     .main-container {
-      max-width: 1100px;
-      margin: auto;
-      display: flex;
+      max-width: 960px;
+      margin: 40px auto;
       background-color: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-      padding: 30px;
-      gap: 30px;
+      border-radius: 30px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+      overflow: hidden;
+      padding: 40px;
+      display: flex;
+      gap: 40px;
     }
 
     .job-left {
@@ -35,21 +41,31 @@
 
     .job-right {
       flex: 1;
-      border-left: 1px solid #eee;
-      padding-left: 20px;
       text-align: center;
+      border-left: 1px solid #eee;
+      padding-left: 30px;
+    }
+
+    .company-logo {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
     }
 
     .job-title {
-      font-size: 28px;
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
       font-weight: 700;
       margin-bottom: 10px;
+      color: #ce4d86;
     }
 
     .job-subtitle {
-      color: #6366f1;
+      font-size: 16px;
+      color: #777;
       margin-bottom: 20px;
-      font-size: 15px;
     }
 
     .job-subtitle i {
@@ -59,13 +75,13 @@
     .job-info-grid {
       display: flex;
       flex-wrap: wrap;
-      gap: 25px;
-      margin-bottom: 20px;
+      gap: 15px;
     }
 
     .job-info-item {
       width: 48%;
-      background-color: #f1f5f9;
+      background-color: #fce4ec;
+      color: #5a4b51;
       padding: 12px 15px;
       border-radius: 10px;
       font-size: 14px;
@@ -74,99 +90,71 @@
     }
 
     .job-info-item i {
-      color: #6366f1;
+      color: #ce4d86;
       margin-right: 10px;
-      font-size: 16px;
-    }
-
-    .job-info-item span {
-      font-weight: 600;
-      margin-right: 5px;
     }
 
     .apply-button {
-      background-color: #4f46e5;
-      color: #fff;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 8px;
-      font-weight: 500;
-      text-decoration: none;
       display: inline-block;
-      margin-top: 10px;
+      margin-top: 20px;
+      padding: 12px 24px;
+      background-color: #ce4d86;
+      color: #fff;
+      border: none;
+      border-radius: 30px;
+      font-weight: bold;
+      text-decoration: none;
     }
 
     .job-description {
       margin-top: 30px;
-      color: #444;
       font-size: 16px;
       line-height: 1.7;
     }
 
-    .company-logo {
-      width: 80px;
-      border-radius: 50%;
-      margin-bottom: 10px;
+    .job-details-extra h2 {
+      font-size: 20px;
+      margin-top: 25px;
+      color: #ce4d86;
+    }
+
+    .job-details-extra ul {
+      list-style: disc;
+      margin-left: 20px;
+      margin-top: 10px;
     }
 
     .company-name {
-      font-size: 18px;
-      font-weight: bold;
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      color: #ce4d86;
       margin-bottom: 10px;
     }
 
     .company-info {
       font-size: 14px;
-      color: #555;
       margin-bottom: 8px;
     }
 
     .company-info i {
-      color: #6366f1;
+      color: #ce4d86;
       margin-right: 6px;
     }
 
-    .job-details-extra {
-      margin-top: 40px;
-      font-size: 15px;
-      color: #333;
-    }
-
-    .job-details-extra h2 {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 20px;
-    }
-  
-    .job-details-extra ul {
-      padding-left: 20px;
-      margin-top: 20px;
-    }
-
-    .job-details-extra ul li {
-      margin-bottom: 6px;
-      line-height: 1.6;
-    }
     .footer-report {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      text-align: center;
+      margin-top: 30px;
       font-size: 14px;
-      border-top: 1px solid #ddd;
-      padding-top: 25px;
-    }
-
-    .footer-report i {
-      font-size: 15px;
+      color: #777;
     }
 
     .footer-report a {
-      color: #000;
-      text-decoration: underline;
+      color: #ce4d86;
+      text-decoration: none;
     }
 
     .footer-report a:hover {
-      text-decoration: none;
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -182,76 +170,62 @@
     </div>
 
     <div class="job-info-grid">
-      <div class="job-info-item">
-        <i class="fas fa-location-dot"></i><span>Lokasi:</span> Jakarta Selatan
-      </div>
-      <div class="job-info-item">
-        <i class="fas fa-user-tag"></i><span>Tipe:</span> Kontrak
-      </div>
-      <div class="job-info-item">
-        <i class="fas fa-layer-group"></i><span>Level:</span> Junior / Entry Level
-      </div>
-      <div class="job-info-item">
-        <i class="fas fa-briefcase"></i><span>Fungsi:</span> Nail Art
-      </div>
-      <div class="job-info-item">
-        <i class="fas fa-graduation-cap"></i><span>Pendidikan:</span> SMA / SMK / STM
-      </div>
-      <div class="job-info-item">
-        <i class="fas fa-money-bill-wave"></i><span>Gaji:</span> Negosiasi
-      </div>
+      <div class="job-info-item"><i class="fas fa-location-dot"></i> Jakarta Selatan</div>
+      <div class="job-info-item"><i class="fas fa-user-tag"></i> Kontrak</div>
+      <div class="job-info-item"><i class="fas fa-layer-group"></i> Junior Level</div>
+      <div class="job-info-item"><i class="fas fa-briefcase"></i> Nail Art</div>
+      <div class="job-info-item"><i class="fas fa-graduation-cap"></i> SMA / SMK</div>
+      <div class="job-info-item"><i class="fas fa-money-bill-wave"></i> Negosiasi</div>
     </div>
 
-    <a href="#" class="apply-button">Lamar Pekerjaan</a>
+    <a href="pages/lamaran.php" class="apply-button">Lamar Pekerjaan</a>
+
 
     <div class="job-description">
-      <p>
-        Nail Art Studio adalah tempat kecantikan yang menghias dan mempercantik kuku klien dengan berbagai teknik dan desain. Kami sedang membuka lowongan sebagai Nailist yang memiliki semangat dan keterampilan dalam bidang nail art.
-      </p>
+      <p>Kami sedang membuka kesempatan untuk kamu yang ingin menjadi Nail Artist profesional bersama tim Nail Art Studio. Berikan pelayanan terbaik dan ekspresikan kreativitasmu di dunia kecantikan kuku.</p>
     </div>
 
-    <!-- Tambahan bagian waktu dan tunjangan -->
     <div class="job-details-extra">
-      <h2>Tanggung Jawab Pekerjaan :</h2>
-      <p> Mendesain dan menghias kuku klien menggunakan berbagai teknik (melukis, menggambar, menempel glitter, stiker, atau dekorasi lainnya)
-Memberikan pelayanan yang rapi, bersih, dan profesional kepada setiap klien
-Menjaga kebersihan alat dan area kerja sesuai standar kebersihan salon</p>
-      <h2>Waktu Bekerja :</h2>
-      <p>Jam 9, setiap hari salon buka, akan ada sistem off bergiliran</p>
-      <h2>keahlian:</h2>
-      <p>Memiliki minat dan bakat di bidang seni, kecantikan, dan detail
-      Menyukai dunia nail art dan bersedia terus belajar</p>
-      <h2>Kualifikasi :</h2>
-      <p>Pendidikan minimal SMA/SMK (atau sederajat)
-Fresh graduate dipersilahkan untuk melamar
-Bersedia mengikuti pelatihan yang dibutuhkan , akan ada training jd tidak perlu khawatir jika belum berpengalaman</p>
-      <h2 style="margin-top: 30px;">Tunjangan :</h2>
+      <h2>Kriteria & Syarat:</h2>
+      <ul>
+        <li>Wanita, usia 19-30 tahun</li>
+        <li>Jujur, mau belajar, dan ramah</li>
+        <li>Berpenampilan menarik</li>
+        <li>Domisili Jakarta Selatan</li>
+        <li>Tidak sedang kuliah</li>
+      </ul>
+
+      <h2>Benefit:</h2>
       <ul>
         <li>Uang Makan</li>
         <li>Uang Kerajinan</li>
-        <li>Selama Pelatihan kurang lebih 2 bulan hanya akan menerima uang makan</li>
+        <li>Pelatihan ±2 bulan (dapat uang makan)</li>
       </ul>
+
+      <h2>Jam Kerja:</h2>
+      <p>Mulai jam 9 pagi, off bergiliran.</p>
     </div>
   </div>
 
   <!-- KANAN -->
   <div class="job-right">
-    <img src="logo.png" alt="Logo Perusahaan" class="company-logo" />
+    <img src="Tazkya-HTML/images/logonails.png" alt="Logo Perusahaan" class="company-logo" />
     <div class="company-name">NAIL ART STUDIO</div>
     <div class="company-info"><i class="fas fa-location-dot"></i> JAKARTA SELATAN</div>
-    <div class="company-info"><i class="fas fa-heart"></i> Perawatan Kecantikan dan Wellness</div>
-    <div class="company-info"><i class="fas fa-users"></i> Kurang dari 5 Karyawan</div>
-    <p style="margin-top: 10px;">Nail Art Studio &amp; Lash adalah usaha yang baru dan tengah berkembang dan berkomitmen menghadirkan layanan terbaik di bidang perawatan kuku (nail art) dan pemasangan bulu mata (lash extension). Kami hadir untuk membantu setiap individu mengekspresikan keindahan dan kepercayaan diri mereka melalui sentuhan seni dan estetika.</p>
+    <div class="company-info"><i class="fas fa-heart"></i> Beauty & Wellness</div>
+    <div class="company-info"><i class="fas fa-users"></i> < 5 Karyawan</div>
+    <p style="margin-top: 10px;">Kami adalah studio baru dengan semangat tinggi untuk menghadirkan layanan nail art dan lash extension berkualitas dan memanjakan pelanggan.</p>
   </div>
 </div>
-<div class="footer-report">
-      <i class="fas fa-clipboard"></i>
-      <a href="kendala.php">Laporkan kendala lowongan/ perusahaan</a>
-    </div>
-  </div>
-</body>
 
-      </ul>
-    </div>
-  </div>
+<div class="footer-report">
+  <i class="fas fa-clipboard"></i>
+  <a href="kendala.php">Laporkan kendala lowongan/perusahaan</a>
+</div>
+
+</body>
 </html>
+  </div>
+  </div>
+ 
+  
