@@ -73,8 +73,8 @@ $totalItems = array_sum(array_column($cart, 'qty'));
       ?>
     </div>
     <div class="p-4 border-t border-gray-200">
-      <button class="w-full bg-pink-600 text-white px-4 py-2 rounded mb-2">Proceed to Checkout</button>
-      <button class="w-full bg-gray-600 text-white px-4 py-2 rounded">View Cart</button>
+      <button class="w-full bg-pink-600 text-white px-4 py-2 rounded mb-2">Lanjutkan ke pembayaran</button>
+      <button class="w-full bg-gray-600 text-white px-4 py-2 rounded">Lihat keranjang</button>
     </div>
   </div>
   <!-- Navigation bar -->
