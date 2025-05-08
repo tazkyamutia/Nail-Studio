@@ -87,9 +87,9 @@ $totalItems = array_sum(array_column($cart, 'qty'));
         <i class="fas fa-bars text-2xl"></i>
       </button>
       <!-- Logo text -->
-      <div class="font-serif font-semibold text-2xl text-black select-none">
+      <a href="../pages/index.php" class="font-serif font-semibold text-2xl text-black select-none hover:text-pink-600 transition">
         Nails Studio
-      </div>
+      </a>
     </div>
     <!-- Right section (search, love, cart) -->
     <div class="flex items-center space-x-6 ml-4">
