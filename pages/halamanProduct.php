@@ -147,5 +147,4 @@ function addToCart(productId) {
 
 </body>
 </html>
-
 <?php include '../views/footers.php'; ?>

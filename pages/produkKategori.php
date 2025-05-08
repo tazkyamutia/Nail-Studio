@@ -43,7 +43,7 @@
      <p class="text-sm text-gray-600 mb-2 leading-relaxed text-center">
       Discover a wide range of vibrant nail polish colors to express your style and keep your nails looking flawless.
      </p>
-     <a class="text-xs font-semibold underline inline-block" href="#">
+     <a class="text-xs font-semibold underline inline-block" href="../pages/halamanProduct.php">
       Shop Nail Polish
      </a>
     </article>

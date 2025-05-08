@@ -15,7 +15,6 @@ $cart = &$_SESSION['cart'];
 $action = $_POST['action'];
 
 if ($action === 'add') {
-    // Tambah 1 qty (atau produk baru)
     $id = intval($_POST['product_id']);
     $stmt = $conn->prepare("SELECT id_product, namaproduct, price, foto FROM _product WHERE id_product = ?");
     $stmt->execute([$id]);
@@ -39,6 +38,7 @@ if ($action === 'add') {
     echo json_encode(['success'=>true,'cart_count'=>$cart_count]);
     exit;
 }
+
 
 if ($action === 'update') {
     // Update qty
