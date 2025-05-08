@@ -57,21 +57,21 @@ $team_members = [
   [
     'name' => 'Raynaldi',
     'role' => 'Product Specialist',
-    'image' => '../Tazkya-HTML/images/cihuy.jpg', // Gambar pria
+    'image' => '../Tazkya-HTML/images/ray.jpg', // Gambar pria
     'desc' => 'Raynaldi is responsible for managing and developing products to stay outstanding and relevant.',
     'link' => '#raynaldi'
   ],
   [
     'name' => 'Tazkya',
     'role' => 'Administrator',
-    'image' => 'https://images.unsplash.com/photo-1517841905240-472988d4b1e0', // Gambar wanita
+    'image' => '../Tazkya-HTML/images/tazkya.jpg', // Gambar wanita
     'desc' => 'Tazkya manages all backend systems and ensures smooth daily operations.',
     'link' => '#tazkya'
   ],
   [
     'name' => 'Zahara',
     'role' => 'Landing Page Designer',
-    'image' => 'https://images.unsplash.com/photo-1524504382020-1c1c1c1c1c1c', // Gambar wanita
+    'image' => '../Tazkya-HTML/images/zahara.jpg', // Gambar wanita
     'desc' => 'Zahara designs captivating landing pages to attract customers from the very first glance.',
     'link' => '#zahara'
   ],
