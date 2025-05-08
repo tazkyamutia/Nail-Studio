@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 if ($_SESSION["role"] == "admin") {                         
                     header("Location: dashboard.php");                     
                 } else if ($_SESSION["role"] == "member") {                         
-                    header("Location: header.php");                     
+                    header("Location: index.php");                     
                 }                     
                 exit;                 
             } else {                     
