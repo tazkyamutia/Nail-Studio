@@ -209,7 +209,7 @@
 
   <!-- KANAN -->
   <div class="job-right">
-    <img src="Tazkya-HTML/images/logonails.png" alt="Logo Perusahaan" class="company-logo" />
+    <img src="../Tazkya-HTML/images/logonails.png" alt="logo" height="70" width="70">
     <div class="company-name">NAIL ART STUDIO</div>
     <div class="company-info"><i class="fas fa-location-dot"></i> JAKARTA SELATAN</div>
     <div class="company-info"><i class="fas fa-heart"></i> Beauty & Wellness</div>
