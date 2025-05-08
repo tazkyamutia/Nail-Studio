@@ -7,13 +7,13 @@ $limit = 12;
 $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $offset = ($page - 1) * $limit;
 
-// Total products count (hanya yang stoknya > 0)
+// Total products count
 $countSql = "SELECT COUNT(*) AS total FROM _product WHERE (status = 'Published' OR status = 'Low stock') AND stock > 0";
 $countResult = $conn->query($countSql);
 $totalRows = ($countResult !== false) ? $countResult->fetch(PDO::FETCH_ASSOC)['total'] : 0;
 $totalPages = ceil($totalRows / $limit);
 
-// Product data query (hanya yang stoknya > 0)
+// Product data query
 $sql = "SELECT id_product, namaproduct, stock, price, status, foto
         FROM _product
         WHERE (status = 'Published' OR status = 'Low stock') AND stock > 0
