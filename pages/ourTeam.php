@@ -29,14 +29,18 @@
   <div class="flex flex-col max-w-xl text-left">
     <div class="mt-20"> <!-- GANTI jadi mt-20 supaya lebih turun -->
       <h1 class="text-black text-2xl md:text-3xl font-semibold leading-snug mb-3">
-        Discover Nail Art Studio Best keep nail care secret
+        join discovery Nail Art Studio
+
       </h1>  
       <p class="text-[#1A1A1A] text-sm md:text-base font-normal mb-6 leading-relaxed">
-        We're here to bring a touch of Beauty and luxury to your nail care, offering affrotdable prices and professional service
+        we are looking for a passionate and we're looking for passionate and creative people to join our tempnam
+        enjoy a fun, profesional workspace with training, growth opportunities and great pay 
       </p>
-      <button class="bg-black text-white text-xs md:text-sm font-semibold rounded-md px-5 py-2 w-max hover:bg-gray-900 transition" type="button">
-        Book  Your Nail Care Now
-      </button>
+      <a href="lowongan.php">
+  <button class="bg-black text-white text-xs md:text-sm font-semibold rounded-md px-5 py-2 w-max hover:bg-gray-900 transition" type="button">
+    Apply Now
+  </button>
+</a>
     </div>
   </div>
 
@@ -53,7 +57,7 @@ $team_members = [
   [
     'name' => 'Raynaldi',
     'role' => 'Product Specialist',
-    'image' => 'https://images.unsplash.com/photo-1507679799980-4a6b1c1c1c1c', // Gambar pria
+    'image' => '../Tazkya-HTML/images/cihuy.jpg', // Gambar pria
     'desc' => 'Raynaldi is responsible for managing and developing products to stay outstanding and relevant.',
     'link' => '#raynaldi'
   ],

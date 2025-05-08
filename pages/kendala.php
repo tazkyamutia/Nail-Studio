@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Hubungi Kami - Nail Art Studio</title>
+  <title>Contact Us - Nail Art Studio</title>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
   <style>
     * {
@@ -169,11 +169,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <div class="container">
   <div class="info">
-    <h2>Apakah Anda mengalami kendala?</h2>
-    <p>Jika ya, silakan isi form berikut dan tim kami akan membantu Anda secepat mungkin.</p>
+    <h2>Are you experiencing any issues?</h2>
+    <p>If yes, please fill out the form below and our team will assist you as soon as possible..</p>
     <table>
       <tr><td>Studio</td><td>: Nail Art Studio</td></tr>
-      <tr><td>Alamat</td><td>: Jl. TELEKOMUNIKASI</td></tr>
+      <tr><td>address</td><td>: Jl. TELEKOMUNIKASI</td></tr>
     </table>
   </div>
 

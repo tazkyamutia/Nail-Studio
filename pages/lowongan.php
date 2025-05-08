@@ -178,7 +178,7 @@
       <div class="job-info-item"><i class="fas fa-money-bill-wave"></i> Negosiasi</div>
     </div>
 
-    <a href="pages/lamaran.php" class="apply-button">Lamar Pekerjaan</a>
+    <a href="lamaran.php" class="apply-button">Lamar Pekerjaan</a>
 
 
     <div class="job-description">
