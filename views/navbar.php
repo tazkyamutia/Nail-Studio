@@ -10,10 +10,7 @@ $totalItems = array_sum(array_column($cart, 'qty'));
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Nail Art Studio</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
   <style>
     #cart-modal {
       position: fixed;
@@ -38,6 +35,10 @@ $totalItems = array_sum(array_column($cart, 'qty'));
     }
     #cart-modal-backdrop.active { display: block; }
   </style>
+  <script>
+    // Path AJAX otomatis benar di semua halaman
+    var BASE_CART = "<?= (strpos($_SERVER['SCRIPT_NAME'], '/pages/')!==false ? '../cart/' : 'cart/') ?>";
+  </script>
 </head>
 
 <body>
@@ -59,9 +60,15 @@ $totalItems = array_sum(array_column($cart, 'qty'));
         foreach ($cart as $item) {
           echo '<div class="flex items-center mb-4">';
           echo '<img src="'.htmlspecialchars($item['foto']).'" class="w-12 h-12 object-cover rounded mr-2" alt="">';
-          echo '<div>';
+          echo '<div class="flex-1">';
           echo '<div class="font-semibold">'.htmlspecialchars($item['name']).'</div>';
-          echo '<div class="text-xs text-gray-500">Qty: '.$item['qty'].' x Rp'.number_format($item['price'],0,',','.').'</div>';
+          echo '<div class="text-xs text-gray-500">Rp'.number_format($item['price'],0,',','.').'</div>';
+          echo '<div class="flex items-center mt-1">';
+          echo '<button onclick="cartMinus('.$item['id'].')" class="px-2 py-1 bg-gray-200 rounded text-xs mr-1">-</button>';
+          echo '<input type="text" value="'.$item['qty'].'" min="1" class="w-10 border rounded text-center text-xs" onchange="cartQty('.$item['id'].',this.value)" />';
+          echo '<button onclick="cartPlus('.$item['id'].')" class="px-2 py-1 bg-gray-200 rounded text-xs ml-1">+</button>';
+          echo '<button onclick="cartDelete('.$item['id'].')" class="ml-2 text-red-500 hover:underline text-xs">Hapus</button>';
+          echo '</div>';
           echo '</div></div>';
         }
       }
@@ -79,13 +86,11 @@ $totalItems = array_sum(array_column($cart, 'qty'));
       <button aria-label="Open menu" class="text-black focus:outline-none">
         <i class="fas fa-bars text-2xl"></i>
       </button>
-
       <!-- Logo text -->
       <div class="font-serif font-semibold text-2xl text-black select-none">
         Nails Studio
       </div>
     </div>
-
     <!-- Right section (search, love, cart) -->
     <div class="flex items-center space-x-6 ml-4">
       <!-- Search button -->
@@ -98,20 +103,17 @@ $totalItems = array_sum(array_column($cart, 'qty'));
           aria-label="Search products and brands"
         />
       </form>
-
       <!-- Love button -->
       <button aria-label="Favorites" class="text-gray-700 hover:text-black text-lg">
         <i class="far fa-heart"></i>
       </button>
-
       <!-- Cart button -->
       <button aria-label="Cart" class="relative text-gray-700 hover:text-black text-lg" onclick="openCartModal()">
         <i class="fas fa-shopping-bag"></i>
         <span
           id="cart-count-badge"
           class="absolute -top-1 -right-2 bg-pink-500 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center select-none"
-          ><?= $totalItems ?></span
-        >
+          ><?= $totalItems ?></span>
       </button>
     </div>
   </header>
@@ -119,12 +121,9 @@ $totalItems = array_sum(array_column($cart, 'qty'));
     function openCartModal() {
       document.getElementById('cart-modal').classList.add('open');
       document.getElementById('cart-modal-backdrop').classList.add('active');
-      // Fetch cart items via AJAX
-      fetch('../cart/get_cart.php')
+      fetch(BASE_CART+'get_cart.php')
         .then(r => r.text())
-        .then(html => {
-          document.getElementById('cart-items-modal').innerHTML = html;
-        });
+        .then(html => document.getElementById('cart-items-modal').innerHTML = html);
     }
     function closeCartModal() {
       document.getElementById('cart-modal').classList.remove('open');
@@ -132,6 +131,33 @@ $totalItems = array_sum(array_column($cart, 'qty'));
     }
     function updateCartBadge(count) {
       document.getElementById('cart-count-badge').innerText = count;
+    }
+    // CRUD Cart functions
+    function cartPlus(id) {
+        cartAction('plus', id);
+    }
+    function cartMinus(id) {
+        cartAction('minus', id);
+    }
+    function cartDelete(id) {
+        cartAction('delete', id);
+    }
+    function cartQty(id, qty) {
+        cartAction('update', id, qty);
+    }
+    function cartAction(action, id, qty=1) {
+        let fd = new FormData();
+        fd.append('action', action);
+        fd.append('product_id', id);
+        if(action === 'update') fd.append('qty', qty);
+        fetch(BASE_CART+'cart_api.php', { method: 'POST', body: fd })
+        .then(r=>r.json())
+        .then(data=>{
+            if(data.success) {
+                updateCartBadge(data.cart_count);
+                openCartModal();
+            }
+        });
     }
   </script>
 </body>
