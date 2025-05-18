@@ -8,7 +8,7 @@ $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $offset = ($page - 1) * $limit;
 
 // Total products count
-$countSql = "SELECT COUNT(*) AS total FROM _product WHERE status = 'Published' OR status = 'Low stock'";
+$countSql = "SELECT COUNT(*) AS total FROM _product WHERE (status = 'Published' OR status = 'Low stock') AND stock > 0";
 $countResult = $conn->query($countSql);
 $totalRows = ($countResult !== false) ? $countResult->fetch(PDO::FETCH_ASSOC)['total'] : 0;
 $totalPages = ceil($totalRows / $limit);
@@ -16,7 +16,7 @@ $totalPages = ceil($totalRows / $limit);
 // Product data query
 $sql = "SELECT id_product, namaproduct, stock, price, status, foto
         FROM _product
-        WHERE status = 'Published' OR status = 'Low stock'
+        WHERE (status = 'Published' OR status = 'Low stock') AND stock > 0
         ORDER BY added DESC
         LIMIT $limit OFFSET $offset";
 
@@ -75,16 +75,11 @@ $conn = null;
             </div>
 
             <div class="flex flex-col sm:flex-row gap-2 mt-auto">
-                <button class="w-full sm:w-5/6 font-semibold rounded-md py-2 px-3 transition
-                               <?= ($productStock <= 0) ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-pink-600 hover:bg-pink-700 text-white' ?>"
-                        <?= ($productStock <= 0) ? 'disabled' : '' ?>
-                        onclick="<?= ($productStock > 0) ? "addToCart({$product['id_product']})" : "" ?>">
-                    <?= ($productStock <= 0) ? 'Stok Habis' : 'Tambah ke Keranjang' ?>
+                <button class="w-full sm:w-5/6 font-semibold rounded-md py-2 px-3 transition bg-pink-600 hover:bg-pink-700 text-white"
+                        onclick="addToCart(<?= $product['id_product'] ?>)">
+                    Tambah ke Keranjang
                 </button>
-
-                <button class="w-full sm:w-1/6 flex items-center justify-center border border-gray-300 rounded-md text-pink-600 hover:text-pink-800 transition
-                               <?= ($productStock <= 0) ? 'opacity-50 cursor-not-allowed' : '' ?>"
-                        <?= ($productStock <= 0) ? 'disabled' : '' ?>>
+                <button class="w-full sm:w-1/6 flex items-center justify-center border border-gray-300 rounded-md text-pink-600 hover:text-pink-800 transition">
                     <i class="far fa-heart"></i>
                 </button>
             </div>
