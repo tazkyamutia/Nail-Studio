@@ -22,11 +22,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif ($password !== $confirm_password) {
         $error = "Password dan konfirmasi tidak cocok.";
     } else {
-        $stmt = $conn->prepare("SELECT id FROM user WHERE username = :username");
-        $stmt->bindParam(':username', $username);
+        $stmt = $conn->prepare("SELECT id FROM user WHERE email = :email");
+        $stmt->bindParam(':email', $email);
         $stmt->execute();
         if ($stmt->rowCount() > 0) {
-            $error = "Username sudah digunakan.";
+            $error = "Username dan Email sudah digunakan.";
         } else {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
             $sql = "INSERT INTO user (username, fullname, email, password, role, status) 
@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->bindParam(':password', $hashed_password);
             $stmt->bindParam(':role', $role);
             if ($stmt->execute()) {
-                $success = "Registrasi berhasil. Silakan login.";
+                $error = "Username dan Email sudah digunakan";
             } else {
                 $error = "Terjadi kesalahan saat menyimpan data.";
             }
@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
     <div class="right-panel">
         <div class="welcome-box">Welcome!</div>
-
+    
         <h2>Sign Up</h2>
         <?php if (!empty($error)) echo "<div class='error'>$error</div>"; ?>
         <?php if (!empty($success)) echo "<div class='success'>$success</div>"; ?>

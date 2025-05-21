@@ -14,10 +14,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
      
     try {         
         // First check if the user exists and get their actual role
-        $check_sql = "SELECT * FROM user WHERE username = :username";         
-        $check_stmt = $conn->prepare($check_sql);         
-        $check_stmt->bindParam(':username', $username);         
-        $check_stmt->execute();         
+        $check_sql = "SELECT * FROM user WHERE username = :username";
+        $check_stmt = $conn->prepare($check_sql);
+        $check_stmt->bindParam(':username', $username);
+        $check_stmt->execute();
                 
         if ($check_stmt->rowCount() > 0) {             
             $user = $check_stmt->fetch();
