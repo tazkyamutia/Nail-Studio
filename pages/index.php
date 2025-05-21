@@ -41,7 +41,7 @@ ini_set('display_errors', 1);
 </body>
 </html>
   <!-- Panggil navbar -->
-  <?php include 'navbar.php'; ?>
+  <?php include '../views/navbar.php'; ?>
   <?php include 'topSeller.php'; ?>
   <?php include 'boking.php'; ?>
   <?php include 'bestSeller.php'; ?>
