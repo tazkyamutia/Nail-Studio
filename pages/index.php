@@ -35,11 +35,6 @@ ini_set('display_errors', 1);
 </head>
 <body class="bg-white">
 
-
-
-
-</body>
-</html>
   <!-- Panggil navbar -->
   <?php include 'navbar.php'; ?>
   <?php include 'topSeller.php'; ?>
@@ -53,5 +48,9 @@ ini_set('display_errors', 1);
   <?php include 'ourTeam.php'; ?>
   
   <?php include 'footer.php'; ?>
+
+</body>
+</html>
+
   
 
