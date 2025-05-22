@@ -224,12 +224,12 @@ $categories = [
     </div>
   </div>
 
-  <header class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-white sticky top-0 z-30">
+<header class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-white sticky top-0 z-30">
     <div class="flex items-center space-x-4">
       <button aria-label="Open menu" class="text-black focus:outline-none" onclick="openCategoryModal()">
         <i class="fas fa-bars text-2xl"></i>
       </button>
-      <a href="<?= (strpos($_SERVER['SCRIPT_NAME'], '/pages/')!==false ? '../' : '') ?>index.php" class="font-serif font-semibold text-2xl text-black select-none hover:text-pink-600 transition">
+      <a href="../pages/index.php" class="font-serif font-semibold text-2xl text-black select-none hover:text-pink-600 transition">
         Nails Studio
       </a>
     </div>
