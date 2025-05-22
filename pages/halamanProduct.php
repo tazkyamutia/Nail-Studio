@@ -27,7 +27,7 @@ $products = ($result !== FALSE) ? $result->fetchAll(PDO::FETCH_ASSOC) : [];
 $conn = null;
 ?>
 
-<?php include '../pages/navbar.php'; ?>
+<?php include '../views/navbar.php'; ?>
 
 <!DOCTYPE html>
 <html lang="id">
