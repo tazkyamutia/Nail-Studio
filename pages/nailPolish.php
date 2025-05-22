@@ -1,3 +1,5 @@
+<?php include 'navbar.php';?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,71 +11,93 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Slab&display=swap" rel="stylesheet"/>
   <style>
-    body {
+    html, body {
+      height: 100%;
+      margin: 0;
+      background-color: white; /* bagian luar body tetap putih */
       font-family: "Poppins", sans-serif;
     }
   </style>
 </head>
-<body class="bg-[#d7e6fb] min-h-screen p-2 sm:p-10">
+<body class="min-h-screen">
 
-  <!-- Breadcrumb -->
-  <nav class="flex items-center space-x-2 text-gray-700 text-sm mb-6">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-      viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
-      aria-hidden="true" focusable="false">
-      <path stroke-linecap="round" stroke-linejoin="round"
-        d="M3 12l2-2m0 0l7-7 7 7M13 5v6h6" />
-    </svg>
+  <!-- Background biru full lebar -->
+  <div class="bg-[#d7e6fb] w-full py-4">
+
+    <!-- Container dengan max width dan padding kiri kanan kecil agar teks geser ke kiri -->
+    <div class="max-w-5xl mx-auto px-4 rounded-lg bg-[#d7e6fb]">
+
+      <!-- Breadcrumb dengan background putih supaya teks jelas -->
+     <div class="inline-block mb-6">
+  <nav class="flex items-center space-x-2 text-gray-700 text-sm bg-white rounded-full px-3 py-1 select-none">
+    <a href="index.php" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+        aria-hidden="true" focusable="false">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M3 12l2-2m0 0l7-7 7 7M13 5v6h6" />
+      </svg>
+      <span class="text-xs">Home</span>
+    </a>
     <span class="text-xs">&gt;</span>
-    <span class="bg-white text-gray-700 text-xs rounded-full px-3 py-1 select-none">
-      Nail Art
-    </span>
+    <span class="text-gray-900 text-xs">Nail Art</span>
   </nav>
+</div>
 
-  <!-- Title & Paragraph -->
-  <h1 class="text-3xl font-semibold text-gray-900 mb-3">Nail Art</h1>
+      <!-- Container ini pastikan full width dengan padding kecil di kiri -->
+      <div class="max-w-5xl mx-auto pr-6 pl-2 py-4 bg-[#d7e6fb] rounded-lg">
 
-  <p class="text-gray-900 mb-3 text-base max-w-xl">
-    Nail polish. A splash of color and creativity at your fingertips!
-  </p>
+        <!-- Title & Paragraph -->
+        <h1 class="text-3xl font-semibold text-gray-900 mb-3 text-left pl-0">Nail Art</h1>
 
-  <p class="text-gray-900 mb-3 text-base max-w-xl">
-    If you’re searching for the perfect nail polish to express your style,
-    you’ve come to the right place! At
-    <a href="#" class="underline decoration-gray-900 decoration-1 underline-offset-2">
-      Nail Art Studio
-    </a>, we’re all about offering you the
-  </p>
+        <p class="text-gray-900 mb-3 text-base max-w-full text-left pl-0">
+          Nail polish. A splash of color and creativity at your fingertips!
+        </p>
 
-  <!-- Read More Content -->
-  <div id="moreContent" class="text-gray-900 text-base max-w-xl hidden mb-4">
-    perfect color, texture, and formula for every occasion. Whether you prefer a subtle nude, a bold red, or something sparkly and festive, nail art polish helps you show your personality in a fun and fashionable way.
-    <br><br>
-    With hundreds of styles to explore — from minimalist lines to extravagant rhinestones — nail art is more than just a trend; it's a form of self-expression. It boosts confidence, sparks creativity, and completes your overall look. Discover vibrant collections that last long, dry fast, and shine bright, making every manicure a masterpiece.
-  </div>
+        <p class="text-gray-900 mb-3 text-base max-w-full text-left pl-0">
+          If you’re searching for the perfect nail polish to express your style,
+          you’ve come to the right place! At
+          <a href="#" class="underline decoration-gray-900 decoration-1 underline-offset-2">
+            Nail Art Studio
+          </a>, we’re all about offering you the
+        </p>
 
-  <!-- Read More / Show Less Buttons -->
-  <div id="buttons" class="flex gap-4">
-    <button onclick="showMore()" class="flex items-center space-x-1 text-pink-600 text-sm font-medium"
-      aria-label="Read more" id="readMoreBtn">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-      </svg>
-      <span>Read more</span>
-    </button>
+        <!-- Read More Content -->
+        <div id="moreContent" class="text-gray-900 text-base max-w-full hidden mb-4 text-left pl-0">
+          perfect color, texture, and formula for every occasion. Whether you prefer a subtle nude, a bold red, or something sparkly and festive, nail art polish helps you show your personality in a fun and fashionable way.
+          <br><br>
+          With hundreds of styles to explore — from minimalist lines to extravagant rhinestones — nail art is more than just a trend; it's a form of self-expression. It boosts confidence, sparks creativity, and completes your overall look. Discover vibrant collections that last long, dry fast, and shine bright, making every manicure a masterpiece.
+        </div>
 
-    <button onclick="showLess()" class="hidden items-center space-x-1 text-blue-600 text-sm font-medium"
-      aria-label="Show less" id="showLessBtn">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
-      </svg>
-      <span>Show less</span>
-    </button>
-  </div>
+        <!-- Read More / Show Less Buttons -->
+        <div id="buttons" class="flex gap-4 justify-start pl-0">
+          <button onclick="showMore()" class="flex items-center space-x-1 text-pink-600 text-sm font-medium"
+            aria-label="Read more" id="readMoreBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+              viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+            <span>Read more</span>
+          </button>
 
-  <!-- Mid Year Sale Banner (tidak full background) -->
+          <button onclick="showLess()" class="hidden items-center space-x-1 text-blue-600 text-sm font-medium"
+            aria-label="Show less" id="showLessBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+              viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+            </svg>
+            <span>Show less</span>
+          </button>
+        </div>
+
+      </div> <!-- End container teks -->
+
+    </div> <!-- End container background biru -->
+
+  </div> <!-- End background biru full lebar -->
+
+
+  <!-- Mid Year Sale Banner (tidak full background biru) -->
   <div class="mt-10">
     <div class="max-w-5xl mx-auto rounded-lg overflow-hidden flex items-center justify-between bg-[#c4c3d6] p-6">
       <div class="max-w-xs">
@@ -96,7 +120,7 @@
     </div>
   </div>
 
-  <!-- Script -->
+  <!-- Script untuk Read More / Show Less -->
   <script>
     function showMore() {
       document.getElementById('moreContent').classList.remove('hidden');
