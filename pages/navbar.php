@@ -102,7 +102,7 @@ $categories = [
   max-width: 360px;
   background: white;
   border-radius: 0;
-  box-shadow: 2px 0 10px rgba(0,0,0,0.15);
+ 
   padding: 1.5rem;
   z-index: 50;
   box-sizing: border-box;
