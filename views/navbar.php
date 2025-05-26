@@ -83,9 +83,25 @@ $totalItems = array_sum(array_column($cart, 'qty'));
   <header class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
     <div class="flex items-center space-x-4">
       <!-- Hamburger menu icon -->
-      <button aria-label="Open menu" class="text-black focus:outline-none">
+      <button aria-label="Open menu" class="text-black focus:outline-none" onclick="openHamburgerModal()">
         <i class="fas fa-bars text-2xl"></i>
       </button>
+      <!-- Hamburger Modal Backdrop -->
+      <div id="hamburger-modal-backdrop" onclick="closeHamburgerModal()" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.2);z-index:40;"></div>
+      <!-- Hamburger Modal -->
+      <div id="hamburger-modal" style="position:fixed;top:0;left:-100%;width:70%;max-width:320px;height:100%;background:white;box-shadow:2px 0 5px rgba(0,0,0,0.1);z-index:50;transition:left 0.3s cubic-bezier(0.4,0,0.2,1);">
+        <!-- Kosong, isi nanti -->
+      </div>
+      <script>
+        function openHamburgerModal() {
+          document.getElementById('hamburger-modal').style.left = '0';
+          document.getElementById('hamburger-modal-backdrop').style.display = 'block';
+        }
+        function closeHamburgerModal() {
+          document.getElementById('hamburger-modal').style.left = '-100%';
+          document.getElementById('hamburger-modal-backdrop').style.display = 'none';
+        }
+      </script>
       <!-- Logo text -->
       <a href="../pages/index.php" class="font-serif font-semibold text-2xl text-black select-none hover:text-pink-600 transition">
         Nails Studio

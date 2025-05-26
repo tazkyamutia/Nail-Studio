@@ -10,11 +10,7 @@ ini_set('display_errors', 1);
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Nail Art Studio</title>
   
-  <body class="bg-white">
-  <!-- Top pink bar -->
-  <div class="bg-pink-300 text-black text-center text-xs py-2 select-none no-scrollbar">
-    FREE shipping and FREE gift when you spend over $75*
-  </div>
+ 
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -35,6 +31,11 @@ ini_set('display_errors', 1);
 </head>
 <body class="bg-white">
 
+
+
+
+</body>
+</html>
   <!-- Panggil navbar -->
   <?php include 'navbar.php'; ?>
   <?php include 'topSeller.php'; ?>
