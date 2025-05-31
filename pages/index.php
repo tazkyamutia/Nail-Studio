@@ -40,16 +40,18 @@ ini_set('display_errors', 1);
   <!-- Panggil navbar -->
   <?php include '../views/navbar.php'; ?>
   <?php include 'topSeller.php'; ?>
+   <?php include 'brand.php'; ?>
   <?php include 'boking.php'; ?>
   <?php include 'bestSeller.php'; ?>
   <div>
  
   <div>
-  <?php include 'brand.php'; ?>
+  
   <?php include 'produkKategori.php'; ?>
   <div>
 
   <?php include 'ourTeam.php'; ?>
+ 
   
   <?php include 'footer.php'; ?>
   

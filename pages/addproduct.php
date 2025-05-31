@@ -168,7 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <option value="nail polish">nail polish</option>
                             <option value="nail tools">nail tools</option>
                             <option value="nail care">nail care</option>
-                            <option value="nail art kit">nail art kit</option>
+                            <option value="nail kit">nail kit</option>
                             
                         </select>
                     </div>

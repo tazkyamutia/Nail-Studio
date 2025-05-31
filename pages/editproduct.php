@@ -148,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <option value="nail polish" <?php echo ($product['category'] == 'nail polish') ? 'selected' : ''; ?>>nail polish</option>
                             <option value="nail tools" <?php echo ($product['category'] == 'nail tools') ? 'selected' : ''; ?>>nail tools</option>
                             <option value="nail care" <?php echo ($product['category'] == 'nail care') ? 'selected' : ''; ?>>nail care</option>
-                            <option value="nail art kit" <?php echo ($product['category'] == 'nail art kit') ? 'selected' : ''; ?>>nail art kit</option>
+                            <option value="nail kit" <?php echo ($product['category'] == 'nail kit') ? 'selected' : ''; ?>>nail kit</option>
                         </select>
                     </div>
                     
