@@ -1,3 +1,4 @@
+
 <?php
 require_once '../configdb.php';
 if (session_status() == PHP_SESSION_NONE) session_start();
@@ -26,7 +27,7 @@ $products = ($result !== FALSE) ? $result->fetchAll(PDO::FETCH_ASSOC) : [];
 $conn = null;
 ?>
 
-<?php include '../views/headers.php'; ?>
+<?php include '../views/navbar.php'; ?>
 
 <!DOCTYPE html>
 <html lang="id">
@@ -142,4 +143,4 @@ function addToCart(productId) {
 
 </body>
 </html>
-<?php include '../views/footers.php'; ?>
+<?php include '../pages/footer.php'; ?>

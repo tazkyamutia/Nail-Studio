@@ -72,7 +72,7 @@
     </script>
 </head>
 <body>
-    <h2>Shop by Brand - Nail Art</h2>
+    <h1 style="font-size: 24px;">Shop by Brand - Nail Art</h1>
     <div class="brand-container">
         <?php
         $nailArtBrands = [
