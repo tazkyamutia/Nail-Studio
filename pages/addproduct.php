@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Check directory permissions
         if (!is_writable($upload_dir)) {
-            error_log("Directory not writable: " . $upload_dir);
+            efrror_log("Directory not writable: " . $upload_dir);
             $_SESSION['error'] = "Uploads directory is not writable. Please contact administrator.";
             header("Location: addproduct.php");
             exit();
@@ -165,11 +165,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="form-group">
                         <label for="category">Category</label>
                         <select id="category" name="category" required>
-                            <option value="Almond Nails">Almond Nails</option>
-                            <option value="Oval Nails">Oval Nails</option>
-                            <option value="Lipstick Nails">Lipstick Nails</option>
-                            <option value="Stiletto Nails">Stiletto Nails</option>
-                            <option value="Square Nails">Square Nails</option>
+                            <option value="nail polish">nail polish</option>
+                            <option value="nail tools">nail tools</option>
+                            <option value="nail care">nail care</option>
+                            <option value="nail art kit">nail art kit</option>
+                            
                         </select>
                     </div>
                     

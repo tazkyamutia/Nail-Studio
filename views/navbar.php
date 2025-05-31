@@ -13,6 +13,7 @@ $categories = [
         "name" => "Nail Polish",
         "img" => "https://storage.googleapis.com/a1aa/image/3454039a-1ec0-4d5b-d768-5eb40bc6fdf3.jpg",
         "alt" => "Classic manicure nails with red polish on a light pink background"
+       
     ],
     [
         "name" => "Nail Tools",

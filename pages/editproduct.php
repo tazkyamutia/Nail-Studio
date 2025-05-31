@@ -145,11 +145,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="form-group">
                         <label for="category">Category</label>
                         <select id="category" name="category" required>
-                            <option value="Almond Nails" <?php echo ($product['category'] == 'Almond Nails') ? 'selected' : ''; ?>>Almond Nails</option>
-                            <option value="Oval Nails" <?php echo ($product['category'] == 'Oval Nails') ? 'selected' : ''; ?>>Oval Nails</option>
-                            <option value="Lipstick Nails" <?php echo ($product['category'] == 'Lipstick Nails') ? 'selected' : ''; ?>>Lipstick Nails</option>
-                            <option value="Stiletto Nails" <?php echo ($product['category'] == 'Stiletto Nails') ? 'selected' : ''; ?>>Stiletto Nails</option>
-                            <option value="Square Nails" <?php echo ($product['category'] == 'Square Nails') ? 'selected' : ''; ?>>Square Nails</option>
+                            <option value="nail polish" <?php echo ($product['category'] == 'nail polish') ? 'selected' : ''; ?>>nail polish</option>
+                            <option value="nail tools" <?php echo ($product['category'] == 'nail tools') ? 'selected' : ''; ?>>nail tools</option>
+                            <option value="nail care" <?php echo ($product['category'] == 'nail care') ? 'selected' : ''; ?>>nail care</option>
+                            <option value="nail art kit" <?php echo ($product['category'] == 'nail art kit') ? 'selected' : ''; ?>>nail art kit</option>
                         </select>
                     </div>
                     
