@@ -53,33 +53,64 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <title>Register - Nail Studio</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/login.css">
-    <style>
-        .error { color: red; margin-bottom: 10px; }
-        .success { color: green; margin-bottom: 10px; }
-        .role-indicator { margin-bottom: 15px; }
+    <link rel="stylesheet" href="../css/login.css">     
+    <style>         
+        .error {             
+            color: red;             
+            margin-bottom: 15px;         
+        }
+        /* Added custom styles for this page */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .form-container {
+            width: 100%;
+            max-width: 600px;
+        }
+        h2 {
+            text-align: left;
+            margin-bottom: 25px;
+        }
+        .login-link {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        input[type="text"], input[type="password"] {
+            height: 50px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
-<body>
-<div class="container">
-    <div class="left-panel">
-        <img src="../Tazkya-HTML/images/logonails.png" alt="Nail Studio Logo">
-        <p>Selamat datang di platform kami! Login atau daftar untuk melanjutkan.</p>
-    </div>
-    <div class="right-panel">
-        <div class="welcome-box">Welcome!</div>
-    
-        <h2>Sign Up</h2>
+<body>     
+    <div class="container">         
+        <div class="left-panel">
+            <div class="logo-container">
+                <img src="../Tazkya-HTML/images/logonails.png" alt="Nail Studio Logo">
+            </div>
+            <p>Selamat datang di platform kami! Login atau daftar untuk melanjutkan.</p>         
+        </div>         
+                
+        <div class="right-panel">             
+            <div class="welcome-box">Welcome!</div>             
+                    
+            <div class="form-container">
+                <h2>Sign Up</h2>     
+
         <?php if (!empty($error)) echo "<div class='error'>$error</div>"; ?>
         <?php if (!empty($success)) echo "<div class='success'>$success</div>"; ?>
-
+        
         <form action="" method="post" id="signup-form">
             <!-- Hidden input for role - always set to "member" -->
             <input type="hidden" name="signup-role" value="member">
             
             <!-- Display fixed role to user -->
             <div class="role-indicator">
-                
+                <!-- Jika ingin tampilkan peran ke user, bisa tambahkan teks di sini -->
+                Anda mendaftar sebagai <strong>Member</strong>.
             </div>
 
             <div class="form-group">
