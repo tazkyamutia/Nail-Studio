@@ -18,10 +18,13 @@ $total_savings = 0;
             $harga_asli = isset($item['original_price']) ? $item['original_price'] : $item['price'];
             $subtotal += $item['qty'] * $item['price'];
             $total_savings += $item['qty'] * max(0, $harga_asli - $item['price']);
+            // Ambil path gambar, sesuai yang disimpan
+            $gambar = isset($item['image']) ? $item['image'] : (isset($item['foto']) ? $item['foto'] : '');
+            $imageURL = (!empty($gambar)) ? '../uploads/' . $gambar : 'https://via.placeholder.com/50x50?text=No+Image';
         ?>
         <div class="flex py-4 items-center">
             <div class="w-20 h-20 flex-shrink-0 flex items-center justify-center border rounded-lg bg-white mr-4">
-                <img src="<?= htmlspecialchars($item['foto']) ?>" alt="" class="object-contain h-16 w-16" />
+                <img src="<?= htmlspecialchars($imageURL) ?>" alt="" class="object-contain h-16 w-16" />
             </div>
             <div class="flex-1">
                 <div class="flex items-start justify-between">

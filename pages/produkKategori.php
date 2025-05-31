@@ -43,7 +43,7 @@
      <p class="text-sm text-gray-600 mb-2 leading-relaxed text-center">
       Discover a wide range of vibrant nail polish colors to express your style and keep your nails looking flawless.
      </p>
-     <a class="text-xs font-semibold underline inline-block" href="../pages/halamanProduct.php">
+     <a class="text-xs font-semibold underline inline-block" href="../pages/nailPolish.php">
       Shop Nail Polish
      </a>
     </article>
@@ -58,7 +58,7 @@
      <p class="text-sm text-gray-600 mb-2 leading-relaxed text-center">
       Equip yourself with professional nail art tools to create stunning designs and perfect manicures at home.
      </p>
-     <a class="text-xs font-semibold underline inline-block" href="#">
+     <a class="text-xs font-semibold underline inline-block" href="../pages/nailTools.php">
       Shop Nail Tools
      </a>
     </article>
@@ -73,7 +73,7 @@
      <p class="text-sm text-gray-600 mb-2 leading-relaxed text-center">
       Keep your nails healthy and strong with our selection of nourishing nail care products.
      </p>
-     <a class="text-xs font-semibold underline inline-block" href="#">
+     <a class="text-xs font-semibold underline inline-block" href="../pages/nailCare.php">
       Shop Nail Care
      </a>
     </article>
@@ -88,8 +88,8 @@
      <p class="text-sm text-gray-600 mb-2 leading-relaxed text-center">
       Everything you need in one kit to create beautiful and professional nail art designs.
      </p>
-     <a class="text-xs font-semibold underline inline-block" href="#">
-      Shop Nail Art Kits
+     <a class="text-xs font-semibold underline inline-block" href="../pages/nailKit.php">
+      Shop Nail Art Kit
      </a>
     </article>
    </section>

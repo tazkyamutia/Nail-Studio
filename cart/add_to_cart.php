@@ -2,15 +2,16 @@
 session_start();
 header('Content-Type: application/json');
 
-$data = json_decode(file_get_contents('php://input'), true);
-if (!isset($data['product_id'])) {
+if (!isset($_POST['product_id'])) {
     echo json_encode(['success' => false, 'message' => 'Invalid product id']);
     exit;
 }
 
 require_once '../configdb.php';
-$stmt = $conn->prepare("SELECT id_product, namaproduct, price, foto FROM _product WHERE id_product = ?");
-$stmt->execute([$data['product_id']]);
+
+// Ganti sesuai field tabel-mu ('image' atau 'foto')
+$stmt = $conn->prepare("SELECT id_product, namaproduct, price, image FROM product WHERE id_product = ?");
+$stmt->execute([$_POST['product_id']]);
 $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$product) {
@@ -29,7 +30,7 @@ if (isset($cart[$product['id_product']])) {
         'name' => $product['namaproduct'],
         'price' => $product['price'],
         'qty' => 1,
-        'foto' => $product['foto']
+        'image' => $product['image'] // Sesuaikan jika nama field gambar adalah image
     ];
 }
 

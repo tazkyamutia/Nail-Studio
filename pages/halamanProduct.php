@@ -1,4 +1,3 @@
-
 <?php
 require_once '../configdb.php';
 if (session_status() == PHP_SESSION_NONE) session_start();
@@ -8,19 +7,20 @@ $limit = 12;
 $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $offset = ($page - 1) * $limit;
 
-// Total products count
-$countSql = "SELECT COUNT(*) AS total FROM _product WHERE (status = 'Published' OR status = 'Low stock') AND stock > 0";
+// Hanya tampil kategori "nail polish"
+$countSql = "SELECT COUNT(*) AS total FROM product 
+    WHERE category = 'nail polish' AND (status = 'published' OR status = 'low stock') AND stock > 0";
 $countResult = $conn->query($countSql);
 $totalRows = ($countResult !== false) ? $countResult->fetch(PDO::FETCH_ASSOC)['total'] : 0;
 $totalPages = ceil($totalRows / $limit);
 
-// Product data query
-$sql = "SELECT id_product, namaproduct, stock, price, status, foto
-        FROM _product
-        WHERE (status = 'Published' OR status = 'Low stock') AND stock > 0
+$sql = "SELECT id_product, namaproduct, stock, price, status, image
+        FROM product
+        WHERE category = 'nail tools' 
+          AND (status = 'published' OR status = 'low stock') 
+          AND stock > 0
         ORDER BY added DESC
         LIMIT $limit OFFSET $offset";
-
 $result = $conn->query($sql);
 $products = ($result !== FALSE) ? $result->fetchAll(PDO::FETCH_ASSOC) : [];
 
@@ -34,7 +34,7 @@ $conn = null;
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1" name="viewport"/>
-    <title>Produk Nail Art Polish - NailStudio</title>
+    <title>Produk Nail Polish - NailStudio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
     <style>
@@ -50,7 +50,10 @@ $conn = null;
 <?php if (!empty($products)) : ?>
     <?php foreach ($products as $product) : ?>
         <?php
-        $imageURL = !empty($product['foto']) ? htmlspecialchars($product['foto']) : 'https://via.placeholder.com/100x100.png?text=No+Image';
+        $imagePath = '../uploads/' . $product['image'];
+        $imageURL = (!empty($product['image']) && file_exists($imagePath)) 
+            ? $imagePath 
+            : 'https://via.placeholder.com/220x220.png?text=No+Image';
         $productName = htmlspecialchars($product['namaproduct']);
         $productPrice = number_format($product['price'], 0, ',', '.');
         $productStock = $product['stock'];
@@ -61,7 +64,7 @@ $conn = null;
                 <img src="<?= $imageURL ?>" alt="<?= $productName ?>" class="h-full w-auto object-contain rounded-lg"/>
             </div>
 
-            <?php if ($productStatus == 'Low stock' && $productStock > 0) : ?>
+            <?php if ($productStatus == 'low stock' && $productStock > 0) : ?>
                 <span class="inline-block bg-yellow-500 text-white text-[10px] font-semibold rounded-full px-2 py-0.5 mb-2 self-start">
                     Low Stock
                 </span>
@@ -128,15 +131,22 @@ $conn = null;
 <script>
 function addToCart(productId) {
   let fd = new FormData();
-  fd.append('action','add');
-  fd.append('product_id',productId);
-  fetch('../cart/cart_api.php', {method:'POST',body:fd})
-  .then(res=>res.json())
-  .then(data=>{
+  fd.append('product_id', productId);
+  fetch('../cart/add_to_cart.php', {
+    method: 'POST',
+    body: fd
+  })
+  .then(res => res.json())
+  .then(data => {
     if(data.success) {
-      if(typeof updateCartBadge==="function") updateCartBadge(data.cart_count);
-      if(typeof openCartModal==="function") openCartModal();
+      if(typeof updateCartBadge === "function") updateCartBadge(data.cart_count);
+      if(typeof openCartModal === "function") openCartModal();
+    } else {
+      alert('Gagal menambah ke keranjang! ' + (data.message || ''));
     }
+  })
+  .catch(err => {
+    alert('Terjadi error pada koneksi! ' + err);
   });
 }
 </script>

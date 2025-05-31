@@ -118,7 +118,7 @@ $conn->close();
       </h4>
       <ul class="space-y-2 text-[#4b4b4b]">
        <li><a class="hover:underline" href="#">Nail polish</a></li>
-       <li><a class="hover:underline" href="#">Nail tols</a></li>
+       <li><a class="hover:underline" href="#">Nail tools</a></li>
        <li><a class="hover:underline" href="#">Nail care</a></li>
        <li><a class="hover:underline" href="#">Nail art kids</a></li>
        
