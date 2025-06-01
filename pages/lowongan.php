@@ -1,4 +1,4 @@
-<?php include 'hehe.php'; ?>
+
 <?php include 'navbar.php'; ?>
 
 
