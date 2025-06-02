@@ -2,6 +2,24 @@
 <?php
 require_once '../configdb.php';
 if (session_status() == PHP_SESSION_NONE) session_start();
+
+$limit = 12;
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($page - 1) * $limit;
+$countSql = "SELECT COUNT(*) AS total FROM product WHERE category = 'nail polish' AND (status = 'published' OR status = 'low stock') AND stock > 0";
+$countResult = $conn->query($countSql);
+$totalRows = ($countResult !== false) ? $countResult->fetch(PDO::FETCH_ASSOC)['total'] : 0;
+$totalPages = ceil($totalRows / $limit);
+
+$sql = "SELECT id_product, namaproduct, stock, price, status, image
+        FROM product
+        WHERE category = 'nail polish' 
+          AND (status = 'published' OR status = 'low stock') 
+          AND stock > 0
+        ORDER BY added DESC
+        LIMIT $limit OFFSET $offset";
+$result = $conn->query($sql);
+$products = ($result !== FALSE) ? $result->fetchAll(PDO::FETCH_ASSOC) : [];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,7 +40,7 @@ if (session_status() == PHP_SESSION_NONE) session_start();
     }
   </style>
 </head>
- 
+
 <body class="min-h-screen">
 
   <!-- ====== BAGIAN LANDING PAGE ====== -->
@@ -82,26 +100,6 @@ if (session_status() == PHP_SESSION_NONE) session_start();
   </div>
 
   <!-- ====== GRID PRODUK NAIL POLISH ====== -->
-  <?php
-  $limit = 12;
-  $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
-  $offset = ($page - 1) * $limit;
-  $countSql = "SELECT COUNT(*) AS total FROM product WHERE category = 'nail polish' AND (status = 'published' OR status = 'low stock') AND stock > 0";
-  $countResult = $conn->query($countSql);
-  $totalRows = ($countResult !== false) ? $countResult->fetch(PDO::FETCH_ASSOC)['total'] : 0;
-  $totalPages = ceil($totalRows / $limit);
-
-  $sql = "SELECT id_product, namaproduct, stock, price, status, image
-          FROM product
-          WHERE category = 'nail polish' 
-            AND (status = 'published' OR status = 'low stock') 
-            AND stock > 0
-          ORDER BY added DESC
-          LIMIT $limit OFFSET $offset";
-  $result = $conn->query($sql);
-  $products = ($result !== FALSE) ? $result->fetchAll(PDO::FETCH_ASSOC) : [];
-  ?>
-
   <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12 mt-12">
     <?php if (!empty($products)) : ?>
         <?php foreach ($products as $product) : ?>
@@ -135,8 +133,12 @@ if (session_status() == PHP_SESSION_NONE) session_start();
                             onclick="addToCart(<?= $product['id_product'] ?>)">
                         Tambah ke Keranjang
                     </button>
-                    <button class="w-full sm:w-1/6 flex items-center justify-center border border-gray-300 rounded-md text-pink-600 hover:text-pink-800 transition">
-                        <i class="far fa-heart"></i>
+                    <button
+                      class="w-full sm:w-1/6 flex items-center justify-center border border-gray-300 rounded-md text-pink-600 hover:text-pink-800 transition favorite-btn"
+                      data-product-id="<?= $product['id_product'] ?>"
+                      aria-label="Favorite"
+                    >
+                      <i class="far fa-heart"></i>
                     </button>
                 </div>
             </div>
@@ -147,7 +149,7 @@ if (session_status() == PHP_SESSION_NONE) session_start();
   </div>
   <!-- /GRID PRODUK -->
 
-  <!-- SCRIPT untuk read more/less dan add to cart -->
+  <!-- SCRIPT untuk read more/less, add to cart, dan wishlist tanpa login -->
   <script>
     function showMore() {
       document.getElementById('moreContent').classList.remove('hidden');
@@ -179,8 +181,52 @@ if (session_status() == PHP_SESSION_NONE) session_start();
         alert('Terjadi error pada koneksi! ' + err);
       });
     }
- 
+
+    // ========== WISHLIST TANPA LOGIN ==========
+    function loadWishlist() {
+      return JSON.parse(localStorage.getItem('wishlist') || '[]');
+    }
+    function saveWishlist(arr) {
+      localStorage.setItem('wishlist', JSON.stringify(arr));
+    }
+    function updateFavoriteBadge(count) {
+      let badge = document.getElementById('favorite-badge');
+      if (badge) badge.innerText = count;
+    }
+    function renderWishlist() {
+      let arr = loadWishlist();
+      document.querySelectorAll('.favorite-btn').forEach(btn => {
+        const pid = btn.getAttribute('data-product-id');
+        const icon = btn.querySelector('i');
+        if (arr.includes(pid)) {
+          icon.classList.remove('far');
+          icon.classList.add('fas');
+          btn.setAttribute('aria-label', 'Unfavorite');
+        } else {
+          icon.classList.remove('fas');
+          icon.classList.add('far');
+          btn.setAttribute('aria-label', 'Favorite');
+        }
+      });
+      updateFavoriteBadge(arr.length);
+    }
+    document.querySelectorAll('.favorite-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const pid = this.getAttribute('data-product-id');
+        let arr = loadWishlist();
+        if (arr.includes(pid)) {
+          arr = arr.filter(x => x !== pid);
+        } else {
+          arr.push(pid);
+        }
+        saveWishlist(arr);
+        renderWishlist();
+      });
+    });
+    document.addEventListener('DOMContentLoaded', renderWishlist);
+
   </script>
 </body>
-   <?php include '../pages/footer.php'; ?>
+<?php include '../pages/footer.php'; ?>
 </html>
