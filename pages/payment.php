@@ -1,3 +1,4 @@
+ <?php include '../views/navbar.php'; ?>
 <?php
 $title = "Nail Art Studio";
 $intro = "Nail Art Studio is thrilled to introduce our new appointment and design selection system! Booking your perfect nail style has never been easier.";
@@ -31,14 +32,7 @@ $steps = [
 <body class="bg-pink-200 text-gray-900">
 
   <!-- Tombol Home -->
-  <div class="absolute top-4 left-4">
-    <a href="awal.php" class="inline-flex items-center bg-white px-3 py-1 rounded-full shadow text-sm font-medium hover:bg-gray-100">
-      <svg class="w-4 h-4 mr-2 text-pink-500" fill="currentColor" viewBox="0 0 20 20">
-        <path d="M10 2L2 10h3v6h4v-4h2v4h4v-6h3L10 2z"/>
-      </svg>
-      Home
-    </a>
-  </div>
+   
 
   <!-- Header -->
   <section class="text-center py-12 px-4 bg-pink-300">
