@@ -1,16 +1,21 @@
-<?php include '../views/navbar.php'; ?>
 <?php
+include '../views/navbar.php';
 require_once '../configdb.php';
 if (session_status() == PHP_SESSION_NONE) session_start();
+
+$user_id = $_SESSION['id'] ?? null;
 
 $limit = 12;
 $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $offset = ($page - 1) * $limit;
+
+// Ambil total produk untuk pagination
 $countSql = "SELECT COUNT(*) AS total FROM product WHERE category = 'nail polish' AND (status = 'published' OR status = 'low stock') AND stock > 0";
 $countResult = $conn->query($countSql);
 $totalRows = ($countResult !== false) ? $countResult->fetch(PDO::FETCH_ASSOC)['total'] : 0;
 $totalPages = ceil($totalRows / $limit);
 
+// Ambil produk
 $sql = "SELECT id_product, namaproduct, stock, price, status, image
         FROM product
         WHERE category = 'nail polish' 
@@ -20,17 +25,23 @@ $sql = "SELECT id_product, namaproduct, stock, price, status, image
         LIMIT $limit OFFSET $offset";
 $result = $conn->query($sql);
 $products = ($result !== FALSE) ? $result->fetchAll(PDO::FETCH_ASSOC) : [];
+
+// Ambil daftar product_id favorit user jika login
+$favIds = [];
+if ($user_id) {
+    $favStmt = $conn->prepare("SELECT product_id FROM favorite WHERE user_id = ?");
+    $favStmt->execute([$user_id]);
+    $favIds = $favStmt->fetchAll(PDO::FETCH_COLUMN, 0);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Nail Art</title>
+  <title>Nail Polish</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Slab&display=swap" rel="stylesheet"/>
   <style>
     html, body {
       height: 100%;
@@ -40,10 +51,9 @@ $products = ($result !== FALSE) ? $result->fetchAll(PDO::FETCH_ASSOC) : [];
     }
   </style>
 </head>
-
 <body class="min-h-screen">
 
-  <!-- ====== BAGIAN LANDING PAGE ====== -->
+ <!-- ====== LANDING PAGE SECTION ====== -->
   <div class="bg-[#d7e6fb] w-full py-4">
     <div class="max-w-5xl mx-auto px-4 rounded-lg bg-[#d7e6fb]">
       <div class="inline-block mb-6">
@@ -57,25 +67,19 @@ $products = ($result !== FALSE) ? $result->fetchAll(PDO::FETCH_ASSOC) : [];
             <span class="text-xs">Home</span>
           </a>
           <span class="text-xs">&gt;</span>
-          <span class="text-gray-900 text-xs">Nail Art</span>
+          <span class="text-gray-900 text-xs">Nail Polish</span>
         </nav>
       </div>
       <div class="max-w-5xl mx-auto pr-6 pl-2 py-4 bg-[#d7e6fb] rounded-lg">
-        <h1 class="text-3xl font-semibold text-gray-900 mb-3 text-left pl-0">Nail Art</h1>
+        <h1 class="text-3xl font-semibold text-gray-900 mb-3 text-left pl-0">Nail Polish</h1>
         <p class="text-gray-900 mb-3 text-base max-w-full text-left pl-0">
-          Nail polish. A splash of color and creativity at your fingertips!
+          Everything you need for perfect nails—at home or on the go!
         </p>
         <p class="text-gray-900 mb-3 text-base max-w-full text-left pl-0">
-          If you’re searching for the perfect nail polish to express your style,
-          you’ve come to the right place! At
-          <a href="#" class="underline decoration-gray-900 decoration-1 underline-offset-2">
-            Nail Art Studio
-          </a>, we’re all about offering you the
+          Discover our curated selection of nail Polish. Whether you're a beginner or a nail art pro, our all-in-one sets come with all the essential tools to create a salon-quality manicure or pedicure, anytime, anywhere.
         </p>
         <div id="moreContent" class="text-gray-900 text-base max-w-full hidden mb-4 text-left pl-0">
-          perfect color, texture, and formula for every occasion. Whether you prefer a subtle nude, a bold red, or something sparkly and festive, nail art polish helps you show your personality in a fun and fashionable way.
-          <br><br>
-          With hundreds of styles to explore — from minimalist lines to extravagant rhinestones — nail art is more than just a trend; it's a form of self-expression. It boosts confidence, sparks creativity, and completes your overall look. Discover vibrant collections that last long, dry fast, and shine bright, making every manicure a masterpiece.
+          From nail clippers and cuticle pushers to complete nail art toolPolish, we offer polish tailored for every style and need. Achieve flawless nails at home—save time, save money, and unleash your creativity with our premium nail kits. Perfect as a gift, travel set, or to level up your self-care routine!
         </div>
         <div id="buttons" class="flex gap-4 justify-start pl-0">
           <button onclick="showMore()" class="flex items-center space-x-1 text-pink-600 text-sm font-medium"
@@ -99,58 +103,109 @@ $products = ($result !== FALSE) ? $result->fetchAll(PDO::FETCH_ASSOC) : [];
     </div>
   </div>
 
-  <!-- ====== GRID PRODUK NAIL POLISH ====== -->
-  <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12 mt-12">
-    <?php if (!empty($products)) : ?>
-        <?php foreach ($products as $product) : ?>
-            <?php
-            $imagePath = '../uploads/' . $product['image'];
-            $imageURL = (!empty($product['image']) && file_exists($imagePath)) 
-                ? $imagePath 
-                : 'https://via.placeholder.com/220x220.png?text=No+Image';
-            $productName = htmlspecialchars($product['namaproduct']);
-            $productPrice = number_format($product['price'], 0, ',', '.');
-            $productStock = $product['stock'];
-            $productStatus = $product['status'];
-            ?>
-            <div class="border border-gray-300 rounded-lg p-4 flex flex-col bg-white shadow-lg">
-                <div class="flex justify-center mb-4 h-48">
-                    <img src="<?= $imageURL ?>" alt="<?= $productName ?>" class="h-full w-auto object-contain rounded-lg"/>
-                </div>
-                <?php if ($productStatus == 'low stock' && $productStock > 0) : ?>
-                    <span class="inline-block bg-yellow-500 text-white text-[10px] font-semibold rounded-full px-2 py-0.5 mb-2 self-start">
-                        Low Stock
-                    </span>
-                <?php endif; ?>
-                <div class="mb-4 font-semibold text-gray-900 text-base leading-snug flex-grow">
-                    <?= $productName ?>
-                </div>
-                <div class="flex items-center space-x-2 mb-4 text-gray-900 text-lg font-bold">
-                    <span>Rp <?= $productPrice ?></span>
-                </div>
-                <div class="flex flex-col sm:flex-row gap-2 mt-auto">
-                    <button class="w-full sm:w-5/6 font-semibold rounded-md py-2 px-3 transition bg-pink-600 hover:bg-pink-700 text-white"
-                            onclick="addToCart(<?= $product['id_product'] ?>)">
-                        Tambah ke Keranjang
-                    </button>
-                    <button
-                      class="w-full sm:w-1/6 flex items-center justify-center border border-gray-300 rounded-md text-pink-600 hover:text-pink-800 transition favorite-btn"
-                      data-product-id="<?= $product['id_product'] ?>"
-                      aria-label="Favorite"
-                    >
-                      <i class="far fa-heart"></i>
-                    </button>
-                </div>
-            </div>
-        <?php endforeach; ?>
-    <?php else : ?>
-        <p class="col-span-full text-center text-gray-500">Tidak ada produk yang tersedia saat ini.</p>
-    <?php endif; ?>
-  </div>
-  <!-- /GRID PRODUK -->
 
-  <!-- SCRIPT untuk read more/less, add to cart, dan wishlist tanpa login -->
-  <script>
+<div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
+    <?php foreach ($products as $product): ?>
+        <?php
+        $imagePath = '../uploads/' . $product['image'];
+        $imageURL = (!empty($product['image']) && file_exists($imagePath))
+            ? $imagePath
+            : 'https://via.placeholder.com/220x220.png?text=No+Image';
+        $productName = htmlspecialchars($product['namaproduct']);
+        $productPrice = number_format($product['price'], 0, ',', '.');
+        $isFavorite = in_array($product['id_product'], $favIds);
+        ?>
+        <div class="border border-gray-300 rounded-lg p-4 flex flex-col bg-white shadow-lg">
+            <div class="flex justify-center mb-4 h-48">
+                <img src="<?= $imageURL ?>" alt="<?= $productName ?>" class="h-full w-auto object-contain rounded-lg"/>
+            </div>
+            <div class="mb-4 font-semibold text-gray-900 text-base leading-snug flex-grow"><?= $productName ?></div>
+            <div class="flex items-center space-x-2 mb-4 text-gray-900 text-lg font-bold">Rp <?= $productPrice ?></div>
+            <div class="flex gap-2 mt-auto">
+                <button class="flex-1 bg-pink-600 hover:bg-pink-700 text-white py-2 rounded font-semibold" onclick="addToCart(<?= $product['id_product'] ?>)">Tambah ke Keranjang</button>
+                <button
+                    class="w-12 flex items-center justify-center border border-gray-300 rounded text-pink-600 hover:text-pink-800 transition favorite-btn"
+                    data-product-id="<?= $product['id_product'] ?>"
+                    aria-label="<?= $isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit' ?>"
+                    title="<?= $isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit' ?>"
+                >
+                    <i class="<?= $isFavorite ? 'fas' : 'far' ?> fa-heart"></i>
+                </button>
+            </div>
+        </div>
+    <?php endforeach; ?>
+</div>
+
+<script>
+function addToCart(productId) {
+    let fd = new FormData();
+    fd.append('product_id', productId);
+    fetch('../cart/add_to_cart.php', {
+        method: 'POST',
+        body: fd
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success) {
+            if(typeof updateCartBadge === "function") updateCartBadge(data.cart_count);
+            if(typeof openCartModal === "function") openCartModal();
+        } else {
+            alert('Gagal menambah ke keranjang! ' + (data.message || ''));
+        }
+    })
+    .catch(err => alert('Terjadi error pada koneksi! ' + err));
+}
+
+// Toggle favorit dengan debugging response
+document.querySelectorAll('.favorite-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const pid = this.getAttribute('data-product-id');
+        const icon = this.querySelector('i');
+        const isFavorited = icon.classList.contains('fas');
+        const action = isFavorited ? 'remove' : 'add';
+
+        let fd = new FormData();
+        fd.append('action', action);
+        fd.append('product_id', pid);
+
+        fetch('favorite_api.php', {  // pastikan path ini benar ya, kalau satu folder
+            method: 'POST',
+            body: fd
+        })
+        .then(res => res.text())  // Ambil text dulu supaya kita tahu kalau error HTML
+        .then(text => {
+          try {
+            const data = JSON.parse(text);
+            if(data.success) {
+                // Update badge
+                const favBadge = document.getElementById('favorite-badge');
+                if(favBadge && data.fav_count !== undefined) favBadge.textContent = data.fav_count;
+
+                // Toggle icon
+                if(action === 'add') {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                    btn.setAttribute('title', 'Hapus dari favorit');
+                    btn.setAttribute('aria-label', 'Hapus dari favorit');
+                } else {
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                    btn.setAttribute('title', 'Tambah ke favorit');
+                    btn.setAttribute('aria-label', 'Tambah ke favorit');
+                }
+            } else {
+                alert('Gagal update favorit: ' + (data.message || ''));
+            }
+          } catch (e) {
+            alert('Response bukan JSON valid:\n' + text);
+          }
+        })
+        .catch(err => alert('Error jaringan: ' + err));
+    });
+});
+
+  
     function showMore() {
       document.getElementById('moreContent').classList.remove('hidden');
       document.getElementById('readMoreBtn').classList.add('hidden');
@@ -174,59 +229,15 @@ $products = ($result !== FALSE) ? $result->fetchAll(PDO::FETCH_ASSOC) : [];
           if(typeof updateCartBadge === "function") updateCartBadge(data.cart_count);
           if(typeof openCartModal === "function") openCartModal();
         } else {
-          alert('Gagal menambah ke keranjang! ' + (data.message || ''));
+          alert('Failed to add to cart! ' + (data.message || ''));
         }
       })
       .catch(err => {
-        alert('Terjadi error pada koneksi! ' + err);
+        alert('Connection error! ' + err);
       });
     }
-
-    // ========== WISHLIST TANPA LOGIN ==========
-    function loadWishlist() {
-      return JSON.parse(localStorage.getItem('wishlist') || '[]');
-    }
-    function saveWishlist(arr) {
-      localStorage.setItem('wishlist', JSON.stringify(arr));
-    }
-    function updateFavoriteBadge(count) {
-      let badge = document.getElementById('favorite-badge');
-      if (badge) badge.innerText = count;
-    }
-    function renderWishlist() {
-      let arr = loadWishlist();
-      document.querySelectorAll('.favorite-btn').forEach(btn => {
-        const pid = btn.getAttribute('data-product-id');
-        const icon = btn.querySelector('i');
-        if (arr.includes(pid)) {
-          icon.classList.remove('far');
-          icon.classList.add('fas');
-          btn.setAttribute('aria-label', 'Unfavorite');
-        } else {
-          icon.classList.remove('fas');
-          icon.classList.add('far');
-          btn.setAttribute('aria-label', 'Favorite');
-        }
-      });
-      updateFavoriteBadge(arr.length);
-    }
-    document.querySelectorAll('.favorite-btn').forEach(btn => {
-      btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        const pid = this.getAttribute('data-product-id');
-        let arr = loadWishlist();
-        if (arr.includes(pid)) {
-          arr = arr.filter(x => x !== pid);
-        } else {
-          arr.push(pid);
-        }
-        saveWishlist(arr);
-        renderWishlist();
-      });
-    });
-    document.addEventListener('DOMContentLoaded', renderWishlist);
-
   </script>
-</body>
+</script>
 <?php include '../pages/footer.php'; ?>
+</body>
 </html>

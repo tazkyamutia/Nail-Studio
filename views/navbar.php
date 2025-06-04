@@ -1,10 +1,21 @@
-<?php
+<?php 
 if (session_status() == PHP_SESSION_NONE) session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+require_once '../configdb.php';
+
 $cart = isset($_SESSION['cart']) ? $_SESSION['cart'] : [];
 $totalItems = array_sum(array_column($cart, 'qty'));
+
+// Ambil jumlah favorite user jika sudah login
+$favCount = 0;
+if (isset($_SESSION['id'])) {  // sesuai dengan session login kamu
+    $user_id = $_SESSION['id'];
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM favorite WHERE user_id = ?");
+    $stmt->execute([$user_id]);
+    $favCount = $stmt->fetchColumn();
+}
 
 $categories = [
     [
@@ -82,6 +93,7 @@ $categories = [
   </style>
   <script>
     var BASE_CART = "<?= (strpos($_SERVER['SCRIPT_NAME'], '/pages/')!==false ? '../cart/' : 'cart/') ?>";
+    var BASE_FAVORITE_API = "<?= (strpos($_SERVER['SCRIPT_NAME'], '/pages/')!==false ? '../favorite_api.php' : 'favorite_api.php') ?>";
   </script>
 </head>
 <body class="overflow-x-hidden">
@@ -100,55 +112,21 @@ $categories = [
     </div>
     <div class="modal-body">
      <ul class="space-y-2 max-w-md mb-6">
-  <a href="../pages/nailPolish.php" class="block">
-    <li class="flex justify-between items-center bg-[#fefcfb] border border-[#f0e9e8] rounded-md px-4 py-3 overflow-hidden hover:shadow-md transition-shadow duration-200 cursor-pointer">
-      <span class="truncate max-w-[70%] block font-medium text-gray-700">Nail Polish</span>
-      <div class="flex-shrink-0 ml-3 w-10 h-10">
-        <img
-          src="https://storage.googleapis.com/a1aa/image/3454039a-1ec0-4d5b-d768-5eb40bc6fdf3.jpg"
-          alt="Classic manicure nails with red polish on a light pink background"
-          class="w-full h-full rounded-md object-cover block"
-        />
-      </div>
-    </li>
-  </a>
-  <a href="../pages/nailTools.php" class="block">
-    <li class="flex justify-between items-center bg-[#fefcfb] border border-[#f0e9e8] rounded-md px-4 py-3 overflow-hidden hover:shadow-md transition-shadow duration-200 cursor-pointer">
-      <span class="truncate max-w-[70%] block font-medium text-gray-700">Nail Tools</span>
-      <div class="flex-shrink-0 ml-3 w-10 h-10">
-        <img
-          src="https://storage.googleapis.com/a1aa/image/19a38516-0222-4fe4-e0e8-8b6788672e73.jpg"
-          alt="Gel nails with shiny finish on a light pink background"
-          class="w-full h-full rounded-md object-cover block"
-        />
-      </div>
-    </li>
-  </a>
-  <a href="../pages/nailCare.php" class="block">
-    <li class="flex justify-between items-center bg-[#fefcfb] border border-[#f0e9e8] rounded-md px-4 py-3 overflow-hidden hover:shadow-md transition-shadow duration-200 cursor-pointer">
-      <span class="truncate max-w-[70%] block font-medium text-gray-700">Nail Care</span>
-      <div class="flex-shrink-0 ml-3 w-10 h-10">
-        <img
-          src="https://storage.googleapis.com/a1aa/image/795a778f-295f-402e-a035-64817b5dd80d.jpg"
-          alt="Nail art with floral and geometric designs on a light pink background"
-          class="w-full h-full rounded-md object-cover block"
-        />
-      </div>
-    </li>
-  </a>
-  <a href="../pages/nailKit.php" class="block">
-    <li class="flex justify-between items-center bg-[#fefcfb] border border-[#f0e9e8] rounded-md px-4 py-3 overflow-hidden hover:shadow-md transition-shadow duration-200 cursor-pointer">
-      <span class="truncate max-w-[70%] block font-medium text-gray-700">Nail Art Kit</span>
-      <div class="flex-shrink-0 ml-3 w-10 h-10">
-        <img
-          src="https://storage.googleapis.com/a1aa/image/20882152-849e-49b3-885b-fbfe303673a2.jpg"
-          alt="Acrylic nails with glitter and rhinestones on a light pink background"
-          class="w-full h-full rounded-md object-cover block"
-        />
-      </div>
-    </li>
-  </a>
-</ul>
+      <?php foreach ($categories as $cat): ?>
+        <a href="<?= htmlspecialchars($cat['url']) ?>" class="block">
+          <li class="flex justify-between items-center bg-[#fefcfb] border border-[#f0e9e8] rounded-md px-4 py-3 overflow-hidden hover:shadow-md transition-shadow duration-200 cursor-pointer">
+            <span class="truncate max-w-[70%] block font-medium text-gray-700"><?= htmlspecialchars($cat['name']) ?></span>
+            <div class="flex-shrink-0 ml-3 w-10 h-10">
+              <img
+                src="<?= htmlspecialchars($cat['img']) ?>"
+                alt="<?= htmlspecialchars($cat['alt']) ?>"
+                class="w-full h-full rounded-md object-cover block"
+              />
+            </div>
+          </li>
+        </a>
+      <?php endforeach; ?>
+     </ul>
 
       <nav class="divide-y divide-gray-200 border-t border-b border-gray-200 mt-3">
         <a href="register.php" class="flex items-center gap-3 py-3 text-gray-700 hover:text-pink-600 text-base font-normal transition-colors">
@@ -257,13 +235,13 @@ $categories = [
       </script>
       <!-- END FORM SEARCH -->
 
-      <!-- FAVORITE HEART BADGE LOCALSTORAGE -->
+      <!-- FAVORITE HEART BADGE DENGAN DATABASE -->
       <button aria-label="Favorites" class="relative text-gray-700 hover:text-black text-lg" onclick="location.href='../pages/favorite.php'">
         <i class="far fa-heart"></i>
         <span
           id="favorite-badge"
           class="absolute -top-1 -right-2 bg-pink-500 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center select-none"
-        >0</span>
+        ><?= $favCount ?></span>
       </button>
       <!-- END FAVORITE HEART BADGE -->
 
@@ -278,20 +256,6 @@ $categories = [
   </header>
 
   <script>
-    // Script favorit localStorage, hanya untuk badge navbar
-    function updateFavoriteBadge(count) {
-      var badge = document.getElementById('favorite-badge');
-      if (badge) badge.innerText = count;
-    }
-    function loadWishlist() {
-      try { return JSON.parse(localStorage.getItem('wishlist') || '[]'); } catch { return []; }
-    }
-    function renderWishlistNavbar() {
-      let arr = loadWishlist();
-      updateFavoriteBadge(arr.length);
-    }
-    document.addEventListener('DOMContentLoaded', renderWishlistNavbar);
-
     // SISA SCRIPT ASLI MU (JANGAN DIUBAH)
     const categoryModal = document.getElementById('category-modal');
     const cartModal = document.getElementById('cart-modal');
