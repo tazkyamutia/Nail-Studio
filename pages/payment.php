@@ -32,12 +32,13 @@ $steps = [
 </head>
 <body class="bg-gray-50 text-gray-900">
     <!-- Header -->
-    <section class="text-center py-12 px-4 bg-pink-600 text-white">
-        <div class="max-w-3xl mx-auto">
-            <h1 class="text-4xl font-bold mb-4">How QRIS Payment Works</h1>
-            <p class="text-lg leading-relaxed">Pay easily and securely using QRIS - Indonesia's national QR code payment standard</p>
-        </div>
-    </section>
+    <section class="text-center py-12 px-4 bg-pink-200 text-white">
+    <div class="max-w-3xl mx-auto">
+        <h1 class="text-4xl font-bold mb-4">How QRIS Payment Works</h1>
+        <p class="text-lg leading-relaxed">Pay easily and securely using QRIS - Indonesia's national QR code payment standard</p>
+    </div>
+</section>
+
 
     <!-- Steps Section -->
     <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
