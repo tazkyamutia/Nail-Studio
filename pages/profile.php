@@ -215,13 +215,28 @@ include '../views/navbar.php';
 
                     <form method="post" autocomplete="off" class="space-y-4">
                         <h3 class="text-sm font-medium text-gray-700">Change Password</h3>
-                        <input type="password" name="old_password" placeholder="Current password" 
-                               class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
-                        <input type="password" name="new_password" placeholder="New password" 
-                               class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
-                        <input type="password" name="confirm_password" placeholder="Confirm new password" 
-                               class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
-                        <button type="submit" name="edit_password" 
+                        <div class="relative">
+                            <input type="password" id="old_password" name="old_password" placeholder="Current password"
+                                   class="w-full border border-gray-200 rounded-lg px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                            <button type="button" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400" onclick="togglePassword('old_password', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="relative">
+                            <input type="password" id="new_password" name="new_password" placeholder="New password"
+                                   class="w-full border border-gray-200 rounded-lg px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                            <button type="button" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400" onclick="togglePassword('new_password', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="relative">
+                            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm new password"
+                                   class="w-full border border-gray-200 rounded-lg px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                            <button type="button" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400" onclick="togglePassword('confirm_password', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <button type="submit" name="edit_password"
                                 class="w-full bg-gray-100 text-gray-700 py-2 rounded-lg text-sm hover:bg-gray-200 transition">
                             Update Password
                         </button>
@@ -230,16 +245,13 @@ include '../views/navbar.php';
 
                 <!-- Address Book -->
                 <div class="bg-white rounded-xl p-6">
-                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Address Book</h2>
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Address</h2>
                     
                     <form method="post" class="flex gap-2 mb-4">
-                        <input type="text" name="address" placeholder="Add new address" 
+                        <input type="text" name="address" placeholder="Add new shipping address" 
                                class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
                                required>
-                        <select name="type" class="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
-                            <option value="billing">Billing</option>
-                            <option value="shipping">Shipping</option>
-                        </select>
+                        <input type="hidden" name="type" value="shipping">
                         <button type="submit" name="add_address" 
                                 class="bg-pink-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-pink-600 transition">
                             Add
@@ -274,14 +286,22 @@ include '../views/navbar.php';
             <!-- Sidebar -->
             <div class="bg-white rounded-xl p-6 text-xs text-gray-900 space-y-4 h-fit">
                 <div>
-                    <p class="font-semibold text-sm">Billing Address</p>
-                    <p><?= htmlspecialchars($user['fullname']) ?></p>
-                </div>
-                <div>
                     <p class="font-semibold text-sm">Shipping Address</p>
-                    <p><?= htmlspecialchars($user['fullname']) ?></p>
+                    <p>
+                        <?php
+                        // Tampilkan alamat shipping pertama user, jika ada
+                        $shipping = array_filter($addresses, fn($a) => $a['type'] === 'shipping');
+                        if (!empty($shipping)) {
+                            echo htmlspecialchars(reset($shipping)['address']);
+                        } else {
+                            echo '<span class="text-gray-400">No shipping address</span>';
+                        }
+                        ?>
+                    </p>
                 </div>
-                <a href="#" class="text-[10px] text-pink-600 hover:underline">View addresses (1)</a>
+                <a href="#" class="text-[10px] text-pink-600 hover:underline">
+                    View addresses (<?= count(array_filter($addresses, fn($a) => $a['type'] === 'shipping')) ?>)
+                </a>
             </div>
         </div>
 
@@ -311,5 +331,21 @@ include '../views/navbar.php';
         <?php endif; ?>
     </div>
 </body>
+
+<script>
+function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = "password";
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+</script>
 </html>
 <?php include '../views/footers.php'; ?>
