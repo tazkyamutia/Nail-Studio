@@ -249,12 +249,13 @@ $categories = [
       </button>
       <!-- END FAVORITE HEART BADGE -->
 
-      <button aria-label="Cart" class="relative text-gray-700 hover:text-black text-lg" onclick="openCartModal()">
+      <!-- Cart button -->
+      <button aria-label="Cart" id="cart-btn" class="relative text-gray-700 hover:text-black text-lg">
         <i class="fas fa-shopping-bag"></i>
         <span
           id="cart-count-badge"
           class="absolute -top-1 -right-2 bg-pink-500 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center select-none"
-          ><?= $totalItems ?></span>
+        ><?= $totalItems ?></span>
       </button>
 
       <!-- PROFILE ICON START -->
@@ -353,6 +354,20 @@ $categories = [
       if (e.key === 'Escape') {
         closeAllModals();
       }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Cart button login check
+      document.getElementById('cart-btn').addEventListener('click', function(e) {
+        var isLoggedIn = <?= isset($_SESSION['id']) ? 'true' : 'false' ?>;
+        if (!isLoggedIn) {
+          alert('Anda harus login terlebih dahulu!');
+          window.location.href = '<?= (strpos($_SERVER['SCRIPT_NAME'], '/pages/')!==false ? '../pages/' : '') ?>login.php';
+          return;
+        }
+        // Jika sudah login, buka modal cart
+        openCartModal();
+      });
     });
   </script>
 </body>
