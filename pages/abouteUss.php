@@ -50,7 +50,7 @@
   <!-- Navigation -->
   <nav class="relative z-10 flex items-center justify-between px-4 sm:px-6 md:px-10 lg:px-16 py-4 text-white text-sm font-semibold">
     <div class="flex items-center space-x-8">
-      <a class="flex items-center space-x-2" href="#">
+      <a class="flex items-center space-x-2" href="index.php">
        <img alt="Logo" class="w-8 h-8" src="../uploads/logo.jpg" />
         <span class="text-white text-lg font-semibold">Nail Studio</span>
 
@@ -58,13 +58,16 @@
    
     </div>
     <div class="hidden md:flex items-center space-x-6 text-xs font-semibold">
-      <a class="flex items-center space-x-1 hover:text-gray-300" href="tel:">
-        <i class="fas fa-phone-alt text-[10px]"></i>
-        <span>CONTACT</span>
-      </a>
-      <button class="flex items-center space-x-1 hover:text-gray-300">
-        <i class="fas fa-globe-americas text-[10px]"></i>
-        <span>loc</span>
+      <a class="flex items-center space-x-1 hover:text-gray-300" href="tel:1234567890">
+  <i class="fas fa-phone-alt text-[10px]"></i>
+  <span>CONTACT</span>
+</a>
+
+      <a href="https://maps.app.goo.gl/ig16vaeSuRgFhv9QA" target="_blank" class="flex items-center space-x-1 hover:text-gray-300" role="button" rel="noopener noreferrer">
+  <i class="fas fa-globe-americas text-[10px]"></i>
+  <span>loc</span>
+</a>
+
        
       </button>
     </div>
