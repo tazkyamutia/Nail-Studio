@@ -24,7 +24,7 @@
     }
   </style>
  </head>
- <body class="bg-pink-100 font-sans text-black">
+ <body class="#F2EFE7 font-sans text-black">
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
    <h1 class="text-3xl font-semibold text-center mb-8">
     Shop by category

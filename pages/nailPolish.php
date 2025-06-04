@@ -39,7 +39,7 @@ if ($user_id) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Nail Polish</title>
+  <title>Nail polish</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
   <style>
@@ -53,7 +53,7 @@ if ($user_id) {
 </head>
 <body class="min-h-screen">
 
- <!-- ====== LANDING PAGE SECTION ====== -->
+<!-- ====== LANDING PAGE SECTION FOR NAIL POLISH ====== -->
   <div class="bg-[#d7e6fb] w-full py-4">
     <div class="max-w-5xl mx-auto px-4 rounded-lg bg-[#d7e6fb]">
       <div class="inline-block mb-6">
@@ -67,19 +67,20 @@ if ($user_id) {
             <span class="text-xs">Home</span>
           </a>
           <span class="text-xs">&gt;</span>
-          <span class="text-gray-900 text-xs">Nail Polish</span>
+          <span class="text-gray-900 text-xs">Nail polish</span>
         </nav>
       </div>
       <div class="max-w-5xl mx-auto pr-6 pl-2 py-4 bg-[#d7e6fb] rounded-lg">
-        <h1 class="text-3xl font-semibold text-gray-900 mb-3 text-left pl-0">Nail Polish</h1>
+        <h1 class="text-3xl font-semibold text-gray-900 mb-3 text-left pl-0">Nail polish</h1>
         <p class="text-gray-900 mb-3 text-base max-w-full text-left pl-0">
-          Everything you need for perfect nails—at home or on the go!
+          Add a splash of color and personality to your look with our premium nail Polish collection! From timeless nudes and soft pastels to bold reds and dazzling glitter, Nail Art Studio brings you quality formulas that are easy to apply, quick to dry, and long-lasting.
         </p>
         <p class="text-gray-900 mb-3 text-base max-w-full text-left pl-0">
-          Discover our curated selection of nail Polish. Whether you're a beginner or a nail art pro, our all-in-one sets come with all the essential tools to create a salon-quality manicure or pedicure, anytime, anywhere.
+          Our nail polishhes are perfect for both beginners and professionals, giving you flawless results at home or in the salon. Express your style, mood, and creativity with every manicure.
         </p>
         <div id="moreContent" class="text-gray-900 text-base max-w-full hidden mb-4 text-left pl-0">
-          From nail clippers and cuticle pushers to complete nail art toolPolish, we offer polish tailored for every style and need. Achieve flawless nails at home—save time, save money, and unleash your creativity with our premium nail kits. Perfect as a gift, travel set, or to level up your self-care routine!
+          Discover vibrant colors, high-shine finishes, and chip-resistant formulas that keep your nails looking stunning day after day. Whether you’re preparing for a special occasion or just want to brighten up your week, there’s a shade for every moment.<br><br>
+          Explore our collections—matte, glossy, shimmer, or classic—and let your nails be your ultimate fashion statement!
         </div>
         <div id="buttons" class="flex gap-4 justify-start pl-0">
           <button onclick="showMore()" class="flex items-center space-x-1 text-pink-600 text-sm font-medium"
@@ -102,7 +103,7 @@ if ($user_id) {
       </div>
     </div>
   </div>
-
+  <!-- ====== END LANDING PAGE ====== -->
 
 <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
     <?php foreach ($products as $product): ?>
