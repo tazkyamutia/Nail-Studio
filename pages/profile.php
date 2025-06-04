@@ -73,7 +73,7 @@ $addresses = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Foto profil default jika belum ada
 $profile_img = $user['photo']
-    ? '../uploads/' . htmlspecialchars($user['photo'])
+    ? '../Tazkya-HTML/images/' . htmlspecialchars($user['photo'])
     : 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg';
 
 include '../views/navbar.php';
@@ -112,8 +112,8 @@ include '../views/navbar.php';
         <div class="flex justify-between items-center mb-8">
             <h1 class="text-3xl font-semibold text-gray-900">Your Account</h1>
             <form action="logout.php" method="post" class="inline-block">
-                <button type="submit" class="inline-flex items-center gap-1 rounded-full bg-[#fff1f3] px-3 py-1 text-xs text-[#4a4a4a] font-normal hover:bg-pink-100 transition">
-                    <i class="fas fa-sign-out-alt text-[10px]"></i>
+                <button type="submit" class="inline-flex items-center gap-2 rounded-full bg-[#fff1f3] px-5 py-2 text-sm text-[#4a4a4a] font-semibold hover:bg-pink-100 transition">
+                    <i class="fas fa-sign-out-alt text-base"></i>
                     Log out
                 </button>
             </form>
@@ -153,21 +153,65 @@ include '../views/navbar.php';
                 <div class="bg-white rounded-xl p-6">
                     <h2 class="text-lg font-semibold text-gray-900 mb-4">Account Settings</h2>
                     
-                    <form method="post" class="space-y-4 mb-6">
-                        <div>
-                            <label class="block text-xs font-medium text-gray-700 mb-1">Username</label>
-                            <div class="flex gap-2">
-                                <input type="text" name="username" 
-                                       value="<?= htmlspecialchars($user['username']) ?>" 
-                                       class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
-                                       required>
-                                <button type="submit" name="edit_username" 
+                    <!-- Username Display & Change -->
+                    <?php if (isset($_GET['edit_username'])): ?>
+                        <form method="post" class="space-y-4 mb-6">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">New Username</label>
+                                <div class="flex gap-2">
+                                    <input type="text" name="username"
+                                        value="<?= htmlspecialchars($user['username']) ?>"
+                                        class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                        required>
+                                    <button type="submit" name="edit_username"
                                         class="bg-pink-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-pink-600 transition">
-                                    Save
-                                </button>
+                                        Save
+                                    </button>
+                                    <a href="profile.php" class="text-gray-500 hover:underline px-2 py-2 text-sm">Cancel</a>
+                                </div>
+                            </div>
+                        </form>
+                    <?php else: ?>
+    <div class="mb-6">
+        <label class="block text-xs font-medium text-gray-700 mb-1">Username</label>
+        <div class="flex items-center justify-between">
+            <span class="text-base text-gray-800 font-medium"><?= htmlspecialchars($user['username']) ?></span>
+            <a href="profile.php?edit_username=1" class="text-blue-600 underline text-sm hover:text-blue-800 transition ml-4">
+                Change username
+            </a>
+        </div>
+    </div>
+<?php endif; ?>
+
+                    <!-- Email Display & Change -->
+                    <?php if (isset($_GET['edit_email'])): ?>
+                        <form method="post" class="space-y-4 mb-6">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">New Email</label>
+                                <div class="flex gap-2">
+                                    <input type="email" name="email"
+                                        value="<?= htmlspecialchars($user['email']) ?>"
+                                        class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                        required>
+                                    <button type="submit" name="edit_email"
+                                        class="bg-pink-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-pink-600 transition">
+                                        Save
+                                    </button>
+                                    <a href="profile.php" class="text-gray-500 hover:underline px-2 py-2 text-sm">Cancel</a>
+                                </div>
+                            </div>
+                        </form>
+                    <?php else: ?>
+                        <div class="mb-6">
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Email</label>
+                            <div class="flex items-center justify-between">
+                                <span class="text-base text-gray-800 font-medium"><?= htmlspecialchars($user['email']) ?></span>
+                                <a href="profile.php?edit_email=1" class="text-blue-600 underline text-sm hover:text-blue-800 transition ml-4">
+                                    Change email
+                                </a>
                             </div>
                         </div>
-                    </form>
+                    <?php endif; ?>
 
                     <form method="post" autocomplete="off" class="space-y-4">
                         <h3 class="text-sm font-medium text-gray-700">Change Password</h3>
