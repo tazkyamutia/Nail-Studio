@@ -9,19 +9,17 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
-
-    <!-- Header -->
-    <header class="bg-pink-200 shadow">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-            <h1 class="text-2xl font-bold text-pink-800">Cosmetic Capital</h1>
-            <nav class="space-x-4">
-                <a href="#" class="text-pink-700 hover:underline">Home</a>
-                <a href="#" class="text-pink-700 hover:underline">Products</a>
-                <a href="reviews.php" class="text-pink-700 font-semibold underline">Reviews</a>
-                <a href="#" class="text-pink-700 hover:underline">Contact</a>
-            </nav>
-        </div>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">Cosmetic Capital</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#products">Products</a></li>
+                <li><a href="#reviews">Reviews</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
     </header>
 
     <!-- Main Content -->
@@ -66,9 +64,7 @@
                 </tbody>
             </table>
         </div>
-    </main>
-
-    <?php include 'footers.php'; ?>
+    </div>
 
 </body>
 </html>

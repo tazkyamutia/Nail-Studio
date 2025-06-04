@@ -27,10 +27,6 @@ ini_set('display_errors', 1);
   </style>
 </head>
 <body class="bg-white">
-  <!-- Top pink bar -->
-  <div class="bg-pink-300 text-black text-center text-xs py-2 select-none no-scrollbar">
-    FREE shipping and FREE gift when you spend over $75*
-  </div>
 
   <!-- Panggil navbar -->
   <?php include(__DIR__ . '/navbar.php'); ?>

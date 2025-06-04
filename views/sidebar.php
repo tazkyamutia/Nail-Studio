@@ -40,6 +40,12 @@
 						<p class="text">Transaction</p>
 					</a>
 				</li>
+				<li>
+					<a href="../pages/stock_management.php">
+						<i class='bx bxs-cube'></i>
+						<p class="text">Management Stock & Harga</p>
+					</a>
+				</li>
 			</ul>
 
 			<ul class="side-menu">
