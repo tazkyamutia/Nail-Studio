@@ -1,6 +1,7 @@
 <?php include '../views/header.php'; ?>
 <?php include '../views/sidebar.php'; ?>
-  <link rel="stylesheet" href="../Tazkya-HTML/css/style2.css">
+<?php include '../configdb.php'; ?>
+<link rel="stylesheet" href="../css/style2.css">
 		<main>
 			<div class="head-title">
 				<div class="left">
