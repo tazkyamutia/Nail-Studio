@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->bindParam(':password', $hashed_password);
             $stmt->bindParam(':role', $role);
             if ($stmt->execute()) {
-                $error = "Username dan Email sudah digunakan";
+                $error = "Data berhasil disimpan. Silakan login.";
             } else {
                 $error = "Terjadi kesalahan saat menyimpan data.";
             }
