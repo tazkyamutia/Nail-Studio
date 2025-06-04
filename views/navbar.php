@@ -5,8 +5,21 @@ ini_set('display_errors', 1);
 
 require_once '../configdb.php';
 
-$cart = isset($_SESSION['cart']) ? $_SESSION['cart'] : [];
-$totalItems = array_sum(array_column($cart, 'qty'));
+// Ambil jumlah item cart dari database jika sudah login
+$totalItems = 0;
+if (isset($_SESSION['id'])) {
+    $user_id = $_SESSION['id'];
+    $stmt = $conn->prepare("SELECT c.id FROM cart c WHERE c.user_id = ? AND c.status = 'active' LIMIT 1");
+    $stmt->execute([$user_id]);
+    $cart_id = $stmt->fetchColumn();
+    if ($cart_id) {
+        $stmt = $conn->prepare("SELECT SUM(qty) FROM cart_item WHERE cart_id = ?");
+        $stmt->execute([$cart_id]);
+        $totalItems = (int)$stmt->fetchColumn();
+    }
+} else {
+    $totalItems = 0;
+}
 
 // Ambil jumlah favorite user jika sudah login
 $favCount = 0;
@@ -169,26 +182,7 @@ $categories = [
       </button>
     </div>
     <div class="p-4" id="cart-items-modal">
-      <?php
-      if (empty($cart)) {
-        echo '<p class="text-gray-700">Keranjang Anda kosong.</p>';
-      } else {
-        foreach ($cart as $item) {
-          echo '<div class="flex items-center mb-4" data-itemid="'.$item['id'].'">';
-          echo '<img src="'.htmlspecialchars($item['foto']).'" class="w-12 h-12 object-cover rounded mr-2" alt="">';
-          echo '<div class="flex-1">';
-          echo '<div class="font-semibold">'.htmlspecialchars($item['name']).'</div>';
-          echo '<div class="text-xs text-gray-500">Rp'.number_format($item['price'],0,',','.').'</div>';
-          echo '<div class="flex items-center mt-1">';
-          echo '<button onclick="cartMinus('.$item['id'].')" class="px-2 py-1 bg-gray-200 rounded text-xs mr-1">-</button>';
-          echo '<input type="text" value="'.$item['qty'].'" min="1" class="w-10 border rounded text-center text-xs qty-input" onchange="cartQty('.$item['id'].',this.value)" />';
-          echo '<button onclick="cartPlus('.$item['id'].')" class="px-2 py-1 bg-gray-200 rounded text-xs ml-1">+</button>';
-          echo '<button onclick="cartDelete('.$item['id'].')" class="ml-auto text-red-500 hover:text-red-700 hover:underline text-xs">Hapus</button>';
-          echo '</div>';
-          echo '</div></div>';
-        }
-      }
-      ?>
+      <!-- Cart items will be loaded here via AJAX -->
     </div>
     <div class="p-4 border-t border-gray-200">
       <button class="w-full bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded mb-2 transition-colors">Proceed to Checkout</button>
@@ -323,7 +317,10 @@ $categories = [
       document.body.style.overflow = '';
     }
     function updateCartBadge(count) {
-      document.getElementById('cart-count-badge').innerText = count;
+      var badge = document.getElementById('cart-count-badge');
+      if (badge) {
+        badge.textContent = count;
+      }
     }
     function cartPlus(id) { cartAction('plus', id);}
     function cartMinus(id) { cartAction('minus', id);}
@@ -369,6 +366,86 @@ $categories = [
         openCartModal();
       });
     });
+
+    // Load cart items into modal
+function loadCartModal() {
+  fetch(BASE_CART+'get_cart.php')
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById('cart-items-modal').innerHTML = html;
+    });
+}
+
+// Open cart modal and load items
+function openCartModal() {
+  document.getElementById('cart-modal').classList.add('open');
+  loadCartModal();
+}
+
+// Close cart modal
+function closeCartModal() {
+  document.getElementById('cart-modal').classList.remove('open');
+}
+
+// Hapus item dari cart
+function cartDelete(cart_item_id) {
+  var fd = new FormData();
+  fd.append('action', 'delete');
+  fd.append('cart_item_id', cart_item_id);
+  fetch(BASE_CART+'cart_api.php', {
+    method: 'POST',
+    body: fd
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      loadCartModal();
+      if (data.cart_count !== undefined && document.getElementById('cart-count-badge')) {
+        document.getElementById('cart-count-badge').textContent = data.cart_count;
+      }
+    } else {
+      alert(data.message || 'Gagal menghapus item dari cart.');
+    }
+  });
+}
+
+// Tambah/kurang qty juga harus reload modal
+function cartPlus(cart_item_id) {
+  var fd = new FormData();
+  fd.append('action', 'plus');
+  fd.append('cart_item_id', cart_item_id);
+  fetch(BASE_CART+'cart_api.php', { method: 'POST', body: fd })
+    .then(res => res.json())
+    .then(() => loadCartModal());
+}
+function cartMinus(cart_item_id) {
+  var fd = new FormData();
+  fd.append('action', 'minus');
+  fd.append('cart_item_id', cart_item_id);
+  fetch(BASE_CART+'cart_api.php', { method: 'POST', body: fd })
+    .then(res => res.json())
+    .then(() => loadCartModal());
+}
+function cartQty(cart_item_id, qty) {
+  var fd = new FormData();
+  fd.append('action', 'update');
+  fd.append('cart_item_id', cart_item_id);
+  fd.append('qty', qty);
+  fetch(BASE_CART+'cart_api.php', { method: 'POST', body: fd })
+    .then(res => res.json())
+    .then(() => loadCartModal());
+}
+
+// Pastikan tombol Cart memanggil openCartModal()
+document.addEventListener('DOMContentLoaded', function() {
+  var cartBtn = document.getElementById('cart-btn');
+  if (cartBtn) {
+    cartBtn.addEventListener('click', function(e) {
+      // ...login check jika perlu...
+      openCartModal();
+    });
+  }
+});
   </script>
 </body>
 </html>
