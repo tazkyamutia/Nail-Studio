@@ -103,11 +103,11 @@ $conn->close();
        Customer Service
       </h4>
       <ul class="space-y-2 text-[#4b4b4b]">
-       <li><a class="hover:underline" href="#">Booking & Appointments</a></li>
+       <li><a class="hover:underline" href="../pages/boking.php">Booking & Appointments</a></li>
        <li><a class="hover:underline" href="#">Frequently Asked Questions</a></li>
        <li><a class="hover:underline" href="#">Cancellation Policy</a></li>
        <li><a class="hover:underline" href="#">Gift Cards</a></li>
-       <li><a class="hover:underline" href="#">My Account</a></li>
+       <li><a class="hover:underline" href="../pages/profile.php">My Account</a></li>
        <li><a class="hover:underline" href="#">Payment Options</a></li>
       </ul>
      </div>
@@ -117,10 +117,10 @@ $conn->close();
        Services
       </h4>
       <ul class="space-y-2 text-[#4b4b4b]">
-       <li><a class="hover:underline" href="#">Nail polish</a></li>
-       <li><a class="hover:underline" href="#">Nail tools</a></li>
-       <li><a class="hover:underline" href="#">Nail care</a></li>
-       <li><a class="hover:underline" href="#">Nail art kids</a></li>
+       <li><a class="hover:underline" href="../pages/nailPolish.php">Nail polish</a></li>
+       <li><a class="hover:underline" href="../pages/nailTools.php">Nail tools</a></li>
+       <li><a class="hover:underline" href="../pages/nailCare.php">Nail care</a></li>
+       <li><a class="hover:underline" href="../pages/nailKit.php">Nail art kits</a></li>
        
       </ul>
      </div>
