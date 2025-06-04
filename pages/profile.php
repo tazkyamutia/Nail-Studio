@@ -350,4 +350,4 @@ function togglePassword(inputId, btn) {
 }
 </script>
 </html>
-<?php include '../views/footers.php'; ?>
+ <?php include 'footer.php'; ?>
