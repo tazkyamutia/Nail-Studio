@@ -7,17 +7,7 @@
     <link rel="stylesheet" href="../css/reviews.css">
 </head>
 <body>
-    <header>
-        <nav class="container">
-            <div class="logo">Cosmetic Capital</div>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#products">Products</a></li>
-                <li><a href="#reviews">Reviews</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
+    <?php include '../views/headers.php'; ?>
 
     <section class="hero">
         <div class="container">
@@ -177,6 +167,8 @@
             </div>
         </div>
     </div>
+
+    <?php include '../views/footers.php'; ?>
 
     <script src="../js/reviews.js"></script>
 </body>
