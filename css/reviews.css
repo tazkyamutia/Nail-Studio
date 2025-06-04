@@ -9,7 +9,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     color: #333;
-    background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+    background: linear-gradient(135deg, #e75480 0%, #fff0f5 100%) !important;
     min-height: 100vh;
 }
 
@@ -21,7 +21,7 @@ body {
 
 /* Header Styles */
 header {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 240, 245, 0.95) !important;
     backdrop-filter: blur(10px);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     padding: 1rem 0;
@@ -39,7 +39,7 @@ nav {
 .logo {
     font-size: 1.8rem;
     font-weight: bold;
-    background: linear-gradient(45deg, #ff6b9d, #c44569);
+    background: linear-gradient(45deg, #e75480, #fff0f5);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -60,7 +60,7 @@ nav {
 }
 
 .nav-links a:hover {
-    color: #ff6b9d;
+    color: #e75480;
     transform: translateY(-2px);
 }
 
@@ -71,7 +71,7 @@ nav {
     height: 2px;
     bottom: -5px;
     left: 0;
-    background: linear-gradient(45deg, #ff6b9d, #c44569);
+    background: linear-gradient(45deg, #e75480, #fff0f5);
     transition: width 0.3s ease;
 }
 
@@ -155,21 +155,23 @@ nav {
     padding: 0.8rem 1.5rem;
     border: none;
     border-radius: 50px;
-    background: linear-gradient(45deg, #ff6b9d, #c44569);
-    color: white;
+    background: linear-gradient(45deg, #e75480, #fff0f5) !important;
+    color: #e75480 !important;
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: 500;
+    border: 1px solid #e75480 !important;
 }
 
 .filter-btn:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(255, 107, 157, 0.3);
+    box-shadow: 0 10px 20px rgba(231, 84, 128, 0.2);
 }
 
 .filter-btn.active {
-    background: linear-gradient(45deg, #c44569, #ff6b9d);
-    box-shadow: 0 5px 15px rgba(255, 107, 157, 0.4);
+    background: linear-gradient(45deg, #fff0f5, #e75480) !important;
+    color: #fff !important;
+    box-shadow: 0 5px 15px rgba(231, 84, 128, 0.2);
 }
 
 /* Reviews Grid */
@@ -185,7 +187,7 @@ nav {
     border-radius: 15px;
     padding: 2rem;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    border: 1px solid #f0f0f0;
+    border: 1px solid #fff0f5;
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
@@ -198,7 +200,7 @@ nav {
     left: 0;
     width: 100%;
     height: 4px;
-    background: linear-gradient(45deg, #ff6b9d, #c44569);
+    background: linear-gradient(45deg, #e75480, #fff0f5) !important;
 }
 
 .review-card:hover {
@@ -216,11 +218,11 @@ nav {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: linear-gradient(45deg, #ff6b9d, #c44569);
+    background: linear-gradient(45deg, #e75480, #fff0f5);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: #e75480;
     font-weight: bold;
     font-size: 1.2rem;
     margin-right: 1rem;
@@ -249,14 +251,14 @@ nav {
 }
 
 .product-info {
-    background: #fdf2f8;
+    background: #fff0f5 !important;
     padding: 1rem;
     border-radius: 10px;
-    border-left: 4px solid #ff6b9d;
+    border-left: 4px solid #e75480 !important;
 }
 
 .product-info strong {
-    color: #ff6b9d;
+    color: #e75480;
 }
 
 /* Verified Badge */
@@ -272,8 +274,8 @@ nav {
 
 /* Stats Section */
 .stats-section {
-    background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
-    color: white;
+    background: linear-gradient(135deg, #e75480 0%, #fff0f5 100%) !important;
+    color: #e75480 !important;
     padding: 3rem;
     text-align: center;
     margin: 2rem 0;
@@ -314,17 +316,17 @@ nav {
     padding: 0.8rem 1.2rem;
     border: none;
     border-radius: 10px;
-    background: white;
-    color: #ff6b9d;
+    background: #fff0f5 !important;
+    color: #e75480 !important;
     cursor: pointer;
     transition: all 0.3s ease;
-    border: 2px solid #ff6b9d;
+    border: 2px solid #e75480 !important;
 }
 
 .page-btn:hover,
 .page-btn.active {
-    background: #ff6b9d;
-    color: white;
+    background: #e75480 !important;
+    color: #fff !important;
     transform: translateY(-2px);
 }
 
