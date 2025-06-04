@@ -122,12 +122,14 @@ include '../views/navbar.php';
         <!-- Profile Quick Info -->
         <div class="bg-white rounded-xl p-6 mb-8">
             <div class="flex items-center gap-4">
-                <div class="relative group">
+                <div class="relative">
                     <img src="<?= $profile_img ?>" alt="Profile" 
                          class="w-16 h-16 rounded-full object-cover border-2 border-pink-200">
-                    <!-- Edit Icon -->
-                    <form method="post" enctype="multipart/form-data" class="absolute bottom-0 right-0">
-                        <label class="cursor-pointer bg-white hover:bg-gray-100 text-pink-500 rounded-full p-1 shadow flex items-center justify-center border-2 border-white transition-opacity opacity-90 group-hover:opacity-100" title="Edit Photo" style="font-size:14px;">
+                    <!-- Edit Icon di luar foto profil -->
+                    <form method="post" enctype="multipart/form-data" 
+                          class="absolute" 
+                          style="right:-12px; bottom:-12px;">
+                        <label class="cursor-pointer bg-white hover:bg-gray-100 text-pink-500 rounded-full p-2 shadow flex items-center justify-center border-2 border-white transition-opacity opacity-90" title="Edit Photo" style="font-size:16px;">
                             <i class="fas fa-pencil-alt"></i>
                             <input type="file" name="profile_photo" accept="image/*" class="hidden" onchange="this.form.submit()">
                         </label>
