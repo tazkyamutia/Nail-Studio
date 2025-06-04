@@ -147,7 +147,7 @@ $categories = [
           </div>
           <i class="fas fa-plus text-sm text-gray-400"></i>
         </a>
-        <a href="#" class="flex items-center justify-between py-3 text-gray-700 hover:text-pink-600 text-base font-normal transition-colors">
+        <a href="abouteUss.php" class="flex items-center justify-between py-3 text-gray-700 hover:text-pink-600 text-base font-normal transition-colors">
           <div class="flex items-center gap-3">
             <i class="far fa-smile text-lg w-5 text-center"></i> About Us
           </div>
