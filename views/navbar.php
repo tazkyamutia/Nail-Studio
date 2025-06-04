@@ -17,6 +17,10 @@ if (isset($_SESSION['id'])) {  // sesuai dengan session login kamu
     $favCount = $stmt->fetchColumn();
 }
 
+$profile_img = (isset($_SESSION['user_photo']) && $_SESSION['user_photo'])
+    ? '../uploads/' . htmlspecialchars($_SESSION['user_photo'])
+    : 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg';
+
 $categories = [
     [
         "name" => "Nail Polish",
@@ -252,6 +256,27 @@ $categories = [
           class="absolute -top-1 -right-2 bg-pink-500 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center select-none"
           ><?= $totalItems ?></span>
       </button>
+
+      <!-- PROFILE ICON START -->
+      <?php if (isset($_SESSION['id']) || isset($_COOKIE['user_id'])): ?>
+        <a href="../pages/profile.php">
+          <img
+            src="<?= $profile_img ?>"
+            alt="Profile"
+            class="w-8 h-8 rounded-full object-cover"
+            onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg';"
+          >
+        </a>
+      <?php else: ?>
+        <a href="../pages/profile.php">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg"
+            alt="Profile"
+            class="w-8 h-8 rounded-full object-cover"
+          >
+        </a>
+      <?php endif; ?>
+      <!-- PROFILE ICON END -->
     </div>
   </header>
 

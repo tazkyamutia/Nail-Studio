@@ -19,207 +19,194 @@ $steps = [
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title><?= $title ?></title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-    }
-  </style>
-</head>
-<body class="bg-pink-200 text-gray-900">
-
-  <!-- Tombol Home -->
-   
-
-  <!-- Header -->
-  <section class="text-center py-12 px-4 bg-pink-300">
-    <div class="max-w-3xl mx-auto">
-      <h1 class="text-4xl font-bold"><?= $title ?></h1>
-      <p class="mt-4 text-base leading-relaxed"><?= $intro ?></p>
-    </div>
-  </section>
-
-  <!-- Steps Section -->
-  <section class="bg-white py-16 px-6">
-    <div class="max-w-5xl mx-auto">
-      <h2 class="text-2xl font-bold mb-10 text-center">How <?= $title ?> Works</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-        <?php foreach ($steps as $step): ?>
-        <div class="text-center md:text-left">
-          <div class="flex items-center justify-center md:justify-start mb-4">
-            <div class="w-8 h-8 flex items-center justify-center rounded-full bg-pink-100 text-pink-700 font-bold text-sm">
-              <?= $step['number'] ?>
-            </div>
-            <h3 class="ml-3 font-semibold text-lg"><?= $step['title'] ?></h3>
-          </div>
-          <p class="text-gray-700 text-sm leading-relaxed"><?= $step['content'] ?></p>
-        </div>
-        
-        <?php endforeach; ?>
-      </div>
-    </div>
-  </section>
-  <html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1" name="viewport"/>
-  <title>
-   How Afterpay works
-  </title>
-  <script src="https://cdn.tailwindcss.com">
-  </script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter&amp;display=swap" rel="stylesheet"/>
-  <style>
-   body {
-      font-family: 'Inter', sans-serif;
-    }
-  </style>
- </head>
- <body class="bg-white text-[#1a1a1a]">
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-   <h2 class="text-lg font-semibold mb-8">
-    How Afterpay works
-   </h2>
-   <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-    <!-- Left Column -->
-    <section>
-     <div class="flex items-center mb-3">
-      <div class="flex items-center justify-center w-8 h-8 rounded-full bg-[#e6f0fa] text-[#1a1a1a] font-semibold mr-3 select-none">
-       1
-      </div>
-      <h3 class="text-base font-semibold leading-tight">
-       Select Afterpay at checkout
-      </h3>
-     </div>
-     <p class="text-sm leading-relaxed mb-6 max-w-md">
-      Afterpay is fully integrated with Cosmetic Capital's checkout. All you
-          need to do is choose Afterpay as your payment option when you’re ready
-          to buy.
-     </p>
-     <div aria-label="Payment options with Afterpay selected" class="border border-[#b94a5b] rounded-md max-w-md p-4">
-      <h4 class="font-bold text-sm mb-1">
-       Payment
-      </h4>
-      <p class="text-xs text-gray-600 mb-3">
-       All transactions are secure and encrypted.
-      </p>
-      <form class="text-xs text-[#1a1a1a] space-y-2">
-       <label class="flex items-center justify-between border border-gray-300 rounded px-2 py-1 cursor-pointer">
-        <input aria-label="Credit card payment option" class="mr-2" name="payment" type="radio"/>
-        Credit card
-        <div class="flex space-x-1">
-         <img alt="Visa card logo" class="h-4 w-auto" height="16" src="https://storage.googleapis.com/a1aa/image/8a45ca36-fae7-424d-6c6b-f6f4a8fba8a3.jpg" width="24"/>
-         <img alt="Mastercard logo" class="h-4 w-auto" height="16" src="https://storage.googleapis.com/a1aa/image/e2c2b1e3-87a3-4a0f-8215-f64a3e8986b4.jpg" width="24"/>
-         <img alt="American Express card logo" class="h-4 w-auto" height="16" src="https://storage.googleapis.com/a1aa/image/463ec09a-ccbc-45cd-ada9-f9090152aa42.jpg" width="24"/>
-         <img alt="UnionPay card logo" class="h-4 w-auto" height="16" src="https://storage.googleapis.com/a1aa/image/135a7e74-f320-4e59-8aa0-7c1017c07ce4.jpg" width="24"/>
-         <img alt="JCB card logo" class="h-4 w-auto" height="16" src="https://storage.googleapis.com/a1aa/image/52f72204-7db8-4524-9d4c-734c8632ac3c.jpg" width="24"/>
-        </div>
-       </label>
-       <label class="flex items-center justify-between border border-gray-300 rounded px-2 py-1 cursor-pointer">
-        <input aria-label="Zip - Buy now, pay later payment option" class="mr-2" name="payment" type="radio"/>
-        Zip - Buy now, pay later
-        <img alt="Zip logo" class="h-4 w-auto" height="16" src="https://storage.googleapis.com/a1aa/image/669dccee-807f-457c-9748-f08e3066f124.jpg" width="40"/>
-       </label>
-       <label aria-checked="true" class="flex items-center justify-between border border-gray-300 rounded bg-[#d9e8d9] px-2 py-1 cursor-pointer" role="radio" tabindex="0">
-        <input aria-label="Afterpay payment option selected" checked="" class="mr-2" name="payment" type="radio"/>
-        Afterpay
-        <svg aria-hidden="true" class="h-5 w-5 text-[#2f7a2f]" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-         <path d="M17 8l4 4m0 0l-4 4m4-4H3" stroke-linecap="round" stroke-linejoin="round">
-         </path>
-        </svg>
-       </label>
-      </form>
-      <div class="border border-gray-300 rounded bg-[#f0f2f0] mt-3 p-6 text-center text-xs text-[#1a1a1a]">
-       <img alt="Browser window with arrow pointing right" class="mx-auto mb-2" height="80" src="https://storage.googleapis.com/a1aa/image/b2c74665-4f89-4acb-7bdb-9ca551ef1fca.jpg" width="160"/>
-       After clicking “Pay now”, you will be redirected to Afterpay to
-            complete your purchase securely.
-      </div>
-     </div>
-    </section>
-    <!-- Right Column -->
-    <section>
-     <div class="flex items-center mb-3">
-      <div class="flex items-center justify-center w-8 h-8 rounded-full bg-[#e6f0fa] text-[#1a1a1a] font-semibold mr-3 select-none">
-       2
-      </div>
-      <h3 class="text-base font-semibold leading-tight">
-       Choose instalment payment method
-      </h3>
-     </div>
-     <p class="text-sm leading-relaxed mb-6 max-w-md">
-      Afterpay splits your payments over four equal instalments due every
-          fortnight. Nominate the debit card or credit card you want to use and
-          Afterpay will schedule automatic payments for you.
-     </p>
-     <div aria-label="Mobile phone showing Afterpay checkout screen" class="border border-[#b94a5b] rounded-md max-w-md p-4">
-      <img alt="Mobile phone showing Afterpay checkout screen with order payment dates and linked payment method" class="mx-auto max-w-full h-auto" height="400" src="https://storage.googleapis.com/a1aa/image/7e9b2fd3-c66a-40cc-2d09-cc082a0dc363.jpg" width="320"/>
-     </div>
-    </section>
-   </div>
-  </main>
- </body>
-</html>
-
-
-<?php
-// Menetapkan konten untuk halaman
-$title = "Afterpay Steps";
-$steps = [
-    [
-        'number' => '3',
-        'title' => 'Get approved instantly and securely',
-        'description' => 'No long forms or detailed personal information. Afterpay simply uses your nominated bank card to process your application on the spot.',
-        'image' => 'https://storage.googleapis.com/a1aa/image/8f3a201c-2c09-4445-c3d0-b365d788ea0b.jpg'
-    ],
-    [
-        'number' => '4',
-        'title' => 'Enjoy your purchase',
-        'description' => 'Afterpay handles reminders and automatic payments for you. Your saved details are ready for your next use.',
-        'image' => 'https://storage.googleapis.com/a1aa/image/ac3437bc-f896-4e86-91bf-e7e7a3444b50.jpg'
-    ]
-];
-?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1" name="viewport"/>
-    <title><?php echo $title; ?></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How QRIS Payment Works</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
         body {
             font-family: 'Inter', sans-serif;
         }
     </style>
 </head>
-<body class="bg-white text-gray-900">
-    <main class="max-w-5xl mx-auto px-4 py-6">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6">
-            <?php foreach ($steps as $step): ?>
-                <section>
-                    <h3 class="flex items-center font-semibold text-base text-gray-900 mb-2">
-                        <span class="mr-2 font-bold text-sm bg-gray-200 text-gray-900 rounded-full p-3"><?php echo $step['number']; ?></span>
-                        <?php echo $step['title']; ?>
-                    </h3>
-                    <p class="text-sm text-gray-700 mb-4 leading-relaxed">
-                        <?php echo $step['description']; ?>
-                    </p>
-                    <img alt="<?php echo $step['title']; ?>" class="w-full rounded-lg object-cover" height="400" loading="lazy" src="<?php echo $step['image']; ?>" width="600"/>
-                </section>
-            <?php endforeach; ?>
-            <section>
-               
-           
-
+<body class="bg-gray-50 text-gray-900">
+    <!-- Header -->
+    <section class="text-center py-12 px-4 bg-pink-600 text-white">
+        <div class="max-w-3xl mx-auto">
+            <h1 class="text-4xl font-bold mb-4">How QRIS Payment Works</h1>
+            <p class="text-lg leading-relaxed">Pay easily and securely using QRIS - Indonesia's national QR code payment standard</p>
         </div>
+    </section>
+
+    <!-- Steps Section -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h2 class="text-2xl font-bold mb-10 text-center text-gray-900">Simple Steps to Pay with QRIS</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Step 1 -->
+            <section class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center mb-4">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-pink-100 text-pink-600 font-bold text-lg mr-4">
+                        1
+                    </div>
+                    <h3 class="text-xl font-semibold">Select QRIS at Checkout</h3>
+                </div>
+                <p class="text-gray-600 mb-4 leading-relaxed">
+                    Choose QRIS as your payment method when completing your purchase. QRIS is accepted by all major Indonesian e-wallets and banking apps.
+                </p>
+                
+                <!-- Payment Options Mock-up -->
+                <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                    <h4 class="font-semibold text-sm mb-2">Payment Method</h4>
+                    <div class="space-y-2">
+                        <label class="flex items-center justify-between border border-gray-300 rounded-md px-3 py-2 cursor-pointer hover:bg-gray-50">
+                            <div class="flex items-center">
+                                <input type="radio" name="payment" class="mr-3">
+                                <span class="text-sm">Credit/Debit Card</span>
+                            </div>
+                            <div class="flex space-x-1">
+                                <div class="w-6 h-4 bg-blue-500 rounded text-xs text-white flex items-center justify-center">V</div>
+                                <div class="w-6 h-4 bg-red-500 rounded text-xs text-white flex items-center justify-center">M</div>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-center justify-between border-2 border-pink-500 bg-pink-50 rounded-md px-3 py-2 cursor-pointer">
+                            <div class="flex items-center">
+                                <input type="radio" name="payment" checked class="mr-3">
+                                <span class="text-sm font-medium">QRIS Payment</span>
+                            </div>
+                            <div class="bg-pink-600 text-white px-2 py-1 rounded text-xs font-bold">QRIS</div>
+                        </label>
+                        
+                        <label class="flex items-center justify-between border border-gray-300 rounded-md px-3 py-2 cursor-pointer hover:bg-gray-50">
+                            <div class="flex items-center">
+                                <input type="radio" name="payment" class="mr-3">
+                                <span class="text-sm">Bank Transfer</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 2 -->
+            <section class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center mb-4">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-pink-100 text-pink-600 font-bold text-lg mr-4">
+                        2
+                    </div>
+                    <h3 class="text-xl font-semibold">Scan the QRIS Code</h3>
+                </div>
+                <p class="text-gray-600 mb-4 leading-relaxed">
+                    Open your preferred e-wallet or banking app (GoPay, OVO, Dana, ShopeePay, etc.) and scan the QRIS code displayed on your screen.
+                </p>
+                
+                <!-- QRIS Code Display Area -->
+                <div class="border-2 border-dashed border-pink-300 rounded-lg p-8 text-center bg-pink-50">
+                    <div class="w-48 h-48 mx-auto bg-white border-2 border-gray-200 rounded-lg flex items-center justify-center mb-4">
+                        <!-- Placeholder for QRIS Code -->
+                        <!-- Replace this section with your actual QRIS code image -->
+                        <!-- Example: <img src="path/to/your/qris-code.png" alt="QRIS Code" class="w-full h-full object-contain"> -->
+                        <div class="text-center">
+                            <div class="w-32 h-32 bg-gray-100 border-2 border-gray-300 rounded-lg mx-auto mb-2 flex items-center justify-center">
+                                <span class="text-gray-500 text-xs">QRIS Code</span>
+                            </div>
+                            <p class="text-xs text-gray-500">Scan with your app</p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 font-medium">QRIS code will appear here after selecting payment method</p>
+                </div>
+            </section>
+
+            <!-- Step 3 -->
+            <section class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center mb-4">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-pink-100 text-pink-600 font-bold text-lg mr-4">
+                        3
+                    </div>
+                    <h3 class="text-xl font-semibold">Confirm Payment Details</h3>
+                </div>
+                <p class="text-gray-600 mb-4 leading-relaxed">
+                    Review the payment amount and merchant details in your app, then confirm the transaction using your PIN, fingerprint, or face recognition.
+                </p>
+                
+                <!-- Mobile App Mock-up -->
+                <div class="border border-gray-200 rounded-lg p-4 bg-gradient-to-b from-pink-50 to-white">
+                    <div class="max-w-xs mx-auto">
+                        <div class="bg-pink-600 text-white text-center py-2 rounded-t-lg">
+                            <span class="text-sm font-medium">Payment Confirmation</span>
+                        </div>
+                        <div class="bg-white border-x border-gray-200 p-4 space-y-3">
+                            <div class="text-center">
+                                <p class="text-sm text-gray-600">Pay to</p>
+                                <p class="font-semibold">Merchant Name</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-2xl font-bold text-pink-600">Rp 150,000</p>
+                            </div>
+                            <div class="bg-pink-600 text-white text-center py-2 rounded">
+                                <span class="text-sm font-medium">Confirm Payment</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 4 -->
+            <section class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center mb-4">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-green-100 text-green-600 font-bold text-lg mr-4">
+                        4
+                    </div>
+                    <h3 class="text-xl font-semibold">Payment Complete!</h3>
+                </div>
+                <p class="text-gray-600 mb-4 leading-relaxed">
+                    Your payment is processed instantly. You'll receive a confirmation notification and can proceed with your order immediately.
+                </p>
+                
+                <!-- Success State -->
+                <div class="border border-green-200 rounded-lg p-4 bg-green-50">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <h4 class="font-semibold text-green-800 mb-1">Payment Successful!</h4>
+                        <p class="text-sm text-green-700">Transaction ID: #QR123456789</p>
+                        <p class="text-xs text-green-600 mt-2">Receipt sent to your email</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Compatible Apps Section -->
+        <section class="mt-16 text-center">
+            <h3 class="text-xl font-semibold mb-6">Compatible with All Major Indonesian E-Wallets</h3>
+            <div class="flex flex-wrap justify-center gap-6">
+                <div class="bg-white rounded-lg shadow-md p-4 w-24 h-24 flex items-center justify-center">
+                    <span class="text-green-600 font-bold text-sm">GoPay</span>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-4 w-24 h-24 flex items-center justify-center">
+                    <span class="text-purple-600 font-bold text-sm">OVO</span>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-4 w-24 h-24 flex items-center justify-center">
+                    <span class="text-blue-600 font-bold text-sm">DANA</span>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-4 w-24 h-24 flex items-center justify-center">
+                    <span class="text-orange-600 font-bold text-sm">ShopeePay</span>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-4 w-24 h-24 flex items-center justify-center">
+                    <span class="text-red-600 font-bold text-sm">LinkAja</span>
+                </div>
+            </div>
+            <p class="text-gray-600 mt-4 text-sm">And all Indonesian banking apps that support QRIS</p>
+        </section>
     </main>
+
+    
+    
 </body>
+</html>
 </html>
 <?php include 'footer.php'; ?>

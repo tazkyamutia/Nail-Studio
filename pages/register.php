@@ -63,25 +63,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .right-panel {
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
+            padding: 60px 32px 40px 32px;
+            overflow-y: auto;
+            min-height: 100vh;
+            height: 100vh;
         }
         .form-container {
             width: 100%;
             max-width: 600px;
-        }
-        h2 {
-            text-align: left;
-            margin-bottom: 25px;
+            /* Hapus min-height agar tidak memaksa tinggi, biar scroll jalan */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            flex: 1 1 auto;
         }
         .login-link {
             display: flex;
             justify-content: center;
             margin-top: 15px;
+            margin-bottom: 0;
+            /* Tambahkan min-height agar selalu terlihat */
+            min-height: 40px;
         }
-        input[type="text"], input[type="password"] {
-            height: 50px;
-            border-radius: 8px;
+        #signup-form {
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 auto;
+        }
+        .signup-btn {
             margin-bottom: 20px;
+        }
+        h2 {
+            text-align: left;
+            margin-bottom: 25px;
+        }
+        /* Pastikan container bisa scroll jika terlalu tinggi */
+        .container {
+            min-height: 100vh;
+            height: 100vh;
+            display: flex;
+            overflow: auto;
         }
     </style>
 </head>
