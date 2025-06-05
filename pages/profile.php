@@ -53,6 +53,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_password'])) {
     }
 }
 
+// Handle update email
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_email'])) {
+    $new_email = trim($_POST['email']);
+    if ($new_email && $new_email !== $user['email']) {
+        // Cek apakah email sudah dipakai user lain
+        $stmt = $conn->prepare("SELECT id FROM user WHERE email = ? AND id != ?");
+        $stmt->execute([$new_email, $user_id]);
+        if ($stmt->fetchColumn()) {
+            $error = "Email sudah digunakan oleh user lain.";
+        } elseif (!filter_var($new_email, FILTER_VALIDATE_EMAIL)) {
+            $error = "Format email tidak valid.";
+        } else {
+            $stmt = $conn->prepare("UPDATE user SET email = ? WHERE id = ?");
+            $stmt->execute([$new_email, $user_id]);
+            $user['email'] = $new_email;
+            $success = "Email berhasil diupdate!";
+        }
+    } else {
+        $error = "Email tidak berubah atau kosong.";
+    }
+}
+
+// Handle update fullname
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_fullname'])) {
+    $new_fullname = trim($_POST['fullname']);
+    if ($new_fullname && $new_fullname !== $user['fullname']) {
+        $stmt = $conn->prepare("UPDATE user SET fullname = ? WHERE id = ?");
+        $stmt->execute([$new_fullname, $user_id]);
+        $user['fullname'] = $new_fullname;
+        $success = "Full name berhasil diupdate!";
+    }
+}
+
 // Handle add address
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
     $address = trim($_POST['address']);
@@ -66,8 +99,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
     }
 }
 
-// Ambil address user
-$stmt = $conn->prepare("SELECT address, type FROM address WHERE user_id = ?");
+// Handle edit address
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_address'])) {
+    $edit_id = $_POST['address_id'];
+    $new_address = trim($_POST['address']);
+    if ($new_address) {
+        $stmt = $conn->prepare("UPDATE address SET address = ? WHERE user_id = ? AND id = ?");
+        $stmt->execute([$new_address, $user_id, $edit_id]);
+        $success = "Address berhasil diupdate!";
+    } else {
+        $error = "Alamat tidak boleh kosong.";
+    }
+}
+
+// Handle delete address
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_address'])) {
+    $delete_id = $_POST['address_id'];
+    $stmt = $conn->prepare("DELETE FROM address WHERE user_id = ? AND id = ?");
+    $stmt->execute([$user_id, $delete_id]);
+    $success = "Address berhasil dihapus!";
+}
+
+// Ambil address user (tambahkan id)
+$stmt = $conn->prepare("SELECT id, address, type FROM address WHERE user_id = ?");
 $stmt->execute([$user_id]);
 $addresses = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -185,6 +239,36 @@ include '../views/navbar.php';
     </div>
 <?php endif; ?>
 
+                    <!-- Full Name Display & Change -->
+                    <?php if (isset($_GET['edit_fullname'])): ?>
+                        <form method="post" class="space-y-4 mb-6">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">New Full Name</label>
+                                <div class="flex gap-2">
+                                    <input type="text" name="fullname"
+                                        value="<?= htmlspecialchars($user['fullname']) ?>"
+                                        class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                        required>
+                                    <button type="submit" name="edit_fullname"
+                                        class="bg-pink-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-pink-600 transition">
+                                        Save
+                                    </button>
+                                    <a href="profile.php" class="text-gray-500 hover:underline px-2 py-2 text-sm">Cancel</a>
+                                </div>
+                            </div>
+                        </form>
+                    <?php else: ?>
+                        <div class="mb-6">
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Full Name</label>
+                            <div class="flex items-center justify-between">
+                                <span class="text-base text-gray-800 font-medium"><?= htmlspecialchars($user['fullname']) ?></span>
+                                <a href="profile.php?edit_fullname=1" class="text-blue-600 underline text-sm hover:text-blue-800 transition ml-4">
+                                    Change full name
+                                </a>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
                     <!-- Email Display & Change -->
                     <?php if (isset($_GET['edit_email'])): ?>
                         <form method="post" class="space-y-4 mb-6">
@@ -265,19 +349,32 @@ include '../views/navbar.php';
                     <?php else: ?>
                         <ul class="space-y-2">
                             <?php foreach ($addresses as $addr): ?>
-                                <li class="flex justify-between items-center p-3 bg-gray-50 rounded-lg shadow-sm">
-                                    <div>
-                                        <p class="text-sm font-medium text-gray-900"><?= htmlspecialchars($addr['address']) ?></p>
-                                        <p class="text-xs text-gray-500"><?= htmlspecialchars(ucfirst($addr['type'])) ?> Address</p>
+                                <li class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-gray-50 rounded-lg shadow-sm gap-2">
+                                    <div class="flex-1">
+                                        <?php if (isset($_GET['edit_address']) && $_GET['edit_address'] == $addr['id']): ?>
+                                            <form method="post" class="flex flex-col sm:flex-row gap-2">
+                                                <input type="hidden" name="address_id" value="<?= $addr['id'] ?>">
+                                                <input type="text" name="address" value="<?= htmlspecialchars($addr['address']) ?>" class="border border-gray-300 rounded px-2 py-1 text-sm flex-1" required>
+                                                <div class="flex gap-2">
+                                                    <button type="submit" name="edit_address" class="text-pink-600 hover:underline text-xs px-2 py-1">Save</button>
+                                                    <a href="profile.php" class="text-gray-500 hover:underline text-xs px-2 py-1">Cancel</a>
+                                                </div>
+                                            </form>
+                                        <?php else: ?>
+                                            <p class="text-sm font-medium text-gray-900"><?= htmlspecialchars($addr['address']) ?></p>
+                                            <p class="text-xs text-gray-500"><?= htmlspecialchars(ucfirst($addr['type'])) ?> Address</p>
+                                        <?php endif; ?>
                                     </div>
-                                    <div class="flex gap-2">
-                                        <button class="text-pink-600 hover:underline text-xs">
-                                            Edit
-                                        </button>
-                                        <button class="text-red-600 hover:underline text-xs">
+                                    <?php if (!(isset($_GET['edit_address']) && $_GET['edit_address'] == $addr['id'])): ?>
+                                    <div class="flex gap-2 mt-2 sm:mt-0 sm:ml-4">
+                                        <a href="profile.php?edit_address=<?= $addr['id'] ?>" class="text-pink-600 hover:underline text-xs px-2 py-1 border border-pink-100 rounded transition">Edit</a>
+                                        <button type="button"
+                                            class="text-red-600 hover:underline text-xs px-2 py-1 border border-red-100 rounded transition"
+                                            onclick="showDeleteModal(<?= $addr['id'] ?>)">
                                             Delete
                                         </button>
                                     </div>
+                                    <?php endif; ?>
                                 </li>
                             <?php endforeach; ?>
                         </ul>
@@ -348,6 +445,29 @@ function togglePassword(inputId, btn) {
         icon.classList.add('fa-eye');
     }
 }
+
+function showDeleteModal(addressId) {
+    document.getElementById('delete_address_id').value = addressId;
+    document.getElementById('deleteAddressModal').classList.remove('hidden');
+}
+function hideDeleteModal() {
+    document.getElementById('deleteAddressModal').classList.add('hidden');
+}
 </script>
 </html>
  <?php include 'footer.php'; ?>
+
+<!-- Modal Delete Address -->
+<div id="deleteAddressModal" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg p-6 max-w-xs w-full">
+        <h3 class="text-lg font-semibold mb-2 text-gray-900">Hapus alamat ini?</h3>
+        <p class="text-sm text-gray-600 mb-4">Apakah Anda yakin ingin menghapus alamat ini?</p>
+        <form method="post" id="deleteAddressForm">
+            <input type="hidden" name="address_id" id="delete_address_id" value="">
+            <div class="flex justify-end gap-2">
+                <button type="button" onclick="hideDeleteModal()" class="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300">Batal</button>
+                <button type="submit" name="delete_address" class="px-4 py-2 rounded bg-pink-600 text-white hover:bg-pink-700">Hapus</button>
+            </div>
+        </form>
+    </div>
+</div>
