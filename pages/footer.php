@@ -132,7 +132,7 @@ $conn->close();
       <ul class="space-y-2 text-[#4b4b4b]">
        <li><a class="hover:underline" href="#">Our Story</a></li>
        <li><a class="hover:underline" href="#">Contact Us</a></li>
-       <li><a class="hover:underline" href="#">Reviews</a></li>
+       <li><a class="hover:underline" href="../pages/addreview.php">Reviews</a></li>
      
       </ul>
      </div>
