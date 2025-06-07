@@ -185,7 +185,7 @@ $categories = [
       <!-- Cart items will be loaded here via AJAX -->
     </div>
     <div class="p-4 border-t border-gray-200">
-      <button class="w-full bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded mb-2 transition-colors">Proceed to Checkout</button>
+      <button onclick="window.location.href='../pages/checkout.php'" class="w-full bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded mb-2 transition-colors">Proceed to Checkout</button>
       <button onclick="location.href='<?= (strpos($_SERVER['SCRIPT_NAME'], '/pages/')!==false ? '../' : '') ?>cart_page.php'" class="w-full bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded transition-colors">View Cart Page</button>
     </div>
   </div>
