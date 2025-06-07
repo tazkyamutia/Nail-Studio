@@ -35,6 +35,33 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <link rel="stylesheet" href="../css/style2.css">
+<style>
+    select.status-select {
+        padding: 4px 10px;
+        border-radius: 9999px;
+        font-weight: 600;
+        border: none;
+        outline: none;
+        cursor: pointer;
+    }
+    .status-pending {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+    .status-processing {
+        background-color: #dbeafe;
+        color: #1d4ed8;
+    }
+    .status-shipped {
+        background-color: #ede9fe;
+        color: #6b21a8;
+    }
+    .status-completed {
+        background-color: #d1fae5;
+        color: #065f46;
+    }
+</style>
+
 <main>
     <div class="head-title">
         <div class="left">
@@ -113,8 +140,7 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <form method="post" action="">
                                 <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
                                 <select name="new_status" onchange="this.form.submit()"
-                                    class="w-full px-2 py-1 text-sm rounded-md border border-gray-300 bg-white shadow-sm 
-                                           focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500">
+                                    class="status-select <?= strtolower('status-' . $order['order_status']) ?>">
                                     <?php
                                     $statuses = ['Pending', 'Processing', 'Shipped', 'Completed'];
                                     foreach ($statuses as $status): ?>
