@@ -38,13 +38,13 @@ include '../views/navbar.php';
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Keranjang Belanja</title>
+    <title>Shopping Cart</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
 </head>
 <body class="bg-gray-50 min-h-screen">
 <div class="max-w-4xl mx-auto py-10 px-4">
-    <h1 class="text-2xl font-bold mb-8 text-pink-700">Keranjang Belanja</h1>
+    <h1 class="text-2xl font-bold mb-8 text-pink-700">Shopping Cart</h1>
     <?php if (empty($cart_items)): ?>
         <div class="text-center py-12 text-gray-400 bg-pink-50 rounded-lg shadow-inner">Keranjang Anda kosong.</div>
     <?php else: ?>
@@ -53,7 +53,7 @@ include '../views/navbar.php';
             <div class="flex items-center mb-4 gap-4">
                 <label class="flex items-center gap-2 cursor-pointer select-none">
                     <input type="checkbox" id="selectAll" class="accent-pink-500 w-5 h-5 rounded-full border-2 border-pink-400 shadow-sm transition-all duration-150" onclick="toggleSelectAll(this)">
-                    <span class="text-sm text-pink-700 font-semibold">Pilih Semua</span>
+                    <span class="text-sm text-pink-700 font-semibold">Select All</span>
                 </label>
                 <button type="submit" name="delete_selected" id="deleteSelectedBtn" style="display:none"
                     class="bg-transparent border-0 text-pink-600 font-semibold text-sm underline hover:text-pink-700 focus:outline-none px-0 py-0 shadow-none ml-2">
@@ -113,7 +113,7 @@ include '../views/navbar.php';
         </div>
         </form>
     <?php endif; ?>
-    <a href="nowShop.php" class="inline-block mt-4 text-pink-600 hover:underline font-semibold"><i class="fas fa-arrow-left"></i> Lanjut Belanja</a>
+    <a href="nowShop.php" class="inline-block mt-4 text-pink-600 hover:underline font-semibold"><i class="fas fa-arrow-left"></i>Continue Shopping</a>
 </div>
 <script>
 function toggleSelectAll(source) {

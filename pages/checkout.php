@@ -52,7 +52,7 @@ include '../views/navbar.php';
 <div class="max-w-3xl mx-auto py-10 px-4">
     <h1 class="text-2xl font-bold mb-6 text-pink-700">Checkout</h1>
     <div class="bg-white rounded-lg shadow p-6 mb-8">
-        <h2 class="text-lg font-semibold mb-4">Rincian Pesanan</h2>
+        <h2 class="text-lg font-semibold mb-4">Order Details</h2>
         <?php if (empty($cart_items)): ?>
             <div class="text-center py-8 text-gray-500">Keranjang Anda kosong.</div>
         <?php else: ?>
@@ -72,7 +72,7 @@ include '../views/navbar.php';
     </div>
 
     <div class="bg-white rounded-lg shadow p-6 mb-8">
-        <h2 class="text-lg font-semibold mb-4">Pilih Metode Pembayaran</h2>
+        <h2 class="text-lg font-semibold mb-4">Select Payment Method</h2>
         <form id="payment-method-form" onsubmit="event.preventDefault(); showQrisModal();">
             <div class="space-y-4">
                 <label class="flex items-center gap-3 cursor-pointer disabled opacity-50">
@@ -88,7 +88,7 @@ include '../views/navbar.php';
             </div>
             <div class="flex justify-end mt-6">
                 <button type="submit" class="px-6 py-2 rounded bg-pink-600 text-white font-semibold hover:bg-pink-700 transition">
-                    Lanjut
+                    Next
                 </button>
             </div>
         </form>
@@ -121,7 +121,7 @@ include '../views/navbar.php';
             </div>
             <form action="upload_bukti.php" method="post" enctype="multipart/form-data" class="space-y-4 mt-6" id="buktiForm">
                 <label class="block">
-                    <span class="block text-sm font-medium text-gray-700 mb-1">Upload Bukti Pembayaran</span>
+                    <span class="block text-sm font-medium text-gray-700 mb-1">Upload Payment Recipe</span>
                     <input type="file" name="bukti_bayar" accept="image/*" required
                         class="block w-full text-sm text-gray-700
                         file:mr-4 file:py-2 file:px-4
@@ -136,9 +136,9 @@ include '../views/navbar.php';
                     />
                 </label>
                 <div class="flex justify-end gap-2">
-                    <button type="button" onclick="hideQrisModal()" class="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300">Batal</button>
+                    <button type="button" onclick="hideQrisModal()" class="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300">Cancel</button>
                     <button type="submit" id="buktiSubmitBtn" class="px-6 py-2 rounded bg-pink-600 text-white font-semibold hover:bg-pink-700 transition" disabled>
-                        Upload Bukti Bayar
+                        Upload Payment Recipe
                     </button>
                 </div>
             </form>
@@ -146,7 +146,7 @@ include '../views/navbar.php';
     </div>
 
     <div class="flex justify-end">
-        <a href="cart_page.php" class="px-5 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 mr-2">Kembali ke Keranjang</a>
+        <a href="cart_page.php" class="px-5 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 mr-2">Back to Cart</a>
         <!-- Tombol upload bukti bayar di bawah DIHAPUS, karena sudah ada di modal -->
     </div>
 </div>
