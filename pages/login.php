@@ -10,26 +10,28 @@ $error = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {     
     $username = trim($_POST["username"]);     
     $password = trim($_POST["password"]);     
-    // The form will only submit "member" as role
-     
+
     try {         
-        // First check if the user exists and get their actual role
         $check_sql = "SELECT * FROM user WHERE username = :username";
         $check_stmt = $conn->prepare($check_sql);
         $check_stmt->bindParam(':username', $username);
         $check_stmt->execute();
                 
         if ($check_stmt->rowCount() > 0) {             
-            $user = $check_stmt->fetch();
+            $user = $check_stmt->fetch(PDO::FETCH_ASSOC);
                      
-            // Check if password is correct
             if (password_verify($password, $user['password'])) {                 
                 $_SESSION["loggedin"] = true;                     
                 $_SESSION["id"] = $user["id"];                     
                 $_SESSION["username"] = $user["username"];                     
-                $_SESSION["role"] = $user["role"]; // Set the actual role from database
-                                     
-                // Redirect based on the actual role in database
+                $_SESSION["role"] = $user["role"];
+
+                // ✅ UPDATE LAST LOGIN (fix untuk Visitors Today)
+                $update_login = $conn->prepare("UPDATE user SET last_login = NOW() WHERE id = :id");
+                $update_login->bindParam(':id', $user['id']);
+                $update_login->execute();
+
+                // ✅ Redirect sesuai role
                 if ($_SESSION["role"] == "admin") {                         
                     header("Location: dashboard.php");                     
                 } else if ($_SESSION["role"] == "member") {                         
@@ -56,33 +58,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Login - Nail Studio</title>     
     <link rel="stylesheet" href="../css/login.css">     
     <style>         
-        .error {             
-            color: red;             
-            margin-bottom: 15px;         
-        }
-        /* Added custom styles for this page */
-        .right-panel {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        .form-container {
-            width: 100%;
-            max-width: 600px;
-        }
-        h2 {
-            text-align: left;
-            margin-bottom: 25px;
-        }
-        .login-link {
-            display: flex;
-            justify-content: center;
-            margin-top: 15px;
-        }
+        .error { color: red; margin-bottom: 15px; }         
+        .right-panel { display: flex; flex-direction: column; justify-content: center; }
+        .form-container { width: 100%; max-width: 600px; }
+        h2 { text-align: left; margin-bottom: 25px; }
+        .login-link { display: flex; justify-content: center; margin-top: 15px; }
         input[type="text"], input[type="password"] {
-            height: 50px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            height: 50px; border-radius: 8px; margin-bottom: 20px;
         }
     </style> 
 </head> 
@@ -106,7 +88,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <?php endif; ?>             
                         
                 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">                 
-                    <!-- Hidden input for role - always set to "member" -->
                     <input type="hidden" name="role" value="member">
                     
                     <label for="username">Username</label>                 
