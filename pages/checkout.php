@@ -119,7 +119,7 @@ include '../views/navbar.php';
                     </div>
                 </div>
             </div>
-            <form action="upload_bukti.php" method="post" enctype="multipart/form-data" class="space-y-4 mt-6">
+            <form action="upload_bukti.php" method="post" enctype="multipart/form-data" class="space-y-4 mt-6" id="buktiForm">
                 <label class="block">
                     <span class="block text-sm font-medium text-gray-700 mb-1">Upload Bukti Pembayaran</span>
                     <input type="file" name="bukti_bayar" accept="image/*" required
@@ -131,11 +131,13 @@ include '../views/navbar.php';
                         hover:file:bg-pink-100
                         transition-colors duration-150
                         cursor-pointer
-                        "/>
+                        "
+                        id="buktiInput"
+                    />
                 </label>
                 <div class="flex justify-end gap-2">
                     <button type="button" onclick="hideQrisModal()" class="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300">Batal</button>
-                    <button type="submit" class="px-6 py-2 rounded bg-pink-600 text-white font-semibold hover:bg-pink-700 transition">
+                    <button type="submit" id="buktiSubmitBtn" class="px-6 py-2 rounded bg-pink-600 text-white font-semibold hover:bg-pink-700 transition" disabled>
                         Upload Bukti Bayar
                     </button>
                 </div>
@@ -164,6 +166,10 @@ function showQrisModal() {
 function hideQrisModal() {
     document.getElementById('qrisModal').classList.add('hidden');
 }
+
+document.getElementById('buktiInput').addEventListener('change', function() {
+    document.getElementById('buktiSubmitBtn').disabled = !this.files.length;
+});
 </script>
 </body>
 </html>

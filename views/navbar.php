@@ -322,30 +322,72 @@ $categories = [
         badge.textContent = count;
       }
     }
-    function cartPlus(id) { cartAction('plus', id);}
-    function cartMinus(id) { cartAction('minus', id);}
-    function cartDelete(id) { cartAction('delete', id);}
-    function cartQty(id, qty) { cartAction('update', id, qty);}
-    function cartAction(action, id, qty=1) {
-      let fd = new FormData();
-      fd.append('action', action);
-      fd.append('product_id', id);
-      if(action === 'update') fd.append('qty', qty);
+    function cartPlus(id) {
+      var fd = new FormData();
+      fd.append('action', 'plus');
+      fd.append('cart_item_id', id);
       fetch(BASE_CART+'cart_api.php', { method: 'POST', body: fd })
-        .then(r=>r.json())
-        .then(data=>{
-            if(data.success) {
-                updateCartBadge(data.cart_count);
-                if (cartModal.classList.contains('open')) {
-                    fetch(BASE_CART+'get_cart.php')
-                        .then(r => r.text())
-                        .then(html => document.getElementById('cart-items-modal').innerHTML = html);
-                }
-            } else {
-                console.error("Cart action failed:", data.message);
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            // Hanya update badge, tidak reload modal
+            if (data.cart_count !== undefined && document.getElementById('cart-count-badge')) {
+              document.getElementById('cart-count-badge').textContent = data.cart_count;
             }
-        })
-        .catch(error => console.error('Error in cartAction:', error));
+            // Update qty input langsung jika ingin (opsional)
+            // Cari input qty di modal dan update nilainya
+            const row = document.querySelector('.modal-item-checkbox[value="'+id+'"]')?.closest('.flex');
+            if (row) {
+              let qtyInput = row.querySelector('input[type="text"]');
+              if (qtyInput) qtyInput.value = parseInt(qtyInput.value) + 1;
+            }
+          } else {
+            alert(data.message || 'Gagal menambah qty.');
+          }
+        });
+    }
+    function cartMinus(id) {
+      var fd = new FormData();
+      fd.append('action', 'minus');
+      fd.append('cart_item_id', id);
+      fetch(BASE_CART+'cart_api.php', { method: 'POST', body: fd })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            if (data.cart_count !== undefined && document.getElementById('cart-count-badge')) {
+              document.getElementById('cart-count-badge').textContent = data.cart_count;
+            }
+            // Update qty input langsung jika ingin (opsional)
+            const row = document.querySelector('.modal-item-checkbox[value="'+id+'"]')?.closest('.flex');
+            if (row) {
+              let qtyInput = row.querySelector('input[type="text"]');
+              if (qtyInput && parseInt(qtyInput.value) > 1) qtyInput.value = parseInt(qtyInput.value) - 1;
+              // Jika qty jadi 0, reload modal
+              if (qtyInput && parseInt(qtyInput.value) <= 1 && data.cart_count === 0) {
+                loadCartModal();
+              }
+            }
+          } else {
+            alert(data.message || 'Gagal mengurangi qty.');
+          }
+        });
+    }
+    function cartQty(id, qty) {
+      var fd = new FormData();
+      fd.append('action', 'update');
+      fd.append('cart_item_id', id);
+      fd.append('qty', qty);
+      fetch(BASE_CART+'cart_api.php', { method: 'POST', body: fd })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            if (data.cart_count !== undefined && document.getElementById('cart-count-badge')) {
+              document.getElementById('cart-count-badge').textContent = data.cart_count;
+            }
+          } else {
+            alert(data.message || 'Gagal update qty.');
+          }
+        });
     }
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
@@ -416,7 +458,16 @@ function cartPlus(cart_item_id) {
   fd.append('cart_item_id', cart_item_id);
   fetch(BASE_CART+'cart_api.php', { method: 'POST', body: fd })
     .then(res => res.json())
-    .then(() => loadCartModal());
+    .then(data => {
+      if (data.success) {
+        loadCartModal();
+        if (data.cart_count !== undefined && document.getElementById('cart-count-badge')) {
+          document.getElementById('cart-count-badge').textContent = data.cart_count;
+        }
+      } else {
+        alert(data.message || 'Gagal menambah qty.');
+      }
+    });
 }
 function cartMinus(cart_item_id) {
   var fd = new FormData();
@@ -424,7 +475,16 @@ function cartMinus(cart_item_id) {
   fd.append('cart_item_id', cart_item_id);
   fetch(BASE_CART+'cart_api.php', { method: 'POST', body: fd })
     .then(res => res.json())
-    .then(() => loadCartModal());
+    .then(data => {
+      if (data.success) {
+        loadCartModal();
+        if (data.cart_count !== undefined && document.getElementById('cart-count-badge')) {
+          document.getElementById('cart-count-badge').textContent = data.cart_count;
+        }
+      } else {
+        alert(data.message || 'Gagal mengurangi qty.');
+      }
+    });
 }
 function cartQty(cart_item_id, qty) {
   var fd = new FormData();
@@ -433,7 +493,16 @@ function cartQty(cart_item_id, qty) {
   fd.append('qty', qty);
   fetch(BASE_CART+'cart_api.php', { method: 'POST', body: fd })
     .then(res => res.json())
-    .then(() => loadCartModal());
+    .then(data => {
+      if (data.success) {
+        loadCartModal();
+        if (data.cart_count !== undefined && document.getElementById('cart-count-badge')) {
+          document.getElementById('cart-count-badge').textContent = data.cart_count;
+        }
+      } else {
+        alert(data.message || 'Gagal update qty.');
+      }
+    });
 }
 
 // Pastikan tombol Cart memanggil openCartModal()
