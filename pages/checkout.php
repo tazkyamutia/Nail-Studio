@@ -73,7 +73,7 @@ include '../views/navbar.php';
 
     <div class="bg-white rounded-lg shadow p-6 mb-8">
         <h2 class="text-lg font-semibold mb-4">Pilih Metode Pembayaran</h2>
-        <form>
+        <form id="payment-method-form" onsubmit="event.preventDefault(); showQrisModal();">
             <div class="space-y-4">
                 <label class="flex items-center gap-3 cursor-pointer disabled opacity-50">
                     <input type="radio" name="payment_method" value="debit" disabled class="accent-pink-500" />
@@ -83,35 +83,87 @@ include '../views/navbar.php';
                 <label class="flex items-center gap-3 cursor-pointer">
                     <input type="radio" name="payment_method" value="qris" checked class="accent-pink-500" />
                     <span class="text-gray-700 font-medium">QRIS (E-wallet & Bank)</span>
-                    <img src="../qris/qris.png" alt="QRIS" class="w-10 h-10 object-contain ml-2" />
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/QRIS_logo.svg" alt="QRIS Logo" class="w-24 h-24 object-contain" />
                 </label>
+            </div>
+            <div class="flex justify-end mt-6">
+                <button type="submit" class="px-6 py-2 rounded bg-pink-600 text-white font-semibold hover:bg-pink-700 transition">
+                    Lanjut
+                </button>
             </div>
         </form>
     </div>
 
-    <div id="qris-section" class="bg-white rounded-lg shadow p-6 mb-8">
-        <h2 class="text-lg font-semibold mb-4">Bayar dengan QRIS</h2>
-        <div class="flex flex-col md:flex-row items-center gap-8">
-            <img src="../qris/Screenshot_20250607_161241_GoPay Merchant.jpg" alt="QRIS" class="w-56 h-56 object-contain border rounded-lg bg-white shadow" />
-            <div>
-                <p class="mb-2 text-gray-700">Scan kode QRIS di samping menggunakan aplikasi e-wallet atau mobile banking Anda (GoPay, OVO, DANA, ShopeePay, dll).</p>
-                <ul class="text-sm text-gray-600 mb-2 list-disc ml-5">
-                    <li>Pastikan nominal pembayaran sesuai: <span class="font-semibold text-pink-700">Rp<?= number_format($subtotal, 0, ',', '.') ?></span></li>
-                    <li>Setelah pembayaran, konfirmasi ke admin jika diperlukan.</li>
-                </ul>
-                <div class="mt-4">
-                    <span class="inline-block bg-pink-100 text-pink-700 px-3 py-1 rounded text-xs font-semibold">QRIS Aktif 24 Jam</span>
+    <!-- Modal Bayar dengan QRIS -->
+    <div id="qrisModal" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 hidden px-2 md:px-64">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-3xl">
+            <div class="flex items-center gap-3 mb-4">
+                <h2 class="text-lg font-semibold">Bayar dengan</h2>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/QRIS_logo.svg" alt="QRIS Logo" class="w-24 h-24 object-contain" />
+            </div>
+            <div class="flex flex-col md:flex-row items-center gap-8">
+                <img src="../qris/Screenshot_20250607_161241_GoPay Merchant.jpg" alt="QRIS" class="w-56 h-56 object-contain border rounded-lg bg-white shadow" />
+                <div>
+                    <p class="mb-2 text-gray-700">Scan kode QRIS di samping menggunakan aplikasi e-wallet atau mobile banking Anda (GoPay, OVO, DANA, ShopeePay, dll).</p>
+                    <ul class="text-sm text-gray-600 mb-2 list-disc ml-5">
+                        <li>
+                            Nominal yang harus dibayar:
+                            <span class="font-extrabold text-green-700 text-2xl font-mono tracking-wider drop-shadow-sm">
+                                Rp<?= number_format($subtotal, 0, ',', '.') ?>
+                            </span>
+                        </li>
+                        <li>Setelah pembayaran, upload bukti bayar di bawah.</li>
+                    </ul>
+                    <div class="mt-4">
+                        <span class="inline-block bg-pink-100 text-pink-700 px-3 py-1 rounded text-xs font-semibold">QRIS Aktif 24 Jam</span>
+                    </div>
                 </div>
             </div>
+            <form action="upload_bukti.php" method="post" enctype="multipart/form-data" class="space-y-4 mt-6">
+                <label class="block">
+                    <span class="block text-sm font-medium text-gray-700 mb-1">Upload Bukti Pembayaran</span>
+                    <input type="file" name="bukti_bayar" accept="image/*" required
+                        class="block w-full text-sm text-gray-700
+                        file:mr-4 file:py-2 file:px-4
+                        file:rounded-full file:border-0
+                        file:text-sm file:font-semibold
+                        file:bg-pink-50 file:text-pink-700
+                        hover:file:bg-pink-100
+                        transition-colors duration-150
+                        cursor-pointer
+                        "/>
+                </label>
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="hideQrisModal()" class="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300">Batal</button>
+                    <button type="submit" class="px-6 py-2 rounded bg-pink-600 text-white font-semibold hover:bg-pink-700 transition">
+                        Upload Bukti Bayar
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
     <div class="flex justify-end">
         <a href="cart_page.php" class="px-5 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 mr-2">Kembali ke Keranjang</a>
-        <button type="button" class="px-6 py-2 rounded bg-pink-600 text-white font-semibold hover:bg-pink-700 transition disabled:opacity-50" disabled>
-            Bayar Sekarang
-        </button>
+        <!-- Tombol upload bukti bayar di bawah DIHAPUS, karena sudah ada di modal -->
     </div>
 </div>
+
+</div>
+
+<script>
+function showBuktiModal() {
+    document.getElementById('buktiModal').classList.remove('hidden');
+}
+function hideBuktiModal() {
+    document.getElementById('buktiModal').classList.add('hidden');
+}
+function showQrisModal() {
+    document.getElementById('qrisModal').classList.remove('hidden');
+}
+function hideQrisModal() {
+    document.getElementById('qrisModal').classList.add('hidden');
+}
+</script>
 </body>
 </html>
