@@ -22,7 +22,9 @@ $reviews = $conn->query("
   <title>Review Showcase</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 py-10">
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+<main class="flex-1 py-24">
   <div class="max-w-5xl mx-auto px-4">
     <h1 class="text-3xl font-bold mb-8 text-center text-pink-600">✨ User Reviews</h1>
 
@@ -34,11 +36,28 @@ $reviews = $conn->query("
 
     <div class="space-y-6">
     <?php foreach ($reviews as $r): ?>
+      <?php
+        // Path relatif karena file ini ada di /views/
+        $avatarPath = '../uploads/' . ($r['user_photo'] ?? '');
+        $productImagePath = '../uploads/' . ($r['product_image'] ?? '');
+        $reviewPhotoPath = '../uploads/' . ($r['photo'] ?? '');
+
+        // Cek file ada atau tidak
+        $avatarURL = (!empty($r['user_photo']) && file_exists($avatarPath))
+            ? $avatarPath
+            : 'https://via.placeholder.com/48?text=Avatar';
+
+        $productImageURL = (!empty($r['product_image']) && file_exists($productImagePath))
+            ? $productImagePath
+            : 'https://via.placeholder.com/60?text=Product';
+
+        $reviewPhotoExists = (!empty($r['photo']) && file_exists($reviewPhotoPath));
+      ?>
+
       <div class="bg-white rounded-2xl shadow p-6 border border-pink-100">
-        <!-- Header -->
+        <!-- Header User -->
         <div class="flex items-center mb-4">
-          <img src="<?= $r['user_photo'] ? 'uploads/' . $r['user_photo'] : 'https://via.placeholder.com/48' ?>"
-               class="w-12 h-12 rounded-full border" alt="Avatar">
+          <img src="<?= $avatarURL ?>" class="w-12 h-12 rounded-full border object-cover" alt="Avatar">
           <div class="ml-4">
             <h3 class="font-semibold text-gray-800"><?= htmlspecialchars($r['fullname']) ?></h3>
             <div class="text-sm text-gray-500"><?= date('M d, Y H:i', strtotime($r['created_at'])) ?></div>
@@ -47,8 +66,7 @@ $reviews = $conn->query("
 
         <!-- Produk -->
         <div class="flex items-center mb-4">
-          <img src="<?= $r['product_image'] ? 'uploads/' . $r['product_image'] : 'https://via.placeholder.com/60' ?>"
-               class="w-16 h-16 object-cover rounded" alt="Product">
+          <img src="<?= $productImageURL ?>" class="w-16 h-16 object-cover rounded border" alt="Product">
           <div class="ml-4 flex-1">
             <p class="text-xs text-gray-500 font-medium uppercase">Product Review</p>
             <h4 class="font-semibold text-pink-700"><?= htmlspecialchars($r['namaproduct']) ?></h4>
@@ -63,9 +81,9 @@ $reviews = $conn->query("
         <!-- Tag & Komentar -->
         <div class="mb-4">
           <?php if ($r['tag']): ?>
-          <span class="inline-block bg-pink-100 text-pink-700 text-xs font-semibold px-2 py-1 rounded-full mb-2">
-            <?= htmlspecialchars($r['tag']) ?>
-          </span>
+            <span class="inline-block bg-pink-100 text-pink-700 text-xs font-semibold px-2 py-1 rounded-full mb-2">
+              <?= htmlspecialchars($r['tag']) ?>
+            </span>
           <?php endif; ?>
           <p class="text-sm text-gray-800 leading-relaxed"><?= nl2br(htmlspecialchars($r['comment'])) ?></p>
         </div>
@@ -81,22 +99,24 @@ $reviews = $conn->query("
 
         <!-- Label Ringkasan -->
         <div class="grid grid-cols-3 gap-4 text-sm text-center mb-4">
-          <div><span class="text-pink-600 font-semibold"><?= $r['recommend'] ?></span><br>Recommend</div>
-          <div><span class="text-yellow-600 font-semibold"><?= $r['repurchase'] ?></span><br>Repurchase</div>
+          <div><span class="text-pink-600 font-semibold"><?= htmlspecialchars($r['recommend']) ?></span><br>Recommend</div>
+          <div><span class="text-yellow-600 font-semibold"><?= htmlspecialchars($r['repurchase']) ?></span><br>Repurchase</div>
           <div><span class="text-pink-700 font-semibold"><?= htmlspecialchars($r['usage_period']) ?></span><br>Usage Period</div>
         </div>
 
-        <!-- Foto -->
-        <?php if (!empty($r['photo'])): ?>
-        <div class="text-center">
-          <img src="uploads/<?= htmlspecialchars($r['photo']) ?>" alt="Review Photo"
-               class="rounded-lg max-w-xs mx-auto shadow mt-3">
-        </div>
+        <!-- Foto Review -->
+        <?php if ($reviewPhotoExists): ?>
+          <div class="text-center">
+            <img src="<?= $reviewPhotoPath ?>" alt="Review Photo"
+                 class="rounded-lg max-w-xs mx-auto shadow mt-3">
+          </div>
         <?php endif; ?>
       </div>
     <?php endforeach; ?>
     </div>
   </div>
+</main>
+
+<?php include 'footer.php'; ?>
 </body>
 </html>
-<?php include 'footer.php'; ?>
