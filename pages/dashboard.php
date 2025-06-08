@@ -30,21 +30,22 @@ $stmtSales = $conn->prepare("
 $stmtSales->execute();
 $total_sales = $stmtSales->fetch(PDO::FETCH_ASSOC)['total_sales'];
 
-// Ambil data recent orders dengan barang
+// Ambil semua data order dari tabel cart (tanpa filter)
 $stmt = $conn->query("
-    SELECT c.id, u.fullname, c.order_status, DATE(c.created_at) as order_date, b.file_path
+    SELECT c.id, u.fullname, c.order_status, c.status, DATE(c.created_at) as order_date, b.file_path
     FROM cart c
     JOIN user u ON u.id = c.user_id
     LEFT JOIN bukti_bayar b ON b.cart_id = c.id
-    WHERE c.order_status != 'Pending'
     ORDER BY c.created_at DESC
     LIMIT 20
 ");
+
 $orders = [];
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $barang = [];
     $harga  = [];
     $total  = 0;
+
     $stmt2 = $conn->prepare("
         SELECT p.namaproduct, ci.qty, ci.price
         FROM cart_item ci
@@ -52,11 +53,13 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         WHERE ci.cart_id = ?
     ");
     $stmt2->execute([$row['id']]);
+
     while ($item = $stmt2->fetch(PDO::FETCH_ASSOC)) {
         $barang[] = $item['namaproduct'] . ($item['qty'] > 1 ? " x" . $item['qty'] : "");
         $harga[]  = 'Rp ' . number_format($item['price'], 0, ',', '.');
         $total   += $item['price'] * $item['qty'];
     }
+
     if (count($barang) === 0) continue; // skip if no items
 
     $row['barang'] = $barang;
