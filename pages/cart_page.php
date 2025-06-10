@@ -55,8 +55,9 @@ include '../views/navbar.php';
                     <input type="checkbox" id="selectAll" class="accent-pink-500 w-5 h-5 rounded-full border-2 border-pink-400 shadow-sm transition-all duration-150" onclick="toggleSelectAll(this)">
                     <span class="text-sm text-pink-700 font-semibold">Select All</span>
                 </label>
-                <button type="submit" name="delete_selected" id="deleteSelectedBtn" style="display:none"
-                    class="bg-transparent border-0 text-pink-600 font-semibold text-sm underline hover:text-pink-700 focus:outline-none px-0 py-0 shadow-none ml-2">
+                <button type="button" id="deleteSelectedBtn" style="display:none"
+                    class="bg-transparent border-0 text-pink-600 font-semibold text-sm underline hover:text-pink-700 focus:outline-none px-0 py-0 shadow-none ml-2"
+                    onclick="deleteSelectedItems()" disabled>
                     Hapus Item
                 </button>
             </div>
@@ -128,10 +129,38 @@ document.querySelectorAll('.remove-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         const id = this.dataset.id;
         if (confirm('Hapus item ini dari keranjang?')) {
-            updateQty(id, 'delete');
+            removeCartItem(id);
         }
     });
 });
+
+function removeCartItem(id) {
+    var fd = new FormData();
+    fd.append('action', 'delete');
+    fd.append('cart_item_id', id);
+    fetch('../cart/cart_api.php', { method: 'POST', body: fd })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // Hapus baris dari DOM
+                const row = document.querySelector('[data-id="'+id+'"]');
+                if (row) row.remove();
+                // Jika sudah tidak ada item, reload halaman/cart
+                if (document.querySelectorAll('.remove-btn').length === 0) {
+                    location.reload();
+                    return;
+                }
+                // Update subtotal
+                updateSubtotal();
+                // Update badge jika ada
+                if (data.cart_count !== undefined && document.getElementById('cart-count-badge')) {
+                    document.getElementById('cart-count-badge').textContent = data.cart_count;
+                }
+            } else {
+                alert(data.message || 'Gagal menghapus item.');
+            }
+        });
+}
 
 function updateQty(id, action) {
     var fd = new FormData();
@@ -141,9 +170,9 @@ function updateQty(id, action) {
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                // Update qty & subtotal di halaman tanpa reload
-                if (action === 'delete' || (action === 'minus' && data.cart_count === 0)) {
-                    document.querySelector('[data-id="'+id+'"]').remove();
+                if (action === 'minus' && data.cart_count === 0) {
+                    location.reload();
+                    return;
                 } else {
                     let qtyInput = document.querySelector('.qty-input[data-id="'+id+'"]');
                     let itemDiv = document.querySelector('[data-id="'+id+'"]');
@@ -197,6 +226,48 @@ function updateDeleteBtn() {
     btn.disabled = !anyChecked;
     btn.style.display = anyChecked ? 'inline-block' : 'none';
     document.getElementById('selectAll').checked = Array.from(checkboxes).every(cb => cb.checked);
+}
+
+function deleteSelectedItems() {
+    // Ambil semua checkbox yang dicentang
+    const checked = Array.from(document.querySelectorAll('.item-checkbox:checked'));
+    if (checked.length === 0) return;
+    if (!confirm('Hapus item yang dipilih dari keranjang?')) return;
+
+    // Ambil id item yang dipilih
+    const ids = checked.map(cb => cb.value);
+
+    var fd = new FormData();
+    fd.append('action', 'delete_selected');
+    ids.forEach(id => fd.append('selected_items[]', id));
+
+    fetch('../cart/cart_api.php', { method: 'POST', body: fd })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // Hapus baris dari DOM
+                ids.forEach(id => {
+                    const row = document.querySelector('[data-id="'+id+'"]');
+                    if (row) row.remove();
+                });
+                // Jika sudah tidak ada item, reload halaman/cart
+                if (document.querySelectorAll('.remove-btn').length === 0) {
+                    location.reload();
+                    return;
+                }
+                // Update subtotal
+                updateSubtotal();
+                // Update badge jika ada
+                if (data.cart_count !== undefined && document.getElementById('cart-count-badge')) {
+                    document.getElementById('cart-count-badge').textContent = data.cart_count;
+                }
+                // Reset select all
+                document.getElementById('selectAll').checked = false;
+                updateDeleteBtn();
+            } else {
+                alert(data.message || 'Gagal menghapus item.');
+            }
+        });
 }
 </script>
 </body>
