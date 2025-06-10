@@ -36,7 +36,7 @@ $total_savings = 0;
     <div class="flex items-center mb-4 gap-4">
         <label class="flex items-center gap-2 cursor-pointer select-none">
             <input type="checkbox" id="modalSelectAll" class="accent-pink-500 w-5 h-5 rounded-full border-2 border-pink-400 shadow-sm transition-all duration-150">
-            <span class="text-sm text-pink-700 font-semibold">Pilih Semua</span>
+            <span class="text-sm text-pink-700 font-semibold">Select All</span>
         </label>
         <button type="button" class="bg-transparent border-0 text-pink-600 font-semibold text-sm underline hover:text-pink-700 focus:outline-none px-0 py-0 shadow-none ml-2" id="modalDeleteSelectedBtn" style="display:none" disabled onclick="modalDeleteSelected()">Hapus Item</button>
     </div>
