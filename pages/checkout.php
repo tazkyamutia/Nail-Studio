@@ -21,7 +21,7 @@ if (!$cart_id) {
 }
 
 // Ambil item cart
-$stmt = $conn->prepare("SELECT ci.qty, ci.price, p.namaproduct FROM cart_item ci
+$stmt = $conn->prepare("SELECT ci.qty, ci.price, p.id_product, p.namaproduct FROM cart_item ci
     JOIN product p ON ci.product_id = p.id_product
     WHERE ci.cart_id = ?");
 $stmt->execute([$cart_id]);
@@ -30,6 +30,47 @@ $cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $subtotal = 0;
 foreach ($cart_items as $item) {
     $subtotal += $item['qty'] * $item['price'];
+}
+
+// PERBAIKAN: Proses pengurangan stok ketika bukti bayar berhasil diupload
+if (isset($_POST['process_payment']) && $_POST['process_payment'] == 'qris') {
+    try {
+        // Mulai transaction untuk memastikan konsistensi data
+        $conn->beginTransaction();
+        
+        // Ubah status cart menjadi 'Processing'
+        $updateCartStatus = $conn->prepare("UPDATE cart SET status = 'Processing' WHERE id = ?");
+        $updateCartStatus->execute([$cart_id]);
+
+        // Pengurangan Stok untuk setiap item di cart_item
+        foreach ($cart_items as $item) {
+            // Cek stok tersedia dulu
+            $checkStock = $conn->prepare("SELECT stock FROM product WHERE id_product = ?");
+            $checkStock->execute([$item['id_product']]);
+            $currentStock = $checkStock->fetchColumn();
+            
+            if ($currentStock < $item['qty']) {
+                throw new Exception("Stok produk {$item['namaproduct']} tidak mencukupi!");
+            }
+            
+            // Mengurangi stok produk berdasarkan quantity yang dibeli
+            $stmtStock = $conn->prepare("UPDATE product SET stock = stock - ? WHERE id_product = ?");
+            $stmtStock->execute([$item['qty'], $item['id_product']]);
+        }
+        
+        // Commit transaction
+        $conn->commit();
+        
+        // Redirect ke halaman sukses atau tampilkan pesan
+        echo "<div class='text-center py-12 text-green-500'>Pembayaran berhasil diproses, stok produk sudah berkurang.</div>";
+        echo "<script>setTimeout(function(){ window.location.href = 'succes_page.php'; }, 2000);</script>";
+        exit;
+        
+    } catch (Exception $e) {
+        // Rollback jika ada error
+        $conn->rollback();
+        echo "<div class='text-center py-12 text-red-500'>Error: " . $e->getMessage() . "</div>";
+    }
 }
 
 include '../views/navbar.php';
@@ -45,6 +86,9 @@ include '../views/navbar.php';
         .disabled {
             opacity: 0.5;
             pointer-events: none;
+        }
+        #qrisModal {
+            display: none;
         }
     </style>
 </head>
@@ -73,7 +117,8 @@ include '../views/navbar.php';
 
     <div class="bg-white rounded-lg shadow p-6 mb-8">
         <h2 class="text-lg font-semibold mb-4">Select Payment Method</h2>
-        <form id="payment-method-form" onsubmit="event.preventDefault(); showQrisModal();">
+        <!-- PERBAIKAN: Hapus event.preventDefault() agar form bisa submit -->
+        <form id="payment-method-form" method="POST" onsubmit="return handlePaymentSubmit();">
             <div class="space-y-4">
                 <label class="flex items-center gap-3 cursor-pointer disabled opacity-50">
                     <input type="radio" name="payment_method" value="debit" disabled class="accent-pink-500" />
@@ -95,7 +140,7 @@ include '../views/navbar.php';
     </div>
 
     <!-- Modal Bayar dengan QRIS -->
-    <div id="qrisModal" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 hidden px-2 md:px-64">
+    <div id="qrisModal" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 px-2 md:px-64" style="display: none;">
         <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-3xl">
             <div class="flex items-center gap-3 mb-4">
                 <h2 class="text-lg font-semibold">Bayar dengan</h2>
@@ -119,9 +164,14 @@ include '../views/navbar.php';
                     </div>
                 </div>
             </div>
-            <form action="upload_bukti.php" method="post" enctype="multipart/form-data" class="space-y-4 mt-6" id="buktiForm">
+            
+            <!-- PERBAIKAN: Form upload bukti sekaligus proses pembayaran -->
+            <form method="post" enctype="multipart/form-data" class="space-y-4 mt-6" id="buktiForm">
+                <input type="hidden" name="process_payment" value="qris">
+                <input type="hidden" name="cart_id" value="<?= $cart_id ?>">
+                
                 <label class="block">
-                    <span class="block text-sm font-medium text-gray-700 mb-1">Upload Payment Recipe</span>
+                    <span class="block text-sm font-medium text-gray-700 mb-1">Upload Payment Receipt</span>
                     <input type="file" name="bukti_bayar" accept="image/*" required
                         class="block w-full text-sm text-gray-700
                         file:mr-4 file:py-2 file:px-4
@@ -138,7 +188,7 @@ include '../views/navbar.php';
                 <div class="flex justify-end gap-2">
                     <button type="button" onclick="hideQrisModal()" class="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300">Cancel</button>
                     <button type="submit" id="buktiSubmitBtn" class="px-6 py-2 rounded bg-pink-600 text-white font-semibold hover:bg-pink-700 transition" disabled>
-                        Upload Payment Recipe
+                        Complete Payment
                     </button>
                 </div>
             </form>
@@ -147,24 +197,25 @@ include '../views/navbar.php';
 
     <div class="flex justify-end">
         <a href="cart_page.php" class="px-5 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 mr-2">Back to Cart</a>
-        <!-- Tombol upload bukti bayar di bawah DIHAPUS, karena sudah ada di modal -->
     </div>
 </div>
 
-</div>
-
 <script>
-function showBuktiModal() {
-    document.getElementById('buktiModal').classList.remove('hidden');
+function handlePaymentSubmit() {
+    const selectedPayment = document.querySelector('input[name="payment_method"]:checked').value;
+    if (selectedPayment === 'qris') {
+        showQrisModal();
+        return false; // Prevent form submission, show modal instead
+    }
+    return true; // Allow form submission for other payment methods
 }
-function hideBuktiModal() {
-    document.getElementById('buktiModal').classList.add('hidden');
-}
+
 function showQrisModal() {
-    document.getElementById('qrisModal').classList.remove('hidden');
+    document.getElementById('qrisModal').style.display = 'flex';
 }
+
 function hideQrisModal() {
-    document.getElementById('qrisModal').classList.add('hidden');
+    document.getElementById('qrisModal').style.display = 'none';
 }
 
 document.getElementById('buktiInput').addEventListener('change', function() {
