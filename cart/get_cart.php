@@ -89,31 +89,34 @@ $total_savings = 0;
     </form>
     <script>
     // --- Select All & Delete Selected mirip cart_page ---
-    function modalToggleSelectAll() {
+    // Fungsionalitas select all dan hapus selected
+    document.addEventListener('DOMContentLoaded', function() {
         const selectAll = document.getElementById('modalSelectAll');
-        const checkboxes = document.querySelectorAll('.modal-item-checkbox');
-        checkboxes.forEach(cb => { cb.checked = selectAll.checked; });
-        modalUpdateDeleteBtn();
-    }
-    function modalUpdateDeleteBtn() {
-        const checkboxes = document.querySelectorAll('.modal-item-checkbox');
         const btn = document.getElementById('modalDeleteSelectedBtn');
-        const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
-        btn.disabled = !anyChecked;
-        btn.style.display = anyChecked ? 'inline-block' : 'none';
-        // update selectAll checked state
-        if (checkboxes.length > 0) {
-            document.getElementById('modalSelectAll').checked = Array.from(checkboxes).every(cb => cb.checked);
-        } else {
-            document.getElementById('modalSelectAll').checked = false;
+        function modalToggleSelectAll() {
+            const checkboxes = document.querySelectorAll('.modal-item-checkbox');
+            checkboxes.forEach(cb => { cb.checked = selectAll.checked; });
+            modalUpdateDeleteBtn();
         }
-    }
-    document.getElementById('modalSelectAll').addEventListener('change', modalToggleSelectAll);
-    document.querySelectorAll('.modal-item-checkbox').forEach(function(cb) {
-        cb.addEventListener('change', modalUpdateDeleteBtn);
+        function modalUpdateDeleteBtn() {
+            const checkboxes = document.querySelectorAll('.modal-item-checkbox');
+            const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+            btn.disabled = !anyChecked;
+            btn.style.display = anyChecked ? 'inline-block' : 'none';
+            // update selectAll checked state
+            if (checkboxes.length > 0) {
+                selectAll.checked = Array.from(checkboxes).every(cb => cb.checked);
+            } else {
+                selectAll.checked = false;
+            }
+        }
+        selectAll.addEventListener('change', modalToggleSelectAll);
+        document.querySelectorAll('.modal-item-checkbox').forEach(function(cb) {
+            cb.addEventListener('change', modalUpdateDeleteBtn);
+        });
+        // Initial state
+        modalUpdateDeleteBtn();
     });
-    // Initial state
-    modalUpdateDeleteBtn();
 
     function modalDeleteSelectedItems() {
         const checked = Array.from(document.querySelectorAll('.modal-item-checkbox:checked'));
@@ -145,7 +148,10 @@ $total_savings = 0;
                     }
                     // Reset select all
                     document.getElementById('modalSelectAll').checked = false;
-                    modalUpdateDeleteBtn();
+                    // Update tombol hapus
+                    const btn = document.getElementById('modalDeleteSelectedBtn');
+                    btn.disabled = true;
+                    btn.style.display = 'none';
                 } else {
                     alert(data.message || 'Gagal menghapus item.');
                 }
