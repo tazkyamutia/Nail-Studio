@@ -103,9 +103,9 @@ include '../views/navbar.php';
                 <span class="text-pink-700 font-bold text-xl" id="cart-subtotal">Rp<?= number_format($subtotal, 0, ',', '.') ?></span>
             </div>
             <div class="flex justify-end mt-6">
-                <a href="checkout.php" class="px-6 py-2 rounded-lg bg-pink-600 text-white font-semibold hover:bg-pink-700 transition shadow">
+                <button type="button" id="proceedCheckoutBtn" class="px-6 py-2 rounded-lg bg-pink-600 text-white font-semibold hover:bg-pink-700 transition shadow">
                     <i class="fas fa-credit-card mr-1"></i> Proceed to Checkout
-                </a>
+                </button>
             </div>
         </div>
         </form>
@@ -227,6 +227,30 @@ function updateDeleteBtn() {
     btn.style.display = anyChecked ? 'inline-block' : 'none';
     document.getElementById('selectAll').checked = Array.from(checkboxes).every(cb => cb.checked);
 }
+
+// Proceed to checkout: jika ada item yang di-select (1 atau lebih), checkout hanya item yang di-select
+// jika tidak ada yang di-select, checkout semua item
+document.getElementById('proceedCheckoutBtn')?.addEventListener('click', function() {
+    const checked = Array.from(document.querySelectorAll('.item-checkbox:checked'));
+    if (checked.length > 0) {
+        // Ada satu atau lebih item yang di-select, checkout hanya item yang dipilih
+        let form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'checkout.php';
+        checked.forEach(cb => {
+            let input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'selected_items[]';
+            input.value = cb.value;
+            form.appendChild(input);
+        });
+        document.body.appendChild(form);
+        form.submit();
+    } else {
+        // Tidak ada yang di-select, checkout semua item
+        window.location.href = 'checkout.php';
+    }
+});
 
 function deleteSelectedItems() {
     // Ambil semua checkbox yang dicentang

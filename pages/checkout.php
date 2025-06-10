@@ -20,12 +20,30 @@ if (!$cart_id) {
     exit;
 }
 
-// Ambil item cart
-$stmt = $conn->prepare("SELECT ci.qty, ci.price, p.namaproduct FROM cart_item ci
-    JOIN product p ON ci.product_id = p.id_product
-    WHERE ci.cart_id = ?");
-$stmt->execute([$cart_id]);
-$cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Ambil hanya item yang dipilih (jika ada POST selected_items)
+$cart_items = [];
+if (!empty($_POST['selected_items']) && is_array($_POST['selected_items'])) {
+    // Validasi: hanya ambil item yang milik cart ini dan id-nya sesuai selected_items
+    $ids = array_map('intval', $_POST['selected_items']);
+    if (!empty($ids)) {
+        $in = implode(',', array_fill(0, count($ids), '?'));
+        $sql = "SELECT ci.qty, ci.price, p.namaproduct 
+                FROM cart_item ci
+                JOIN product p ON ci.product_id = p.id_product
+                WHERE ci.cart_id = ? AND ci.id IN ($in)";
+        $params = array_merge([$cart_id], $ids);
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($params);
+        $cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+} else {
+    // Jika tidak ada selected_items, tampilkan semua item cart
+    $stmt = $conn->prepare("SELECT ci.qty, ci.price, p.namaproduct FROM cart_item ci
+        JOIN product p ON ci.product_id = p.id_product
+        WHERE ci.cart_id = ?");
+    $stmt->execute([$cart_id]);
+    $cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
 $subtotal = 0;
 foreach ($cart_items as $item) {
