@@ -17,10 +17,6 @@
 </main>
 
 <?php
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-
 if (isset($_SESSION['success'])) {
     echo '<div class="alert alert-success">' . $_SESSION['success'] . '</div>';
     unset($_SESSION['success']);
@@ -35,7 +31,7 @@ if (isset($_SESSION['error'])) {
 <div class="product-page">
     <div class="header-actions">
         <h2>Product Management</h2>
-        <a href="addproduct.php" class="btn-add"> Add Product</a>
+        <a href="addproduct.php" class="btn-add">Add Product</a>
     </div>
 
     <div class="search-bar">
@@ -58,13 +54,14 @@ if (isset($_SESSION['error'])) {
             <tbody>
                 <?php
                 try {
+                    // Retrieve all products
                     $sql = "SELECT * FROM product ORDER BY id_product DESC";
                     $stmt = $conn->prepare($sql);
                     $stmt->execute();
                     
                     if ($stmt->rowCount() > 0) {
                         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                            // Set default added date if not available
+                            // Format the added date
                             $formattedDate = isset($row['added']) ? date('d M Y', strtotime($row['added'])) : date('d M Y');
                             
                             // Set the status class and text
@@ -85,7 +82,8 @@ if (isset($_SESSION['error'])) {
                                     $statusText = 'Draft';
                                     break;
                             }
-                            
+
+                            // Display product row
                             echo '<tr>
                                 <td>
                                     <div class="product-info">
@@ -117,6 +115,7 @@ if (isset($_SESSION['error'])) {
 </div>
 
 <script>
+// Search function for products
 function searchProducts() {
     var input, filter, table, tr, td, i, txtValue;
     input = document.getElementById("searchInput");
@@ -139,6 +138,7 @@ function searchProducts() {
 </script>
 
 <style>
+/* Your CSS styles for the page */
 .product-page {
     padding: 20px;
     background-color: #fff;
@@ -257,5 +257,43 @@ function searchProducts() {
 </style>
 
 <?php include '../views/footer.php'; ?>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="../js/dashboard.js"></script>
+
+<?php
+// Update product stock when order status changes to "Processing"
+if (isset($_GET['cart_id'])) {
+    try {
+        $cart_id = $_GET['cart_id']; // Cart ID passed via URL (should be set when status changes to 'Processing')
+
+        // Retrieve all items in the cart
+        $stmtCartItems = $conn->prepare("SELECT product_id, qty FROM cart_item WHERE cart_id = ?");
+        $stmtCartItems->execute([$cart_id]);
+
+        while ($item = $stmtCartItems->fetch(PDO::FETCH_ASSOC)) {
+            // Check the current stock of the product
+            $stmtStock = $conn->prepare("SELECT stock FROM product WHERE id_product = ?");
+            $stmtStock->execute([$item['product_id']]);
+            $product = $stmtStock->fetch(PDO::FETCH_ASSOC);
+
+            if ($product) {
+                // Subtract the stock based on the quantity purchased
+                $newStock = $product['stock'] - $item['qty'];
+
+                // Update the product stock in the database
+                $stmtUpdateStock = $conn->prepare("UPDATE product SET stock = ? WHERE id_product = ?");
+                $stmtUpdateStock->execute([$newStock, $item['product_id']]);
+            }
+        }
+
+        // Update cart status to "Processing" when payment is confirmed
+        $stmtUpdateOrder = $conn->prepare("UPDATE cart SET status = 'Processing' WHERE id = ?");
+        $stmtUpdateOrder->execute([$cart_id]);
+
+        echo "Stok diperbarui dan status cart diubah menjadi 'Processing'.";
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
+    }
+}
+?>

@@ -17,7 +17,7 @@ $check->execute([$user_id]);
 $orderExists = $check->fetchColumn();
 
 if (!$orderExists) {
-    // 3. Tambah order ke `cart`
+    // 3. Tambah order ke `cart` dengan status 'Processing'
     $stmtCart = $conn->prepare("INSERT INTO cart (user_id, status, order_status, created_at, updated_at)
                                 VALUES (?, 'checked_out', 'Processing', NOW(), NOW())");
     $stmtCart->execute([$user_id]);
@@ -71,7 +71,6 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </div>
                             <span class="text-sm px-3 py-1 rounded-full 
                                 <?= match($order['order_status']) {
-                                    'Pending' => 'bg-yellow-100 text-yellow-800',
                                     'Processing' => 'bg-blue-100 text-blue-800',
                                     'Shipped' => 'bg-purple-100 text-purple-800',
                                     'Completed' => 'bg-green-100 text-green-800',
