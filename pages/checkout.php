@@ -62,8 +62,7 @@ if (isset($_POST['process_payment']) && $_POST['process_payment'] == 'qris') {
         $conn->commit();
         
         // Redirect ke halaman sukses atau tampilkan pesan
-        echo "<div class='text-center py-12 text-green-500'>Pembayaran berhasil diproses, stok produk sudah berkurang.</div>";
-        echo "<script>setTimeout(function(){ window.location.href = 'order_success.php'; }, 2000);</script>";
+        echo "<script>setTimeout(function(){ window.location.href = 'succes_page.php'; }, 2000);</script>";
         exit;
         
     } catch (Exception $e) {
