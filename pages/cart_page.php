@@ -228,7 +228,7 @@ function updateDeleteBtn() {
     document.getElementById('selectAll').checked = Array.from(checkboxes).every(cb => cb.checked);
 }
 
-// Proceed to checkout: jika ada item yang di-select (1 atau lebih), checkout hanya item yang di-select
+// Checkout: jika ada item yang di-select (1 atau lebih), checkout hanya item yang di-select
 // jika tidak ada yang di-select, checkout semua item
 document.getElementById('proceedCheckoutBtn')?.addEventListener('click', function() {
     const checked = Array.from(document.querySelectorAll('.item-checkbox:checked'));
