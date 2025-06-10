@@ -41,7 +41,7 @@ include '../views/navbar.php';
 </head>
 <body class="bg-gray-50 min-h-screen">
   <div class="max-w-5xl mx-auto py-10 px-4">
-    <h1 class="text-3xl font-semibold mb-6 text-pink-700">Produk Favorit Saya</h1>
+    <h1 class="text-3xl font-semibold mb-6 text-pink-700">My Wishlist</h1>
 
     <?php if (count($favorites) === 0): ?>
       <p class="text-center text-gray-400">Belum ada produk favorit.</p>
