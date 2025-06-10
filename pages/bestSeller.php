@@ -14,6 +14,7 @@ $tahun = date('Y');
 $tgl_awal = "$tahun-".str_pad($bulan,2,'0',STR_PAD_LEFT)."-01";
 $tgl_akhir = date("Y-m-t", strtotime($tgl_awal));
 
+//stock kalau habis 
 $products = [];
 foreach ($categories as $cat) {
     $sql = "
@@ -107,28 +108,39 @@ if ($user_id) {
             $productPrice = number_format($product['price'], 0, ',', '.');
             $isFavorite = in_array($product['id_product'], $favIds);
             ?>
-            <div class="border border-gray-300 rounded-lg p-4 flex flex-col bg-white shadow-lg">
-          <span class="inline-block bg-pink-600 text-white text-xs font-semibold mb-2 w-max" style="padding:2px 8px; border-radius:10px;">
-           Best Seller
-          </span>
-                <div class="flex justify-center mb-4 h-40">
-                    <img src="<?= $imageURL ?>" alt="<?= $productName ?>" class="h-full w-auto object-contain rounded-lg"/>
-                </div>
-                <p class="text-gray-700 text-xs font-semibold mb-1"><?= htmlspecialchars($product['category']) ?></p>
-                <div class="mb-2 font-semibold text-gray-900 text-base leading-snug flex-grow"><?= $productName ?></div>
-                <div class="flex items-center space-x-2 mb-4 text-gray-900 text-lg font-bold">Rp <?= $productPrice ?></div>
-                <div class="flex gap-2 mt-auto">
-                    <button class="flex-1 bg-pink-600 hover:bg-pink-700 text-white py-2 rounded font-semibold add-to-cart-btn" data-product-id="<?= $product['id_product'] ?>">Tambah ke Keranjang</button>
-                    <button
-                        class="w-12 flex items-center justify-center border border-gray-300 rounded text-pink-600 hover:text-pink-800 transition favorite-btn"
-                        data-product-id="<?= $product['id_product'] ?>"
-                        aria-label="<?= $isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit' ?>"
-                        title="<?= $isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit' ?>"
-                    >
-                        <i class="<?= $isFavorite ? 'fas' : 'far' ?> fa-heart"></i>
-                    </button>
-                </div>
-            </div>
+<div class="border border-gray-300 rounded-lg p-4 flex flex-col bg-white shadow-lg">
+  <span class="inline-block bg-pink-600 text-white text-xs font-semibold mb-2 w-max" style="padding:2px 8px; border-radius:10px;">
+   Best Seller
+  </span>
+  <div class="flex justify-center mb-4 h-40">
+    <img src="<?= $imageURL ?>" alt="<?= $productName ?>" class="h-full w-auto object-contain rounded-lg"/>
+  </div>
+  <p class="text-gray-700 text-xs font-semibold mb-1"><?= htmlspecialchars($product['category']) ?></p>
+  
+  <div class="mb-2 font-semibold text-gray-900 text-base leading-snug flex-grow"><?= $productName ?></div>
+  
+  <!-- TARUH KODE INI DI SINI -->
+  <?php if ($product['stock'] > 0): ?>
+    <div class="mb-1 text-xs text-gray-500">Stok: <?= $product['stock'] ?></div>
+  <?php else: ?>
+    <div class="mb-1 text-xs text-red-400 font-semibold">Stok Habis</div>
+  <?php endif; ?>
+  <!-- SAMPAI SINI -->
+  
+  <div class="flex items-center space-x-2 mb-4 text-gray-900 text-lg font-bold">Rp <?= $productPrice ?></div>
+  <div class="flex gap-2 mt-auto">
+      <button class="flex-1 bg-pink-600 hover:bg-pink-700 text-white py-2 rounded font-semibold add-to-cart-btn" data-product-id="<?= $product['id_product'] ?>">Tambah ke Keranjang</button>
+      <button
+          class="w-12 flex items-center justify-center border border-gray-300 rounded text-pink-600 hover:text-pink-800 transition favorite-btn"
+          data-product-id="<?= $product['id_product'] ?>"
+          aria-label="<?= $isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit' ?>"
+          title="<?= $isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit' ?>"
+      >
+          <i class="<?= $isFavorite ? 'fas' : 'far' ?> fa-heart"></i>
+      </button>
+  </div>
+</div>
+
         <?php endforeach; ?>
         <?php if (count($products) == 0): ?>
           <div class="w-full text-center text-gray-400 py-12 col-span-4">Belum ada produk terlaris bulan ini.</div>

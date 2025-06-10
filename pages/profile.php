@@ -200,10 +200,11 @@ include '../views/navbar.php';
             <!-- Main Content Area -->
             <div class="lg:col-span-3 space-y-6">
                 <!-- Order History -->
-                <div class="bg-white rounded-xl p-6">
-                    <h2 class="text-lg font-semibold text-gray-900 mb-1">Order history</h2>
-                    <p class="text-xs text-gray-700">You haven't placed any orders yet.</p>
-                </div>
+                <a href="orders.php" class="block bg-white rounded-xl p-6 shadow hover:bg-gray-50 transition no-underline">
+                 <h2 class="text-lg font-semibold text-gray-900 mb-1">Order history</h2>
+                 <p class="text-xs text-gray-700">You haven't placed any orders yet.</p>
+                </a>
+
 
                 <!-- Account Settings -->
                 <div class="bg-white rounded-xl p-6">
