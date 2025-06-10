@@ -33,23 +33,14 @@ $total_savings = 0;
     <div class="text-center py-12 text-gray-500">Keranjang Anda kosong.</div>
 <?php else: ?>
     <form id="cartModalForm">
-    <div class="flex items-center mb-4 gap-4">
-        <label class="flex items-center gap-2 cursor-pointer select-none">
-            <input type="checkbox" id="modalSelectAll" class="accent-pink-500 w-5 h-5 rounded-full border-2 border-pink-400 shadow-sm transition-all duration-150">
-            <span class="text-sm text-pink-700 font-semibold">Pilih Semua</span>
-        </label>
-        <button type="button" class="bg-transparent border-0 text-pink-600 font-semibold text-sm underline hover:text-pink-700 focus:outline-none px-0 py-0 shadow-none ml-2" id="modalDeleteSelectedBtn" style="display:none" disabled onclick="modalDeleteSelected()">Hapus Item</button>
-    </div>
     <div class="divide-y divide-gray-200">
         <?php foreach ($cart_items as $item): ?>
         <?php
             $subtotal += $item['qty'] * $item['price'];
             $imageURL = (!empty($item['image'])) ? '../uploads/' . $item['image'] : 'https://via.placeholder.com/50x50?text=No+Image';
         ?>
-        <div class="flex py-4 items-center hover:bg-pink-50 rounded-lg transition">
-            <label class="flex items-center mr-4 cursor-pointer select-none">
-                <input type="checkbox" class="modal-item-checkbox accent-pink-500 w-5 h-5 rounded-full border-2 border-pink-400 shadow-sm transition-all duration-150" value="<?= $item['id'] ?>">
-            </label>
+        <div class="flex py-4 items-center hover:bg-pink-50 rounded-lg transition" data-id="<?= $item['id'] ?>">
+            <!-- Tidak ada checkbox/select -->
             <div class="w-20 h-20 flex-shrink-0 flex items-center justify-center border rounded-lg bg-white mr-4">
                 <img src="<?= htmlspecialchars($imageURL) ?>" alt="" class="object-contain h-16 w-16" />
             </div>
@@ -84,40 +75,34 @@ $total_savings = 0;
     </div>
     </form>
     <script>
-    // Fix: event binding for select all and item checkboxes
-    document.addEventListener('DOMContentLoaded', function() {
-        const selectAll = document.getElementById('modalSelectAll');
-        function modalToggleSelectAll() {
-            const checkboxes = document.querySelectorAll('.modal-item-checkbox');
-            checkboxes.forEach(cb => { cb.checked = selectAll.checked; });
-            modalUpdateDeleteBtn();
-        }
-        function modalUpdateDeleteBtn() {
-            const checkboxes = document.querySelectorAll('.modal-item-checkbox');
-            const btn = document.getElementById('modalDeleteSelectedBtn');
-            const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
-            btn.disabled = !anyChecked;
-            btn.style.display = anyChecked ? 'inline-block' : 'none';
-            // update selectAll checked state
-            if (checkboxes.length > 0) {
-                selectAll.checked = Array.from(checkboxes).every(cb => cb.checked);
+    // Tidak ada kode select/select all/hapus selected
+    function cartDelete(id, btn) {
+        var fd = new FormData();
+        fd.append('action', 'delete');
+        fd.append('cart_item_id', id);
+        fetch((typeof BASE_CART !== "undefined" ? BASE_CART : '../cart/') + 'cart_api.php', {
+            method: 'POST',
+            body: fd
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // Hapus elemen dari DOM
+                const row = document.querySelector('.flex[data-id="'+id+'"]');
+                if (row) row.remove();
+                // Update badge jika ada
+                if (data.cart_count !== undefined && document.getElementById('cart-count-badge')) {
+                    document.getElementById('cart-count-badge').textContent = data.cart_count;
+                }
+                // Jika sudah kosong, reload modal (atau tampilkan pesan kosong)
+                if (document.querySelectorAll('.flex[data-id]').length === 0) {
+                    location.reload();
+                }
             } else {
-                selectAll.checked = false;
+                alert(data.message || 'Gagal menghapus item.');
             }
-        }
-        // Bind select all
-        selectAll.addEventListener('change', modalToggleSelectAll);
-        // Bind each item checkbox
-        document.querySelectorAll('.modal-item-checkbox').forEach(function(cb) {
-            cb.addEventListener('change', modalUpdateDeleteBtn);
         });
-        // Initial state
-        modalUpdateDeleteBtn();
-        // Expose for inline onchange
-        window.modalUpdateDeleteBtn = modalUpdateDeleteBtn;
-        window.modalToggleSelectAll = modalToggleSelectAll;
-    });
-    // Pastikan BASE_CART sudah didefinisikan di navbar.php
+    }
     function cartPlus(id, btn) {
         var fd = new FormData();
         fd.append('action', 'plus');

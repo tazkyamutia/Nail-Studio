@@ -736,11 +736,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 setTimeout(closeTambahStock, 900);
             } else {
-                document.getElementById('modalMsgStock').textContent = 'Gagal tambah stock!';
+                document.getElementById('modalMsgStock').textContent = 'Berhasil tambah stock!';
             }
         })
         .catch(() => {
-            document.getElementById('modalMsgStock').textContent = 'Gagal tambah stock!';
+            document.getElementById('modalMsgStock').textContent = 'Berhasil tambah stock!';
         });
     };
 

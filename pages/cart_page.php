@@ -55,8 +55,9 @@ include '../views/navbar.php';
                     <input type="checkbox" id="selectAll" class="accent-pink-500 w-5 h-5 rounded-full border-2 border-pink-400 shadow-sm transition-all duration-150" onclick="toggleSelectAll(this)">
                     <span class="text-sm text-pink-700 font-semibold">Select All</span>
                 </label>
-                <button type="submit" name="delete_selected" id="deleteSelectedBtn" style="display:none"
-                    class="bg-transparent border-0 text-pink-600 font-semibold text-sm underline hover:text-pink-700 focus:outline-none px-0 py-0 shadow-none ml-2">
+                <button type="button" id="deleteSelectedBtn" style="display:none"
+                    class="bg-transparent border-0 text-pink-600 font-semibold text-sm underline hover:text-pink-700 focus:outline-none px-0 py-0 shadow-none ml-2"
+                    onclick="deleteSelectedItems()" disabled>
                     Hapus Item
                 </button>
             </div>
@@ -65,7 +66,7 @@ include '../views/navbar.php';
                     <?php
                         $imageURL = (!empty($item['image'])) ? '../uploads/' . $item['image'] : 'https://via.placeholder.com/50x50?text=No+Image';
                     ?>
-                    <div class="flex py-4 items-center hover:bg-pink-50 rounded-lg transition">
+                    <div class="flex py-4 items-center hover:bg-pink-50 rounded-lg transition" data-id="<?= $item['id'] ?>" data-price="<?= $item['price'] ?>">
                         <label class="flex items-center mr-4 cursor-pointer select-none">
                             <input type="checkbox" name="selected_items[]" value="<?= $item['id'] ?>" class="item-checkbox accent-pink-500 w-5 h-5 rounded-full border-2 border-pink-400 shadow-sm transition-all duration-150" onchange="updateDeleteBtn()">
                         </label>
@@ -77,23 +78,19 @@ include '../views/navbar.php';
                                 <div>
                                     <div class="font-semibold text-pink-800 text-base"><?= htmlspecialchars($item['namaproduct']) ?></div>
                                 </div>
-                                <form method="post" action="" onsubmit="return confirm('Hapus item ini dari keranjang?');" style="margin:0;">
-                                    <input type="hidden" name="delete_id" value="<?= $item['id'] ?>">
-                                    <button type="submit" class="text-gray-400 hover:text-pink-500 transition ml-2" aria-label="Remove">
-                                        <span class="sr-only">Remove</span>
-                                        <i class="fas fa-times-circle text-xl"></i>
-                                    </button>
-                                </form>
+                                <button class="text-gray-400 hover:text-pink-500 transition ml-2 remove-btn" aria-label="Remove" data-id="<?= $item['id'] ?>">
+                                    <span class="sr-only">Remove</span>
+                                    <i class="fas fa-times-circle text-xl"></i>
+                                </button>
                             </div>
                             <div class="flex items-center mt-3">
-                                <form method="post" action="" class="flex items-center gap-2" style="margin:0;">
-                                    <input type="hidden" name="update_id" value="<?= $item['id'] ?>">
-                                    <button type="submit" name="minus" class="w-8 h-8 flex items-center justify-center text-xl text-pink-700 hover:text-white hover:bg-pink-500 bg-pink-100 rounded-full transition shadow">-</button>
-                                    <input type="text" name="qty" value="<?= $item['qty'] ?>" min="1" class="w-10 h-8 border-0 text-center text-pink-700 text-sm bg-pink-50 focus:ring-2 focus:ring-pink-300 rounded shadow" style="border:1px solid #fbcfe8;" />
-                                    <button type="submit" name="plus" class="w-8 h-8 flex items-center justify-center text-xl text-pink-700 hover:text-white hover:bg-pink-500 bg-pink-100 rounded-full transition shadow">+</button>
-                                </form>
+                                <div class="flex items-center border rounded-lg bg-pink-50 px-3 py-1" style="min-width:110px;">
+                                    <button type="button" class="text-xl text-gray-700 hover:text-pink-600 px-2 minus-btn" data-id="<?= $item['id'] ?>" style="background:none;border:none;">-</button>
+                                    <input type="text" value="<?= $item['qty'] ?>" min="1" readonly class="w-8 text-center bg-transparent border-0 text-gray-900 font-semibold qty-input" data-id="<?= $item['id'] ?>" style="outline:none;" />
+                                    <button type="button" class="text-xl text-gray-700 hover:text-pink-600 px-2 plus-btn" data-id="<?= $item['id'] ?>" style="background:none;border:none;">+</button>
+                                </div>
                                 <div class="ml-auto space-x-2 flex items-center">
-                                    <span class="text-lg font-bold text-pink-700">Rp<?= number_format($item['price'], 0, ',', '.') ?></span>
+                                    <span class="text-lg font-bold text-pink-700 item-total" data-id="<?= $item['id'] ?>">Rp<?= number_format($item['qty'] * $item['price'], 0, ',', '.') ?></span>
                                 </div>
                             </div>
                         </div>
@@ -103,12 +100,12 @@ include '../views/navbar.php';
             <hr class="my-4 border-pink-200" />
             <div class="flex justify-between items-center mb-2">
                 <span class="text-pink-800 font-semibold">Total</span>
-                <span class="text-pink-700 font-bold text-xl">Rp<?= number_format($subtotal, 0, ',', '.') ?></span>
+                <span class="text-pink-700 font-bold text-xl" id="cart-subtotal">Rp<?= number_format($subtotal, 0, ',', '.') ?></span>
             </div>
             <div class="flex justify-end mt-6">
-                <a href="checkout.php" class="px-6 py-2 rounded-lg bg-pink-600 text-white font-semibold hover:bg-pink-700 transition shadow">
+                <button type="button" id="proceedCheckoutBtn" class="px-6 py-2 rounded-lg bg-pink-600 text-white font-semibold hover:bg-pink-700 transition shadow">
                     <i class="fas fa-credit-card mr-1"></i> Proceed to Checkout
-                </a>
+                </button>
             </div>
         </div>
         </form>
@@ -116,6 +113,107 @@ include '../views/navbar.php';
     <a href="nowShop.php" class="inline-block mt-4 text-pink-600 hover:underline font-semibold"><i class="fas fa-arrow-left"></i>Continue Shopping</a>
 </div>
 <script>
+document.querySelectorAll('.plus-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const id = this.dataset.id;
+        updateQty(id, 'plus');
+    });
+});
+document.querySelectorAll('.minus-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const id = this.dataset.id;
+        updateQty(id, 'minus');
+    });
+});
+document.querySelectorAll('.remove-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const id = this.dataset.id;
+        removeCartItem(id);
+    });
+});
+
+function removeCartItem(id) {
+    var fd = new FormData();
+    fd.append('action', 'delete');
+    fd.append('cart_item_id', id);
+    fetch('../cart/cart_api.php', { method: 'POST', body: fd })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // Hapus baris dari DOM tanpa konfirmasi/alert
+                const row = document.querySelector('[data-id="'+id+'"]');
+                if (row) row.remove();
+                // Update subtotal
+                updateSubtotal();
+                // Update badge jika ada
+                if (data.cart_count !== undefined && document.getElementById('cart-count-badge')) {
+                    document.getElementById('cart-count-badge').textContent = data.cart_count;
+                }
+                // Jika sudah tidak ada item, tampilkan pesan kosong
+                if (document.querySelectorAll('.remove-btn').length === 0) {
+                    const cartBox = document.querySelector('.bg-white.rounded-2xl.shadow-lg');
+                    if (cartBox) cartBox.style.display = 'none';
+                    const emptyMsg = document.createElement('div');
+                    emptyMsg.className = 'text-center py-12 text-gray-400 bg-pink-50 rounded-lg shadow-inner';
+                    emptyMsg.textContent = 'Keranjang Anda kosong.';
+                    document.querySelector('.max-w-4xl.mx-auto.py-10.px-4').appendChild(emptyMsg);
+                }
+            }
+        });
+}
+
+function updateQty(id, action) {
+    var fd = new FormData();
+    fd.append('action', action);
+    fd.append('cart_item_id', id);
+    fetch('../cart/cart_api.php', { method: 'POST', body: fd })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                if (action === 'minus' && data.cart_count === 0) {
+                    location.reload();
+                    return;
+                } else {
+                    let qtyInput = document.querySelector('.qty-input[data-id="'+id+'"]');
+                    let itemDiv = document.querySelector('[data-id="'+id+'"]');
+                    let price = parseInt(itemDiv.getAttribute('data-price'));
+                    if (action === 'plus') {
+                        qtyInput.value = parseInt(qtyInput.value) + 1;
+                    } else if (action === 'minus' && parseInt(qtyInput.value) > 1) {
+                        qtyInput.value = parseInt(qtyInput.value) - 1;
+                    }
+                    // Update item total
+                    let itemTotal = document.querySelector('.item-total[data-id="'+id+'"]');
+                    itemTotal.textContent = 'Rp' + numberWithSeparator(qtyInput.value * price);
+                }
+                // Update subtotal
+                updateSubtotal();
+                // Update badge jika ada
+                if (data.cart_count !== undefined && document.getElementById('cart-count-badge')) {
+                    document.getElementById('cart-count-badge').textContent = data.cart_count;
+                }
+            } else {
+                alert(data.message || 'Gagal update keranjang.');
+            }
+        });
+}
+
+function updateSubtotal() {
+    let total = 0;
+    document.querySelectorAll('.qty-input').forEach(function(input) {
+        let qty = parseInt(input.value);
+        let itemDiv = document.querySelector('[data-id="'+input.dataset.id+'"]');
+        let price = parseInt(itemDiv.getAttribute('data-price'));
+        total += qty * price;
+    });
+    document.getElementById('cart-subtotal').textContent = 'Rp' + numberWithSeparator(total);
+}
+
+function numberWithSeparator(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+// Checkbox logic
 function toggleSelectAll(source) {
     const checkboxes = document.querySelectorAll('.item-checkbox');
     checkboxes.forEach(cb => cb.checked = source.checked);
@@ -129,36 +227,72 @@ function updateDeleteBtn() {
     btn.style.display = anyChecked ? 'inline-block' : 'none';
     document.getElementById('selectAll').checked = Array.from(checkboxes).every(cb => cb.checked);
 }
-</script>
-<?php
-// Handle update qty & delete
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['delete_id'])) {
-        $del_id = intval($_POST['delete_id']);
-        $stmt = $conn->prepare("DELETE FROM cart_item WHERE id = ? AND cart_id = ?");
-        $stmt->execute([$del_id, $cart_id]);
-        echo "<script>location.href='cart_page.php';</script>";
-        exit;
+
+// Checkout: jika ada item yang di-select (1 atau lebih), checkout hanya item yang di-select
+// jika tidak ada yang di-select, checkout semua item
+document.getElementById('proceedCheckoutBtn')?.addEventListener('click', function() {
+    const checked = Array.from(document.querySelectorAll('.item-checkbox:checked'));
+    if (checked.length > 0) {
+        // Ada satu atau lebih item yang di-select, checkout hanya item yang dipilih
+        let form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'checkout.php';
+        checked.forEach(cb => {
+            let input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'selected_items[]';
+            input.value = cb.value;
+            form.appendChild(input);
+        });
+        document.body.appendChild(form);
+        form.submit();
+    } else {
+        // Tidak ada yang di-select, checkout semua item
+        window.location.href = 'checkout.php';
     }
-    if (isset($_POST['update_id'])) {
-        $item_id = intval($_POST['update_id']);
-        $qty = isset($_POST['qty']) ? max(1, intval($_POST['qty'])) : 1;
-        if (isset($_POST['plus'])) $qty++;
-        if (isset($_POST['minus'])) $qty = max(1, $qty-1);
-        $stmt = $conn->prepare("UPDATE cart_item SET qty = ? WHERE id = ? AND cart_id = ?");
-        $stmt->execute([$qty, $item_id, $cart_id]);
-        echo "<script>location.href='cart_page.php';</script>";
-        exit;
-    }
-    if (isset($_POST['delete_selected']) && isset($_POST['selected_items'])) {
-        $selected_ids = array_map('intval', $_POST['selected_items']);
-        $in_query = implode(',', array_fill(0, count($selected_ids), '?'));
-        $stmt = $conn->prepare("DELETE FROM cart_item WHERE id IN ($in_query) AND cart_id = ?");
-        $stmt->execute(array_merge($selected_ids, [$cart_id]));
-        echo "<script>location.href='cart_page.php';</script>";
-        exit;
-    }
+});
+
+function deleteSelectedItems() {
+    // Ambil semua checkbox yang dicentang
+    const checked = Array.from(document.querySelectorAll('.item-checkbox:checked'));
+    if (checked.length === 0) return;
+    //if (!confirm('Hapus item yang dipilih dari keranjang?')) return;
+
+    // Ambil id item yang dipilih
+    const ids = checked.map(cb => cb.value);
+
+    var fd = new FormData();
+    fd.append('action', 'delete_selected');
+    ids.forEach(id => fd.append('selected_items[]', id));
+
+    fetch('../cart/cart_api.php', { method: 'POST', body: fd })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // Hapus baris dari DOM
+                ids.forEach(id => {
+                    const row = document.querySelector('[data-id="'+id+'"]');
+                    if (row) row.remove();
+                });
+                // Jika sudah tidak ada item, reload halaman/cart
+                if (document.querySelectorAll('.remove-btn').length === 0) {
+                    location.reload();
+                    return;
+                }
+                // Update subtotal
+                updateSubtotal();
+                // Update badge jika ada
+                if (data.cart_count !== undefined && document.getElementById('cart-count-badge')) {
+                    document.getElementById('cart-count-badge').textContent = data.cart_count;
+                }
+                // Reset select all
+                document.getElementById('selectAll').checked = false;
+                updateDeleteBtn();
+            } else {
+                alert(data.message || 'Gagal menghapus item.');
+            }
+        });
 }
-?>
+</script>
 </body>
 </html>

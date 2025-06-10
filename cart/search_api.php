@@ -1,20 +1,14 @@
 <?php
-$dbhost = 'localhost';
-$dbuser = 'root';
-$dbpass = '';
-$dbname = 'nailstudio_db';
+include '../configdb.php';
 
 $q = isset($_GET['q']) ? strtolower(trim($_GET['q'])) : '';
 
 try {
-    $pdo = new PDO("mysql:host=$dbhost;dbname=$dbname;charset=utf8", $dbuser, $dbpass, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-    ]);
     $products = [];
     if ($q !== '' && strlen($q) >= 2) {
-        $stmt = $pdo->prepare("SELECT id_product, namaproduct, image, price FROM product WHERE status = 'published' AND LOWER(namaproduct) LIKE ?");
+        $stmt = $conn->prepare("SELECT id_product, namaproduct, image, price FROM product WHERE status = 'published' AND LOWER(namaproduct) LIKE ?");
         $stmt->execute(['%' . $q . '%']);
-        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $products = $stmt->fetchAll();
     }
 } catch (Exception $e) {
     die("Database error: " . $e->getMessage());
