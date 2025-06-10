@@ -128,9 +128,7 @@ document.querySelectorAll('.minus-btn').forEach(btn => {
 document.querySelectorAll('.remove-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         const id = this.dataset.id;
-        if (confirm('Hapus item ini dari keranjang?')) {
-            removeCartItem(id);
-        }
+        removeCartItem(id);
     });
 });
 
@@ -142,22 +140,24 @@ function removeCartItem(id) {
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                // Hapus baris dari DOM
+                // Hapus baris dari DOM tanpa konfirmasi/alert
                 const row = document.querySelector('[data-id="'+id+'"]');
                 if (row) row.remove();
-                // Jika sudah tidak ada item, reload halaman/cart
-                if (document.querySelectorAll('.remove-btn').length === 0) {
-                    location.reload();
-                    return;
-                }
                 // Update subtotal
                 updateSubtotal();
                 // Update badge jika ada
                 if (data.cart_count !== undefined && document.getElementById('cart-count-badge')) {
                     document.getElementById('cart-count-badge').textContent = data.cart_count;
                 }
-            } else {
-                alert(data.message || 'Gagal menghapus item.');
+                // Jika sudah tidak ada item, tampilkan pesan kosong
+                if (document.querySelectorAll('.remove-btn').length === 0) {
+                    const cartBox = document.querySelector('.bg-white.rounded-2xl.shadow-lg');
+                    if (cartBox) cartBox.style.display = 'none';
+                    const emptyMsg = document.createElement('div');
+                    emptyMsg.className = 'text-center py-12 text-gray-400 bg-pink-50 rounded-lg shadow-inner';
+                    emptyMsg.textContent = 'Keranjang Anda kosong.';
+                    document.querySelector('.max-w-4xl.mx-auto.py-10.px-4').appendChild(emptyMsg);
+                }
             }
         });
 }
@@ -256,7 +256,7 @@ function deleteSelectedItems() {
     // Ambil semua checkbox yang dicentang
     const checked = Array.from(document.querySelectorAll('.item-checkbox:checked'));
     if (checked.length === 0) return;
-    if (!confirm('Hapus item yang dipilih dari keranjang?')) return;
+    //if (!confirm('Hapus item yang dipilih dari keranjang?')) return;
 
     // Ambil id item yang dipilih
     const ids = checked.map(cb => cb.value);
