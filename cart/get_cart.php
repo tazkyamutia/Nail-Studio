@@ -36,9 +36,13 @@ $total_savings = 0;
     <div class="flex items-center mb-4 gap-4">
         <label class="flex items-center gap-2 cursor-pointer select-none">
             <input type="checkbox" id="modalSelectAll" class="accent-pink-500 w-5 h-5 rounded-full border-2 border-pink-400 shadow-sm transition-all duration-150">
-            <span class="text-sm text-pink-700 font-semibold">Pilih Semua</span>
+            <span class="text-sm text-pink-700 font-semibold">Select All</span>
         </label>
-        <button type="button" class="bg-transparent border-0 text-pink-600 font-semibold text-sm underline hover:text-pink-700 focus:outline-none px-0 py-0 shadow-none ml-2" id="modalDeleteSelectedBtn" style="display:none" disabled onclick="modalDeleteSelected()">Hapus Item</button>
+        <button type="button" id="modalDeleteSelectedBtn" style="display:none"
+            class="bg-transparent border-0 text-pink-600 font-semibold text-sm underline hover:text-pink-700 focus:outline-none px-0 py-0 shadow-none ml-2"
+            onclick="modalDeleteSelectedItems()" disabled>
+            Hapus Item
+        </button>
     </div>
     <div class="divide-y divide-gray-200">
         <?php foreach ($cart_items as $item): ?>
@@ -46,7 +50,7 @@ $total_savings = 0;
             $subtotal += $item['qty'] * $item['price'];
             $imageURL = (!empty($item['image'])) ? '../uploads/' . $item['image'] : 'https://via.placeholder.com/50x50?text=No+Image';
         ?>
-        <div class="flex py-4 items-center hover:bg-pink-50 rounded-lg transition">
+        <div class="flex py-4 items-center hover:bg-pink-50 rounded-lg transition" data-id="<?= $item['id'] ?>" data-price="<?= $item['price'] ?>">
             <label class="flex items-center mr-4 cursor-pointer select-none">
                 <input type="checkbox" class="modal-item-checkbox accent-pink-500 w-5 h-5 rounded-full border-2 border-pink-400 shadow-sm transition-all duration-150" value="<?= $item['id'] ?>">
             </label>
@@ -84,95 +88,69 @@ $total_savings = 0;
     </div>
     </form>
     <script>
-    // Fix: event binding for select all and item checkboxes
-    document.addEventListener('DOMContentLoaded', function() {
+    // --- Select All & Delete Selected mirip cart_page ---
+    function modalToggleSelectAll() {
         const selectAll = document.getElementById('modalSelectAll');
-        function modalToggleSelectAll() {
-            const checkboxes = document.querySelectorAll('.modal-item-checkbox');
-            checkboxes.forEach(cb => { cb.checked = selectAll.checked; });
-            modalUpdateDeleteBtn();
-        }
-        function modalUpdateDeleteBtn() {
-            const checkboxes = document.querySelectorAll('.modal-item-checkbox');
-            const btn = document.getElementById('modalDeleteSelectedBtn');
-            const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
-            btn.disabled = !anyChecked;
-            btn.style.display = anyChecked ? 'inline-block' : 'none';
-            // update selectAll checked state
-            if (checkboxes.length > 0) {
-                selectAll.checked = Array.from(checkboxes).every(cb => cb.checked);
-            } else {
-                selectAll.checked = false;
-            }
-        }
-        // Bind select all
-        selectAll.addEventListener('change', modalToggleSelectAll);
-        // Bind each item checkbox
-        document.querySelectorAll('.modal-item-checkbox').forEach(function(cb) {
-            cb.addEventListener('change', modalUpdateDeleteBtn);
-        });
-        // Initial state
+        const checkboxes = document.querySelectorAll('.modal-item-checkbox');
+        checkboxes.forEach(cb => { cb.checked = selectAll.checked; });
         modalUpdateDeleteBtn();
-        // Expose for inline onchange
-        window.modalUpdateDeleteBtn = modalUpdateDeleteBtn;
-        window.modalToggleSelectAll = modalToggleSelectAll;
+    }
+    function modalUpdateDeleteBtn() {
+        const checkboxes = document.querySelectorAll('.modal-item-checkbox');
+        const btn = document.getElementById('modalDeleteSelectedBtn');
+        const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+        btn.disabled = !anyChecked;
+        btn.style.display = anyChecked ? 'inline-block' : 'none';
+        // update selectAll checked state
+        if (checkboxes.length > 0) {
+            document.getElementById('modalSelectAll').checked = Array.from(checkboxes).every(cb => cb.checked);
+        } else {
+            document.getElementById('modalSelectAll').checked = false;
+        }
+    }
+    document.getElementById('modalSelectAll').addEventListener('change', modalToggleSelectAll);
+    document.querySelectorAll('.modal-item-checkbox').forEach(function(cb) {
+        cb.addEventListener('change', modalUpdateDeleteBtn);
     });
-    // Pastikan BASE_CART sudah didefinisikan di navbar.php
-    function cartPlus(id, btn) {
+    // Initial state
+    modalUpdateDeleteBtn();
+
+    function modalDeleteSelectedItems() {
+        const checked = Array.from(document.querySelectorAll('.modal-item-checkbox:checked'));
+        if (checked.length === 0) return;
+        if (!confirm('Hapus item yang dipilih dari keranjang?')) return;
+
+        const ids = checked.map(cb => cb.value);
         var fd = new FormData();
-        fd.append('action', 'plus');
-        fd.append('cart_item_id', id);
-        fetch((typeof BASE_CART !== "undefined" ? BASE_CART : '../cart/') + 'cart_api.php', { method: 'POST', body: fd })
+        fd.append('action', 'delete_selected');
+        ids.forEach(id => fd.append('selected_items[]', id));
+
+        fetch('../cart/cart_api.php', { method: 'POST', body: fd })
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    // Update qty input
-                    let row = btn.closest('.flex');
-                    let qtyInput = row.querySelector('.qty-input');
-                    if (qtyInput) qtyInput.value = parseInt(qtyInput.value) + 1;
+                    // Hapus baris dari DOM
+                    ids.forEach(id => {
+                        const row = document.querySelector('.modal-item-checkbox[value="'+id+'"]')?.closest('.flex');
+                        if (row) row.remove();
+                    });
+                    // Jika sudah tidak ada item, reload modal/cart
+                    if (document.querySelectorAll('.modal-item-checkbox').length === 0) {
+                        location.reload();
+                        return;
+                    }
+                    // Update badge jika ada
                     if (data.cart_count !== undefined && document.getElementById('cart-count-badge')) {
                         document.getElementById('cart-count-badge').textContent = data.cart_count;
                     }
+                    // Reset select all
+                    document.getElementById('modalSelectAll').checked = false;
+                    modalUpdateDeleteBtn();
                 } else {
-                    alert(data.message || 'Gagal menambah qty.');
+                    alert(data.message || 'Gagal menghapus item.');
                 }
             });
     }
-    function cartMinus(id, btn) {
-        var fd = new FormData();
-        fd.append('action', 'minus');
-        fd.append('cart_item_id', id);
-        fetch((typeof BASE_CART !== "undefined" ? BASE_CART : '../cart/') + 'cart_api.php', { method: 'POST', body: fd })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    let row = btn.closest('.flex');
-                    let qtyInput = row.querySelector('.qty-input');
-                    if (qtyInput && parseInt(qtyInput.value) > 1) qtyInput.value = parseInt(qtyInput.value) - 1;
-                    if (data.cart_count !== undefined && document.getElementById('cart-count-badge')) {
-                        document.getElementById('cart-count-badge').textContent = data.cart_count;
-                    }
-                } else {
-                    alert(data.message || 'Gagal mengurangi qty.');
-                }
-            });
-    }
-    function cartQty(id, qty, input) {
-        var fd = new FormData();
-        fd.append('action', 'update');
-        fd.append('cart_item_id', id);
-        fd.append('qty', qty);
-        fetch((typeof BASE_CART !== "undefined" ? BASE_CART : '../cart/') + 'cart_api.php', { method: 'POST', body: fd })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    if (data.cart_count !== undefined && document.getElementById('cart-count-badge')) {
-                        document.getElementById('cart-count-badge').textContent = data.cart_count;
-                    }
-                } else {
-                    alert(data.message || 'Gagal update qty.');
-                }
-            });
-    }
+    window.modalDeleteSelectedItems = modalDeleteSelectedItems;
     </script>
 <?php endif; ?>

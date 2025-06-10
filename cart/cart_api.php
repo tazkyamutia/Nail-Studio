@@ -112,6 +112,26 @@ if ($action === 'update') {
     exit;
 }
 
+// Handler untuk hapus banyak item sekaligus (select all/hapus beberapa)
+if ($action === 'delete_selected' && isset($_POST['selected_items']) && is_array($_POST['selected_items'])) {
+    $ids = array_map('intval', $_POST['selected_items']);
+    if (!empty($ids)) {
+        $in = implode(',', array_fill(0, count($ids), '?'));
+        // Hapus hanya item yang milik cart user ini
+        $sql = "DELETE FROM cart_item WHERE id IN ($in) AND cart_id = ?";
+        $stmt = $conn->prepare($sql);
+        // PDO bind param harus urut, array_merge ids + cart_id
+        $params = array_merge($ids, [$cart_id]);
+        $stmt->execute($params);
+    }
+    // Hitung ulang cart_count
+    $stmt = $conn->prepare("SELECT SUM(qty) FROM cart_item WHERE cart_id = ?");
+    $stmt->execute([$cart_id]);
+    $cart_count = (int)$stmt->fetchColumn();
+    echo json_encode(['success' => true, 'cart_count' => $cart_count]);
+    exit;
+}
+
 // Read Cart (optional, for refresh)
 if ($action === 'list') {
     ob_start();
