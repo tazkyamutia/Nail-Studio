@@ -10,6 +10,45 @@ if (!isset($_SESSION['id'])) {
 
 $user_id = $_SESSION['id'];
 
+// --- Handle photo upload ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['profile_photo']) && $_FILES['profile_photo']['error'] === UPLOAD_ERR_OK) {
+    $photo = $_FILES['profile_photo'];
+    $upload_dir = __DIR__ . '/../uploads/';
+    $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
+    $max_size = 5 * 1024 * 1024; // 5MB
+
+    if (!in_array($photo['type'], $allowed_types)) {
+        $error = "Format file tidak valid. Hanya JPG, PNG, atau GIF yang diizinkan.";
+    } elseif ($photo['size'] > $max_size) {
+        $error = "Ukuran file terlalu besar. Maksimal 5MB.";
+    } else {
+        $stmt_old = $conn->prepare("SELECT photo FROM user WHERE id = ?");
+        $stmt_old->execute([$user_id]);
+        $old_photo_name = $stmt_old->fetchColumn();
+
+        $file_extension = strtolower(pathinfo($photo['name'], PATHINFO_EXTENSION));
+        $new_filename = 'user_' . $user_id . '_' . time() . '.' . $file_extension;
+        $target_path = $upload_dir . $new_filename;
+
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0775, true);
+        }
+
+        if (move_uploaded_file($photo['tmp_name'], $target_path)) {
+            $stmt = $conn->prepare("UPDATE user SET photo = ? WHERE id = ?");
+            $stmt->execute([$new_filename, $user_id]);
+            if ($old_photo_name && file_exists($upload_dir . $old_photo_name)) {
+                unlink($upload_dir . $old_photo_name);
+            }
+            $_SESSION['user_photo'] = $new_filename;
+            header('Location: profile.php');
+            exit;
+        } else {
+            $error = "Terjadi kesalahan saat mengupload foto.";
+        }
+    }
+}
+
 // Ambil data user dari database
 $stmt = $conn->prepare("SELECT username, fullname, email, photo FROM user WHERE id = ?");
 $stmt->execute([$user_id]);
@@ -125,16 +164,20 @@ $stmt = $conn->prepare("SELECT id, address, type FROM address WHERE user_id = ?"
 $stmt->execute([$user_id]);
 $addresses = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-
-
-// Foto profil default jika belum ada
-$profile_img = $user['photo']
-    ? '../Tazkya-HTML/images/' . htmlspecialchars($user['photo'])
+// Path foto profil
+$profile_img = (!empty($user['photo']) && file_exists(__DIR__ . '/../uploads/' . $user['photo']))
+    ? '../uploads/' . htmlspecialchars($user['photo'])
     : 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg';
+
+// Pastikan session user_photo selalu sinkron
+if (!empty($user['photo']) && file_exists(__DIR__ . '/../uploads/' . $user['photo'])) {
+    $_SESSION['user_photo'] = $user['photo'];
+} else {
+    unset($_SESSION['user_photo']);
+}
 
 include '../views/navbar.php';
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -162,6 +205,45 @@ include '../views/navbar.php';
             background: linear-gradient(135deg, #fce7f3 0%, #d6e0ff 100%);
             min-height: 100vh;
         }
+        .profile-photo-container {
+            position: relative;
+            display: inline-block;
+            width: 64px;
+            height: 64px;
+        }
+        .profile-photo-img {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #f9a8d4;
+            background: #fff;
+        }
+        .edit-photo-btn {
+            position: absolute;
+            right: -6px;
+            bottom: -6px;
+            background: #fff;
+            border-radius: 50%;
+            border: 1.5px solid #f9a8d4;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ec4899;
+            cursor: pointer;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+            transition: background 0.2s;
+            z-index: 2;
+        }
+        .edit-photo-btn:hover {
+            background: #fce7f3;
+            color: #be185d;
+        }
+        .edit-photo-btn input[type="file"] {
+            display: none;
+        }
     </style>
 </head>
 <body class="min-h-screen relative bg-gradient-to-br from-custom-pink to-custom-blue">
@@ -179,20 +261,15 @@ include '../views/navbar.php';
         <!-- Profile Quick Info -->
         <div class="bg-white rounded-xl p-6 mb-8">
             <div class="flex items-center gap-4">
-                <div class="relative">
-                    <img src="<?= $profile_img ?>" alt="Profile" 
-                         class="w-16 h-16 rounded-full object-cover border-2 border-pink-200">
-                    <!-- Edit Icon di luar foto profil -->
-                    <!--
-                    <form method="post" enctype="multipart/form-data" 
-                          class="absolute" 
-                          style="right:-12px; bottom:-12px;">
-                        <label class="cursor-pointer bg-white hover:bg-gray-100 text-pink-500 rounded-full p-2 shadow flex items-center justify-center border-2 border-white transition-opacity opacity-90" title="Edit Photo" style="font-size:16px;">
-                            <i class="fas fa-pencil-alt"></i>
-                            <input type="file" name="profile_photo" accept="image/*" class="hidden" onchange="this.form.submit()">
-                        </label>
-                    </form>
-                    -->
+                <div class="profile-photo-container">
+                    <img src="<?= $profile_img ?>" alt="Profile"
+                         class="profile-photo-img" id="profilePhotoImg">
+                    <label class="edit-photo-btn" title="Ganti Foto Profil">
+                        <i class="fas fa-pencil-alt"></i>
+                        <form method="post" enctype="multipart/form-data" id="photoForm">
+                            <input type="file" name="profile_photo" accept="image/*" onchange="document.getElementById('photoForm').submit()">
+                        </form>
+                    </label>
                 </div>
                 <div>
                     <h2 class="font-semibold text-lg"><?= htmlspecialchars($user['fullname']) ?></h2>
