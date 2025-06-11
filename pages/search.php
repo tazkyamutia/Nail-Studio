@@ -68,7 +68,7 @@ if (isset($_SESSION['id'])) {
 
   <!-- Title hasil pencarian -->
    <h1 class="text-2xl font-bold mb-8 mt-10 text-center text-pink-700">
-    Hasil produk yang anda cari: <span class="italic"><?= htmlspecialchars($query) ?></span>
+    The results of the products you are looking for: <span class="italic"><?= htmlspecialchars($query) ?></span>
   </h2>
 
   <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12 mt-12">
@@ -103,7 +103,7 @@ if (isset($_SESSION['id'])) {
                 <div class="flex flex-col sm:flex-row gap-2 mt-auto">
                     <button class="w-full sm:w-5/6 font-semibold rounded-md py-2 px-3 transition bg-pink-600 hover:bg-pink-700 text-white"
                             onclick="addToCart(<?= $product['id_product'] ?>)">
-                        Tambah ke Keranjang
+                        Add to Cart
                     </button>
                     <button
                         class="w-full sm:w-1/6 flex items-center justify-center border border-gray-300 rounded-md text-pink-600 hover:text-pink-800 transition favorite-btn"
@@ -117,7 +117,7 @@ if (isset($_SESSION['id'])) {
             </div>
         <?php endforeach; ?>
     <?php else : ?>
-        <p class="col-span-full text-center text-gray-500">Tidak ada produk yang ditemukan untuk pencarian <b><?= htmlspecialchars($query) ?></b>.</p>
+        <p class="col-span-full text-center text-gray-500"> No products found for your search <b><?= htmlspecialchars($query) ?></b>.</p>
     <?php endif; ?>
   </div>
 
