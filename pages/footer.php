@@ -1,16 +1,9 @@
 <?php
-
-$servername = "localhost"; 
-$username = "root"; 
-$password = ""; 
-$dbname = "nailstudio_db";
-
-// koneksi 
-$conn = new mysqli($servername, $username, $password, $dbname);
+require_once '../configdb.php';
 
 // Memeriksa koneksi
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if (!$conn) {
+    die("Connection failed: Unable to connect to database.");
 }
 
 // Mengecek apakah form telah disubmit
@@ -19,22 +12,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Validasi email
     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $stmt = $conn->prepare("INSERT INTO newsletter_subscribers (email) VALUES (?)");
-        $stmt->bind_param("s", $email); 
+        try {
+            $stmt = $conn->prepare("INSERT INTO newsletter_subscribers (email) VALUES (:email)");
+            $stmt->bindParam(':email', $email, PDO::PARAM_STR);
 
-        if ($stmt->execute()) {
-            header("Location: footer.php?message=success");
-        } else {
+            if ($stmt->execute()) {
+                header("Location: footer.php?message=success");
+            } else {
+                header("Location: footer.php?message=error");
+            }
+        } catch (PDOException $e) {
             header("Location: footer.php?message=error");
         }
-
-        $stmt->close();
     } else {
         header("Location: footer.php?message=invalid_email");
     }
 }
-
-$conn->close();
 ?>
 
 <html lang="en">
@@ -204,4 +197,4 @@ $conn->close();
   </div>
 
 </body>
-</html> 
+</html>

@@ -1,4 +1,5 @@
 <?php
+// ====== ALL PHP LOGIC & HEADER MODIFICATION AT THE TOP ======
 session_start();
 require_once '../configdb.php';
 
@@ -176,6 +177,7 @@ if (!empty($user['photo']) && file_exists(__DIR__ . '/../uploads/' . $user['phot
     unset($_SESSION['user_photo']);
 }
 
+// ====== END OF PHP LOGIC, NOW INCLUDE HTML & VIEWS ======
 include '../views/navbar.php';
 ?>
 <!DOCTYPE html>
@@ -541,7 +543,7 @@ function hideDeleteModal() {
 }
 </script>
 </html>
- <?php include 'footer.php'; ?>
+<?php include 'footer.php'; ?>
 
 <!-- Modal Delete Address -->
 <div id="deleteAddressModal" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 hidden">
