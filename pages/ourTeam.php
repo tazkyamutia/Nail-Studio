@@ -3,7 +3,7 @@
 ?>
 <!DOCTYPE html>
 <html lang="en">
- <head>
+<head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Beauty Secret</title>
@@ -12,93 +12,104 @@
   <style>
     body {
       font-family: "Poppins", sans-serif;
-      margin: 0; /* Menghilangkan margin default di body */
-      padding: 0; /* Menghilangkan padding default di body */
+      margin: 0;
+      padding: 0;
     }
-    .content-container {
-      background-color:rgb(245, 231, 235); /* Background pink hanya untuk kontainer ini */
-      width: 100%; /* Memastikan kontainer memenuhi seluruh lebar layar */
-      min-width: 100vw; /* Memastikan lebar minimum memenuhi layar */
-      padding: 40px 0; /* Menambahkan padding vertikal untuk konten di dalamnya */
-      box-sizing: border-box; /* Memastikan padding tidak menambah lebar elemen */
+    /* Ganti nama kelas agar lebih spesifik dan tidak bertabrakan */
+    .hero-container {
+      background-color: rgb(245, 231, 235);
+      width: 100%;
+      padding: 60px 0; /* Menambahkan padding vertikal yang lebih seimbang */
+      box-sizing: border-box;
     }
   </style>
- </head>
- <body>
- <div class="content-container flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-12">
-  <div class="flex flex-col max-w-xl text-left">
-    <div class="mt-20"> <!-- GANTI jadi mt-20 supaya lebih turun -->
-      <h1 class="text-black text-2xl md:text-3xl font-semibold leading-snug mb-3">
-        join discovery Nail Art Studio
+</head>
+<body>
 
-      </h1>  
-      <p class="text-[#1A1A1A] text-sm md:text-base font-normal mb-6 leading-relaxed">
-        we are looking for a passionate and we're looking for passionate and creative people to join our tempnam
-        enjoy a fun, profesional workspace with training, growth opportunities and great pay 
-      </p>
-      <a href="lowongan.php">
-  <button class="bg-black text-white text-xs md:text-sm font-semibold rounded-md px-5 py-2 w-max hover:bg-gray-900 transition" type="button">
-    Apply Now
-  </button>
-</a>
+<div class="hero-container">
+  <div class="max-w-screen-xl mx-auto px-6 md:px-8"><div class="flex flex-col md:flex-row items-center justify-between gap-8">
+      <div class="flex flex-col max-w-xl text-center md:text-left">
+        <h1 class="text-black text-3xl md:text-4xl font-semibold leading-snug mb-4">
+          Join Discovery Nail Art Studio
+        </h1>
+        <p class="text-[#1A1A1A] text-sm md:text-base font-normal mb-8 leading-relaxed">
+          We are looking for passionate and creative people to join our team. 
+          Enjoy a fun, professional workspace with training, growth opportunities, and great pay.
+        </p>
+        <a href="lowongan.php" class="self-center md:self-start">
+          <button class="bg-black text-white text-sm font-semibold rounded-md px-6 py-3 w-max hover:bg-gray-800 transition" type="button">
+            Apply Now
+          </button>
+        </a>
+      </div>
+
+      <div class="rounded-xl overflow-hidden flex-shrink-0 w-full max-w-md md:w-[480px]">
+        <img src="https://storage.googleapis.com/a1aa/image/13aae325-a01c-47aa-0420-4b0e1de34178.jpg"
+             alt="Models with colorful makeup"
+             class="w-full h-auto object-cover rounded-xl"
+             width="480" height="320"/>
+      </div>
     </div>
   </div>
-
-  <div class="rounded-xl overflow-hidden flex-shrink-0 w-full md:w-[480px]">
-    <img src="https://storage.googleapis.com/a1aa/image/13aae325-a01c-47aa-0420-4b0e1de34178.jpg" 
-         alt="Close-up of two models with colorful makeup on pink background, one with green eye makeup and pink hair, the other with silver eye makeup" 
-         class="w-full h-auto object-cover rounded-xl" 
-         width="480" height="320"/>
-  </div>
 </div>
-<!--member-->
+
+
 <?php
 $team_members = [
   [
     'name' => 'Raynaldi',
     'role' => 'Product Specialist',
-    'image' => '../Tazkya-HTML/images/ray.jpg', // Gambar pria
-    'desc' => 'Raynaldi is responsible for managing and developing products to stay outstanding and relevant.',
+    // KEMBALIKAN PATH GAMBAR ASLI ANDA DI SINI
+    'image' => '../Tazkya-HTML/images/ray.jpg', 
+    'desc' => 'Raynaldi is responsible for managing and developing products to stay outstanding and relevant in the market.',
     'link' => '#raynaldi'
   ],
   [
     'name' => 'Tazkya',
     'role' => 'Administrator',
-    'image' => '../Tazkya-HTML/images/tazkya.jpg', // Gambar wanita
-    'desc' => 'Tazkya manages all backend systems and ensures smooth daily operations.',
+    // KEMBALIKAN PATH GAMBAR ASLI ANDA DI SINI
+    'image' => '../Tazkya-HTML/images/tazkya.jpg',
+    'desc' => 'Tazkya manages all backend systems and ensures our daily operations run smoothly and efficiently.',
     'link' => '#tazkya'
   ],
   [
     'name' => 'Zahara',
     'role' => 'Landing Page Designer',
-    'image' => '../Tazkya-HTML/images/zahara.jpg', // Gambar wanita
+    // KEMBALIKAN PATH GAMBAR ASLI ANDA DI SINI
+    'image' => '../Tazkya-HTML/images/zahara.jpg',
     'desc' => 'Zahara designs captivating landing pages to attract customers from the very first glance.',
     'link' => '#zahara'
   ],
 ];
 ?>
 
+<div class="bg-white py-16 px-4 md:px-12">
+  <div class="max-w-screen-xl mx-auto">
+    <h2 class="text-3xl font-semibold text-center mb-4">Meet Our Team</h2>
+    <p class="text-center text-gray-600 max-w-2xl mx-auto mb-12">
+      We are the creative minds behind this studio. Get to know the people who bring you the best services!
+    </p>
 
-
-<div class="bg-blue-50 py-16 px-4 md:px-12">
-  <h2 class="text-3xl font-semibold text-center mb-4">Meet Our Team</h2>
-  <p class="text-center text-gray-600 max-w-2xl mx-auto mb-12">
-    We are the creative minds behind Nail Art Studio. Get to know the people who bring you the best services!
-  </p>
-
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <?php foreach ($team_members as $member): ?>
-      <div class="bg-white rounded-xl shadow-md overflow-hidden flex flex-col">
-        <img src="<?= $member['image'] ?>" alt="<?= $member['name'] ?>" class="w-full h-64 object-cover"/>
-        <div class="p-5 flex flex-col flex-grow">
-          <h3 class="text-lg font-semibold mb-1"><?= $member['name'] ?></h3>
-          <p class="text-sm text-gray-500 mb-3"><?= $member['role'] ?></p>
-          <p class="text-sm text-gray-600 flex-grow"><?= $member['desc'] ?></p>
-          <a href="<?= $member['link'] ?>" class="mt-4 inline-block bg-black text-white text-sm px-4 py-2 rounded-md hover:bg-gray-800 transition self-start">
-            View Profile
-          </a>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <?php foreach ($team_members as $member): ?>
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col transition-transform duration-300 hover:transform hover:-translate-y-2">
+          <img src="<?= htmlspecialchars($member['image']) ?>" alt="<?= htmlspecialchars($member['name']) ?>" class="w-full h-64 object-cover"/>
+          
+          <div class="p-6 flex flex-col flex-grow">
+            <h3 class="text-xl font-semibold mb-1"><?= htmlspecialchars($member['name']) ?></h3>
+            <p class="text-sm text-pink-500 font-semibold mb-3"><?= htmlspecialchars($member['role']) ?></p>
+            
+            <p class="text-gray-600 flex-grow mb-4"><?= htmlspecialchars($member['desc']) ?></p>
+            
+            <a href="<?= htmlspecialchars($member['link']) ?>" class="mt-auto inline-block bg-black text-white text-sm px-5 py-2.5 rounded-md hover:bg-gray-800 transition self-start">
+              View Profile
+            </a>
+          </div>
         </div>
-      </div>
-    <?php endforeach; ?>
+      <?php endforeach; ?>
+    </div>
   </div>
 </div>
+
+</body>
+</html>
