@@ -1,7 +1,7 @@
 <?php
 include '../configdb.php';
 
-// AJAX handler (output JSON SAJA saat ada ?ajax=1)
+// AJAX handler (output JSON saja saat ada ?ajax=1)
 if (isset($_GET['ajax'])) {
     $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
     $limit  = isset($_GET['limit']) ? (int)$_GET['limit'] : 5;
@@ -20,24 +20,30 @@ if (isset($_GET['ajax'])) {
         $barang = [];
         $harga  = [];
         $total  = 0;
+        $qty_total = 0; // Total quantity per transaction
+
+        // Get cart items
         $stmt2 = $conn->prepare(
-            "SELECT p.namaproduct, ci.price 
+            "SELECT p.namaproduct, ci.price, ci.qty 
              FROM cart_item ci
              JOIN product p ON ci.product_id = p.id_product
              WHERE ci.cart_id = ?"
         );
         $stmt2->execute([$cart_id]);
         while ($item = $stmt2->fetch(PDO::FETCH_ASSOC)) {
-            $barang[] = $item['namaproduct'];
+            $barang[] = $item['namaproduct'] . " x" . $item['qty']; // Show quantity with product name
             $harga[]  = 'Rp ' . number_format($item['price'], 0, ',', '.');
-            $total   += $item['price'];
+            $total   += $item['price'] * $item['qty']; // Multiply price by quantity to get the total
+            $qty_total += $item['qty']; // Add to total quantity
         }
+
         $result[] = [
             'id'      => $cart_id,
             'pembeli' => $trans['pembeli'],
             'barang'  => $barang,
             'harga'   => $harga,
-            'total'   => 'Rp ' . number_format($total, 0, ',', '.')
+            'total'   => 'Rp ' . number_format($total, 0, ',', '.'), // Display total price
+            'qty'     => $qty_total // Show total quantity
         ];
     }
     header('Content-Type: application/json');
@@ -60,7 +66,7 @@ include '../views/sidebar.php';
                 </li>
                 <li><i class='bx bx-chevron-right'></i></li>
                 <li>
-                    <a class="active" href="#">Transaction</a>
+                    <a class="active" href="#">Transaction History</a>
                 </li>
             </ul>
         </div>
@@ -76,6 +82,7 @@ include '../views/sidebar.php';
                         <th>Daftar Barang</th>
                         <th>Harga per Item</th>
                         <th>Total Harga</th>
+                        <th>Total Pembelian</th> <!-- New column for Quantity -->
                     </tr>
                 </thead>
                <tbody id="transactionTable">
@@ -94,18 +101,22 @@ while ($trans = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $barang = [];
     $harga  = [];
     $total  = 0;
+    $qty_total = 0; // Total quantity for each transaction
+
     $stmt2 = $conn->prepare(
-        "SELECT p.namaproduct, ci.price 
+        "SELECT p.namaproduct, ci.price, ci.qty 
          FROM cart_item ci
          JOIN product p ON ci.product_id = p.id_product
          WHERE ci.cart_id = ?"
     );
     $stmt2->execute([$cart_id]);
     while ($item = $stmt2->fetch(PDO::FETCH_ASSOC)) {
-        $barang[] = $item['namaproduct'];
+        $barang[] = $item['namaproduct'] . " x" . $item['qty']; // Display quantity along with product name
         $harga[]  = 'Rp ' . number_format($item['price'], 0, ',', '.');
-        $total   += $item['price'];
+        $total   += $item['price'] * $item['qty']; // Accumulate total price by multiplying with quantity
+        $qty_total += $item['qty']; // Accumulate total quantity
     }
+
     // === FILTER di sini: skip jika barang kosong ===
     if (count($barang) === 0) continue;
 
@@ -118,7 +129,8 @@ while ($trans = $stmt->fetch(PDO::FETCH_ASSOC)) {
     echo "<td><ul>";
     foreach ($harga as $h) echo "<li>$h</li>";
     echo "</ul></td>";
-    echo "<td>Rp ".number_format($total, 0, ',', '.')."</td>";
+    echo "<td>Rp ".number_format($total, 0, ',', '.')."</td>"; // Display total price
+    echo "<td>".$qty_total." items</td>"; // Display total quantity of items in this transaction
     echo "</tr>";
 }
 ?>
@@ -146,6 +158,7 @@ function renderTransactions(data) {
         html += `<td><ul>${row.barang.map(b => `<li>${b}</li>`).join('')}</ul></td>`;
         html += `<td><ul>${row.harga.map(h => `<li>${h}</li>`).join('')}</ul></td>`;
         html += `<td>${row.total}</td>`;
+        html += `<td>${row.qty} items</td>`; // Display total quantity of items
         html += `</tr>`;
     }
     // Hanya tambah data, tidak hapus data awal

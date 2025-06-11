@@ -88,25 +88,31 @@ if ($user_id) {
         $productPrice = number_format($product['price'], 0, ',', '.');
         $isFavorite = in_array($product['id_product'], $favIds);
         ?>
-        <div class="border border-gray-300 rounded-lg p-4 flex flex-col bg-white shadow-lg">
-            <div class="flex justify-center mb-4 h-48">
-                <img src="<?= $imageURL ?>" alt="<?= $productName ?>" class="h-full w-auto object-contain rounded-lg"/>
-            </div>
-            <div class="text-xs text-gray-500 mb-1"><?= htmlspecialchars($product['category']) ?></div>
-            <div class="mb-4 font-semibold text-gray-900 text-base leading-snug flex-grow"><?= $productName ?></div>
-            <div class="flex items-center space-x-2 mb-4 text-gray-900 text-lg font-bold">Rp <?= $productPrice ?></div>
-            <div class="flex gap-2 mt-auto">
-                <button class="flex-1 bg-pink-600 hover:bg-pink-700 text-white py-2 rounded font-semibold add-to-cart-btn" data-product-id="<?= $product['id_product'] ?>">Tambah ke Keranjang</button>
-                <button
-                    class="w-12 flex items-center justify-center border border-gray-300 rounded text-pink-600 hover:text-pink-800 transition favorite-btn"
-                    data-product-id="<?= $product['id_product'] ?>"
-                    aria-label="<?= $isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit' ?>"
-                    title="<?= $isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit' ?>"
-                >
-                    <i class="<?= $isFavorite ? 'fas' : 'far' ?> fa-heart"></i>
-                </button>
-            </div>
-        </div>
+       <div class="border border-gray-300 rounded-lg p-4 flex flex-col bg-white shadow-lg">
+    <div class="flex justify-center mb-4 h-48">
+        <img src="<?= $imageURL ?>" alt="<?= $productName ?>" class="h-full w-auto object-contain rounded-lg"/>
+    </div>
+    <div class="text-xs text-gray-500 mb-1"><?= htmlspecialchars($product['category']) ?></div>
+    <div class="mb-2 font-semibold text-gray-900 text-base leading-snug flex-grow"><?= $productName ?></div>
+    <?php if ($product['stock'] > 0): ?>
+      <div class="mb-2 text-xs text-gray-500">Stok: <?= $product['stock'] ?></div>
+    <?php else: ?>
+      <div class="mb-2 text-xs text-red-400 font-semibold">Stok Habis</div>
+    <?php endif; ?>
+    <div class="flex items-center space-x-2 mb-4 text-gray-900 text-lg font-bold">Rp <?= $productPrice ?></div>
+    <div class="flex gap-2 mt-auto">
+        <button class="flex-1 bg-pink-600 hover:bg-pink-700 text-white py-2 rounded font-semibold add-to-cart-btn" data-product-id="<?= $product['id_product'] ?>">Tambah ke Keranjang</button>
+        <button
+            class="w-12 flex items-center justify-center border border-gray-300 rounded text-pink-600 hover:text-pink-800 transition favorite-btn"
+            data-product-id="<?= $product['id_product'] ?>"
+            aria-label="<?= $isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit' ?>"
+            title="<?= $isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit' ?>"
+        >
+            <i class="<?= $isFavorite ? 'fas' : 'far' ?> fa-heart"></i>
+        </button>
+    </div>
+</div>
+
     <?php endforeach; ?>
 </div>
 

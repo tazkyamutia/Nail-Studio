@@ -19,7 +19,7 @@ ini_set('display_errors', 1);
 
   <?php include '../views/navbar.php'; ?>
   <?php include 'topSeller.php'; ?>
-  <?php include 'brand.php'; ?>
+
   <?php include 'boking.php'; ?>
   <?php include 'bestSeller.php'; ?>
   <?php include 'produkKategori.php'; ?>

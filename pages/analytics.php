@@ -3,6 +3,8 @@ include '../views/header.php';
 include '../views/sidebar.php';
 require_once '../configdb.php';
 
+
+
 // --- SALES ANALYTICS (Akumulasi per bulan, chart naik) ---
 $bulan = [];
 $penjualan = [];
@@ -70,6 +72,17 @@ while($row = $stmt_status->fetch(PDO::FETCH_ASSOC)) {
 ?>
 
 <link rel="stylesheet" href="../css/style2.css">
+<main>
+    <div class="head-title">
+        <div class="left">
+            <h1>Analytics</h1>
+            <ul class="breadcrumb">
+                <li><a href="dashboard.php">Dashboard</a></li>
+                <li><i class='bx bx-chevron-right' ></i></li>
+                <li><a class="active" href="#">Analytics</a></li>
+            </ul>
+        </div>
+    </div>
 
 <main>
     <div class="analytics">

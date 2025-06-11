@@ -86,7 +86,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     .table-container { margin: 32px 0; }
     table { width: 100%; border-collapse: collapse; }
     th, td { padding: 10px 12px; border-bottom: 1px solid #eee; text-align: left; }
-    th { background: #8B1D3B; color: #fff; }
+    th { background: #8B1D3B; color: #000000; }
     tr:nth-child(even) { background: #faf8fb; }
 </style>
 

@@ -31,13 +31,13 @@
 				<li>
 					<a href="../pages/message.php">
 						<i class='bx bxs-message-dots'></i>
-						<p class="text">Message</p>
+						<p class="text">FAQ Message</p>
 					</a>
 				</li>
 				<li>
 					<a href="../pages/transaction.php">
 						<i class='bx bxs-credit-card-front'></i>
-						<p class="text">Transaction</p>
+						<p class="text">Transaction History</p>
 					</a>
 				</li>
 				<li>
