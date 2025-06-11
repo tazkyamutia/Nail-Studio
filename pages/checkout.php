@@ -23,11 +23,10 @@ if (!$cart_id) {
 // Ambil hanya item yang dipilih (jika ada POST selected_items)
 $cart_items = [];
 if (!empty($_POST['selected_items']) && is_array($_POST['selected_items'])) {
-    // Validasi: hanya ambil item yang milik cart ini dan id-nya sesuai selected_items
     $ids = array_map('intval', $_POST['selected_items']);
     if (!empty($ids)) {
         $in = implode(',', array_fill(0, count($ids), '?'));
-        $sql = "SELECT ci.qty, ci.price, p.namaproduct 
+        $sql = "SELECT ci.qty, ci.price, ci.product_id AS id_product, p.namaproduct 
                 FROM cart_item ci
                 JOIN product p ON ci.product_id = p.id_product
                 WHERE ci.cart_id = ? AND ci.id IN ($in)";
@@ -38,53 +37,48 @@ if (!empty($_POST['selected_items']) && is_array($_POST['selected_items'])) {
     }
 } else {
     // Jika tidak ada selected_items, tampilkan semua item cart
-    $stmt = $conn->prepare("SELECT ci.qty, ci.price, p.namaproduct FROM cart_item ci
+    $stmt = $conn->prepare("SELECT ci.qty, ci.price, ci.product_id AS id_product, p.namaproduct FROM cart_item ci
         JOIN product p ON ci.product_id = p.id_product
         WHERE ci.cart_id = ?");
     $stmt->execute([$cart_id]);
     $cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+// Hitung subtotal
 $subtotal = 0;
 foreach ($cart_items as $item) {
     $subtotal += $item['qty'] * $item['price'];
 }
 
-// PERBAIKAN: Proses pengurangan stok ketika bukti bayar berhasil diupload
+// Proses pengurangan stok ketika bukti bayar berhasil diupload
 if (isset($_POST['process_payment']) && $_POST['process_payment'] == 'qris') {
     try {
-        // Mulai transaction untuk memastikan konsistensi data
         $conn->beginTransaction();
-        
-        // Ubah status cart menjadi 'Processing'
+
+        // Update status cart menjadi 'Processing'
         $updateCartStatus = $conn->prepare("UPDATE cart SET status = 'Processing' WHERE id = ?");
         $updateCartStatus->execute([$cart_id]);
 
-        // Pengurangan Stok untuk setiap item di cart_item
+        // Proses stok setiap item
         foreach ($cart_items as $item) {
-            // Cek stok tersedia dulu
+            // Cek stok
             $checkStock = $conn->prepare("SELECT stock FROM product WHERE id_product = ?");
             $checkStock->execute([$item['id_product']]);
             $currentStock = $checkStock->fetchColumn();
-            
+
             if ($currentStock < $item['qty']) {
                 throw new Exception("Stok produk {$item['namaproduct']} tidak mencukupi!");
             }
-            
-            // Mengurangi stok produk berdasarkan quantity yang dibeli
+
+            // Kurangi stok
             $stmtStock = $conn->prepare("UPDATE product SET stock = stock - ? WHERE id_product = ?");
             $stmtStock->execute([$item['qty'], $item['id_product']]);
         }
-        
-        // Commit transaction
+
         $conn->commit();
-        
-        // Redirect ke halaman sukses atau tampilkan pesan
         echo "<script>setTimeout(function(){ window.location.href = 'succes_page.php'; }, 2000);</script>";
         exit;
-        
     } catch (Exception $e) {
-        // Rollback jika ada error
         $conn->rollback();
         echo "<div class='text-center py-12 text-red-500'>Error: " . $e->getMessage() . "</div>";
     }
@@ -100,13 +94,8 @@ include '../views/navbar.php';
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
     <style>
-        .disabled {
-            opacity: 0.5;
-            pointer-events: none;
-        }
-        #qrisModal {
-            display: none;
-        }
+        .disabled { opacity: 0.5; pointer-events: none; }
+        #qrisModal { display: none; }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -134,7 +123,6 @@ include '../views/navbar.php';
 
     <div class="bg-white rounded-lg shadow p-6 mb-8">
         <h2 class="text-lg font-semibold mb-4">Select Payment Method</h2>
-        <!-- PERBAIKAN: Hapus event.preventDefault() agar form bisa submit -->
         <form id="payment-method-form" method="POST" onsubmit="return handlePaymentSubmit();">
             <div class="space-y-4">
                 <label class="flex items-center gap-3 cursor-pointer disabled opacity-50">
@@ -156,8 +144,8 @@ include '../views/navbar.php';
         </form>
     </div>
 
-    <!-- Modal Bayar dengan QRIS -->
-    <div id="qrisModal" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 px-2 md:px-64" style="display: none;">
+    <!-- Modal QRIS -->
+    <div id="qrisModal" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 px-2 md:px-64">
         <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-3xl">
             <div class="flex items-center gap-3 mb-4">
                 <h2 class="text-lg font-semibold">Bayar dengan</h2>
@@ -181,24 +169,13 @@ include '../views/navbar.php';
                     </div>
                 </div>
             </div>
-            
-            <!-- PERBAIKAN: Form upload bukti sekaligus proses pembayaran -->
             <form method="post" enctype="multipart/form-data" class="space-y-4 mt-6" id="buktiForm">
                 <input type="hidden" name="process_payment" value="qris">
                 <input type="hidden" name="cart_id" value="<?= $cart_id ?>">
-                
                 <label class="block">
                     <span class="block text-sm font-medium text-gray-700 mb-1">Upload Payment Receipt</span>
                     <input type="file" name="bukti_bayar" accept="image/*" required
-                        class="block w-full text-sm text-gray-700
-                        file:mr-4 file:py-2 file:px-4
-                        file:rounded-full file:border-0
-                        file:text-sm file:font-semibold
-                        file:bg-pink-50 file:text-pink-700
-                        hover:file:bg-pink-100
-                        transition-colors duration-150
-                        cursor-pointer
-                        "
+                        class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 transition-colors duration-150 cursor-pointer"
                         id="buktiInput"
                     />
                 </label>
@@ -222,9 +199,9 @@ function handlePaymentSubmit() {
     const selectedPayment = document.querySelector('input[name="payment_method"]:checked').value;
     if (selectedPayment === 'qris') {
         showQrisModal();
-        return false; // Prevent form submission, show modal instead
+        return false;
     }
-    return true; // Allow form submission for other payment methods
+    return true;
 }
 
 function showQrisModal() {
