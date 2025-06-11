@@ -28,7 +28,7 @@
 			</a>
 			<a href="#" class="profile">
 				<div class="dropdown" >
-					<button onclick="myFunction()" class="dropbtn"><img src="profile.jpg"></button>
+					<button onclick="myFunction()" class="dropbtn"><img src="../Tazkya-HTML/images/profile.jpg"></button>
 					<div id="myDropdown" class="dropdown-content">
 					  <a href="profile.html">
 						<i class='far fa-user-circle'></i>
