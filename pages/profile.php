@@ -283,9 +283,13 @@ include '../views/navbar.php';
             <div class="lg:col-span-3 space-y-6">
                 <!-- Order History -->
                 <div class="bg-white rounded-xl p-6">
-                    <h2 class="text-lg font-semibold text-gray-900 mb-1">Order history</h2>
-                    <p class="text-xs text-gray-700">You haven't placed any orders yet.</p>
-                </div>
+                <h2 class="text-lg font-semibold text-gray-900 mb-1">Order history</h2>
+                <p class="text-xs text-gray-700">
+                 You haven't placed any orders yet.
+                <a href="orders.php" class="text-blue-600 underline ml-1 hover:text-blue-800 transition">detail</a>
+                 </p>
+            </div>
+
 
                 <!-- Account Settings -->
                 <div class="bg-white rounded-xl p-6">
