@@ -10,61 +10,6 @@ if (!isset($_SESSION['id'])) {
 
 $user_id = $_SESSION['id'];
 
-// Handle photo upload
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['profile_photo']) && $_FILES['profile_photo']['error'] === UPLOAD_ERR_OK) {
-    $photo = $_FILES['profile_photo'];
-    $upload_dir = __DIR__ . '/../Tazkya-HTML/images/';
-    
-    // Tentukan tipe file yang diizinkan dan ukuran maksimal
-    $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
-    $max_size = 5 * 1024 * 1024; // 5MB
-
-    // Validasi tipe file
-    if (!in_array($photo['type'], $allowed_types)) {
-        $error = "Format file tidak valid. Hanya JPG, PNG, atau GIF yang diizinkan.";
-    } 
-    // Validasi ukuran file
-    elseif ($photo['size'] > $max_size) {
-        $error = "Ukuran file terlalu besar. Maksimal 5MB.";
-    } else {
-        // Ambil nama foto lama untuk dihapus nanti
-        $stmt_old = $conn->prepare("SELECT photo FROM user WHERE id = ?");
-        $stmt_old->execute([$user_id]);
-        $old_photo_name = $stmt_old->fetchColumn();
-
-        // Buat nama file baru yang unik untuk menghindari konflik
-        $file_extension = pathinfo($photo['name'], PATHINFO_EXTENSION);
-        $new_filename = 'user_' . $user_id . '_' . time() . '.' . $file_extension;
-        $target_path = $upload_dir . $new_filename;
-
-        // Pastikan direktori tujuan ada dan bisa ditulis
-        if (!is_dir($upload_dir)) {
-            mkdir($upload_dir, 0775, true);
-        }
-
-        // Pindahkan file yang diunggah ke direktori tujuan
-        if (move_uploaded_file($photo['tmp_name'], $target_path)) {
-            // Update nama file foto di database
-            $stmt = $conn->prepare("UPDATE user SET photo = ? WHERE id = ?");
-            $stmt->execute([$new_filename, $user_id]);
-
-            // Hapus file foto lama jika ada
-            if ($old_photo_name && file_exists($upload_dir . $old_photo_name)) {
-                unlink($upload_dir . $old_photo_name);
-            }
-
-            // Set pesan sukses dan redirect
-            $_SESSION['update_success'] = "Foto profil berhasil diupdate!";
-            header('Location: profile.php');
-            exit;
-
-        } else {
-            $error = "Terjadi kesalahan saat mengupload foto.";
-        }
-    }
-}
-
-
 // Ambil data user dari database
 $stmt = $conn->prepare("SELECT username, fullname, email, photo FROM user WHERE id = ?");
 $stmt->execute([$user_id]);
@@ -180,22 +125,14 @@ $stmt = $conn->prepare("SELECT id, address, type FROM address WHERE user_id = ?"
 $stmt->execute([$user_id]);
 $addresses = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// === LOGIKA BARU TANPA BASE_URL ===
 
-// 1. Path untuk SERVER (menggunakan __DIR__ agar absolut dan andal)
-// Digunakan untuk mengecek apakah file benar-benar ada.
-$file_path_on_server = __DIR__ . '/../Tazkya-HTML/images/' . $user['photo'];
 
-// 2. Path untuk BROWSER (menggunakan path relatif sederhana)
-// Digunakan di dalam <img src="...">.
-$image_url_for_browser = '../Tazkya-HTML/images/' . htmlspecialchars($user['photo']);
-
-// 3. Logika final untuk menentukan URL gambar
-$profile_img = $user['photo'] && file_exists($file_path_on_server)
-    ? $image_url_for_browser
+// Foto profil default jika belum ada
+$profile_img = $user['photo']
+    ? '../Tazkya-HTML/images/' . htmlspecialchars($user['photo'])
     : 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg';
 
-include '../views/headers.php'; // Pastikan header.php sudah ada
+include '../views/navbar.php';
 ?>
 
 <!DOCTYPE html>
@@ -227,7 +164,8 @@ include '../views/headers.php'; // Pastikan header.php sudah ada
         }
     </style>
 </head>
-<body class="min-h-screen relative bg-gradient-to-br from-custom-pink to-custom-blue">    <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+<body class="min-h-screen relative bg-gradient-to-br from-custom-pink to-custom-blue">
+    <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center mb-8">
             <h1 class="text-3xl font-semibold text-gray-900">Your Account</h1>
             <form action="logout.php" method="post" class="inline-block">
@@ -245,6 +183,7 @@ include '../views/headers.php'; // Pastikan header.php sudah ada
                     <img src="<?= $profile_img ?>" alt="Profile" 
                          class="w-16 h-16 rounded-full object-cover border-2 border-pink-200">
                     <!-- Edit Icon di luar foto profil -->
+                    <!--
                     <form method="post" enctype="multipart/form-data" 
                           class="absolute" 
                           style="right:-12px; bottom:-12px;">
@@ -253,6 +192,7 @@ include '../views/headers.php'; // Pastikan header.php sudah ada
                             <input type="file" name="profile_photo" accept="image/*" class="hidden" onchange="this.form.submit()">
                         </label>
                     </form>
+                    -->
                 </div>
                 <div>
                     <h2 class="font-semibold text-lg"><?= htmlspecialchars($user['fullname']) ?></h2>
@@ -265,11 +205,10 @@ include '../views/headers.php'; // Pastikan header.php sudah ada
             <!-- Main Content Area -->
             <div class="lg:col-span-3 space-y-6">
                 <!-- Order History -->
-                <a href="orders.php" class="block bg-white rounded-xl p-6 shadow hover:bg-gray-50 transition no-underline">
-                 <h2 class="text-lg font-semibold text-gray-900 mb-1">Order history</h2>
-                 <p class="text-xs text-gray-700">You haven't placed any orders yet.</p>
-                </a>
-
+                <div class="bg-white rounded-xl p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-1">Order history</h2>
+                    <p class="text-xs text-gray-700">You haven't placed any orders yet.</p>
+                </div>
 
                 <!-- Account Settings -->
                 <div class="bg-white rounded-xl p-6">
