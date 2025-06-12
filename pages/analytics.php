@@ -3,11 +3,12 @@ include '../views/header.php';
 include '../views/sidebar.php';
 require_once '../configdb.php';
 
-
-
 // --- SALES ANALYTICS (Akumulasi per bulan, chart naik) ---
-$bulan = [];
+// Data bulan (12 bulan)
+$bulan = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 $penjualan = [];
+
+// Ambil data penjualan per bulan
 $sql_sales = "SELECT MONTH(c.created_at) AS bulan, 
                      SUM(ci.qty * ci.price) AS penjualan
               FROM cart c
@@ -17,11 +18,11 @@ $sql_sales = "SELECT MONTH(c.created_at) AS bulan,
               ORDER BY bulan";
 $stmt_sales = $conn->prepare($sql_sales);
 $stmt_sales->execute();
-$accum = 0;
+
+$penjualan = array_fill(0, 12, 0); // Menyiapkan array dengan nilai default 0
 while($row = $stmt_sales->fetch(PDO::FETCH_ASSOC)) {
-    $accum += (int)$row['penjualan'];
-    $bulan[] = date('M', mktime(0, 0, 0, $row['bulan'], 10));
-    $penjualan[] = $accum;
+    $bulan_index = $row['bulan'] - 1; // Adjust karena bulan dimulai dari 1
+    $penjualan[$bulan_index] = (int)$row['penjualan'];
 }
 
 // --- VISITOR STATISTICS (Per Hari Senin-Minggu) ---
@@ -34,7 +35,6 @@ $sql_visitor = "SELECT DAYOFWEEK(created_at) AS daynum, COUNT(*) AS jumlah
 $stmt_visitor = $conn->prepare($sql_visitor);
 $stmt_visitor->execute();
 while($row = $stmt_visitor->fetch(PDO::FETCH_ASSOC)) {
-    // In MySQL, DAYOFWEEK: 1=Sun, 2=Mon, ..., 7=Sat
     $index = ($row['daynum'] + 5) % 7; // agar 0=Mon, dst.
     $visitor_count[$index] = (int)$row['jumlah'];
 }
@@ -72,24 +72,26 @@ while($row = $stmt_status->fetch(PDO::FETCH_ASSOC)) {
 ?>
 
 <link rel="stylesheet" href="../css/style2.css">
+
 <main>
     <div class="head-title">
         <div class="left">
             <h1>Analytics</h1>
             <ul class="breadcrumb">
                 <li><a href="dashboard.php">Dashboard</a></li>
-                <li><i class='bx bx-chevron-right' ></i></li>
+                <li><i class='bx bx-chevron-right'></i></li>
                 <li><a class="active" href="#">Analytics</a></li>
             </ul>
         </div>
     </div>
 
-<main>
     <div class="analytics">
         <div class="chart-container">
             <div class="chart-card">
                 <h3>Sales Analytics</h3>
-                <canvas id="salesChart"></canvas>
+                <div class="sales-analytics-scroll">
+                    <canvas id="salesChart"></canvas> <!-- Scrollable canvas -->
+                </div>
             </div>
             <div class="chart-card">
                 <h3>Visitor Statistics</h3>
@@ -121,7 +123,7 @@ new Chart(document.getElementById('salesChart'), {
     data: {
         labels: labelsSales,
         datasets: [{
-            label: 'Sales 2024',
+            label: 'Sales ',
             data: dataSales,
             borderColor: '#8B1D3B',
             backgroundColor: 'rgba(139,29,59,0.08)',
@@ -205,3 +207,21 @@ new Chart(document.getElementById('orderChart'), {
     }
 });
 </script>
+
+<style>
+/* Styles for the horizontal scroll in Sales Analytics */
+.sales-analytics-scroll {
+    width: 100%;
+    overflow-x: auto;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.sales-analytics-scroll canvas {
+    width: 800px; /* Set canvas width to allow scrolling */
+    height: 250px; /* Set height */
+    flex-shrink: 0;
+    margin: 0 10px; /* Optional, for spacing between charts */
+}
+</style>

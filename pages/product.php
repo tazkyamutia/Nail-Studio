@@ -6,7 +6,7 @@
 <main>
     <div class="head-title">
         <div class="left">
-            <h1>Dashboard</h1>
+            <h1>Products</h1>
             <ul class="breadcrumb">
                 <li><a href="#">Dashboard</a></li>
                 <li><i class='bx bx-chevron-right'></i></li>
@@ -46,6 +46,8 @@ if (isset($_SESSION['error'])) {
                     <th>Category</th>
                     <th>Stock</th>
                     <th>Price</th>
+                    <th>Discount</th>
+                    <th>Price After Discount</th>
                     <th>Status</th>
                     <th>Added</th>
                     <th>Action</th>
@@ -83,6 +85,11 @@ if (isset($_SESSION['error'])) {
                                     break;
                             }
 
+                            // Menghitung harga setelah diskon
+                            $discount = $row['discount'];  // Misalnya diskon dalam persen
+                            $price = $row['price'];
+                            $discountedPrice = $price - ($price * ($discount / 100));
+
                             // Display product row
                             echo '<tr>
                                 <td>
@@ -93,7 +100,9 @@ if (isset($_SESSION['error'])) {
                                 </td>
                                 <td>' . htmlspecialchars($row['category']) . '</td>
                                 <td>' . htmlspecialchars($row['stock']) . '</td>
-                                <td>Rp' . number_format($row['price'], 0, ',', '.') . '</td>
+                                <td>Rp' . number_format($price, 0, ',', '.') . '</td>
+                                <td>' . $discount . '%</td>
+                                <td>Rp' . number_format($discountedPrice, 0, ',', '.') . '</td>
                                 <td><span class="status-badge ' . $statusClass . '">' . $statusText . '</span></td>
                                 <td>' . $formattedDate . '</td>
                                 <td class="action-buttons">
@@ -103,10 +112,10 @@ if (isset($_SESSION['error'])) {
                             </tr>';
                         }
                     } else {
-                        echo '<tr><td colspan="7" class="no-data">No products found</td></tr>';
+                        echo '<tr><td colspan="9" class="no-data">No products found</td></tr>';
                     }
                 } catch (PDOException $e) {
-                    echo '<tr><td colspan="7" class="error-message">Database error: ' . $e->getMessage() . '</td></tr>';
+                    echo '<tr><td colspan="9" class="error-message">Database error: ' . $e->getMessage() . '</td></tr>';
                 }
                 ?>
             </tbody>
@@ -260,40 +269,3 @@ function searchProducts() {
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="../js/dashboard.js"></script>
-
-<?php
-// Update product stock when order status changes to "Processing"
-if (isset($_GET['cart_id'])) {
-    try {
-        $cart_id = $_GET['cart_id']; // Cart ID passed via URL (should be set when status changes to 'Processing')
-
-        // Retrieve all items in the cart
-        $stmtCartItems = $conn->prepare("SELECT product_id, qty FROM cart_item WHERE cart_id = ?");
-        $stmtCartItems->execute([$cart_id]);
-
-        while ($item = $stmtCartItems->fetch(PDO::FETCH_ASSOC)) {
-            // Check the current stock of the product
-            $stmtStock = $conn->prepare("SELECT stock FROM product WHERE id_product = ?");
-            $stmtStock->execute([$item['product_id']]);
-            $product = $stmtStock->fetch(PDO::FETCH_ASSOC);
-
-            if ($product) {
-                // Subtract the stock based on the quantity purchased
-                $newStock = $product['stock'] - $item['qty'];
-
-                // Update the product stock in the database
-                $stmtUpdateStock = $conn->prepare("UPDATE product SET stock = ? WHERE id_product = ?");
-                $stmtUpdateStock->execute([$newStock, $item['product_id']]);
-            }
-        }
-
-        // Update cart status to "Processing" when payment is confirmed
-        $stmtUpdateOrder = $conn->prepare("UPDATE cart SET status = 'Processing' WHERE id = ?");
-        $stmtUpdateOrder->execute([$cart_id]);
-
-        echo "Stok diperbarui dan status cart diubah menjadi 'Processing'.";
-    } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
-    }
-}
-?>

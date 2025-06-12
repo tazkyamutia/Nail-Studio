@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../configdb.php';
+include '../views/navbar.php';
 
 // Pastikan user sudah login
 if (!isset($_SESSION['id'])) {
@@ -28,8 +29,8 @@ $stmt = $conn->prepare("SELECT p.id_product, p.namaproduct, p.price, p.image
 $stmt->execute([$user_id]);
 $favorites = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Include navbar jika perlu
-include '../views/navbar.php';
+
+
 ?>
 
 <!DOCTYPE html>

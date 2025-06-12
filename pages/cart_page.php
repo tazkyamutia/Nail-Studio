@@ -2,7 +2,6 @@
 session_start();
 require_once '../configdb.php';
 
-// Redirect jika belum login
 if (!isset($_SESSION['id'])) {
     header('Location: login.php');
     exit;
@@ -19,8 +18,8 @@ if (!$cart_id) {
     $cart_items = [];
     $subtotal = 0;
 } else {
-    // Ambil item cart
-    $stmt = $conn->prepare("SELECT ci.id, ci.qty, ci.price, p.namaproduct, p.image FROM cart_item ci
+    // Ambil item cart dan diskon produk
+    $stmt = $conn->prepare("SELECT ci.id, ci.qty, ci.price, p.discount, p.namaproduct, p.image FROM cart_item ci
         JOIN product p ON ci.product_id = p.id_product
         WHERE ci.cart_id = ?");
     $stmt->execute([$cart_id]);
@@ -28,7 +27,11 @@ if (!$cart_id) {
 
     $subtotal = 0;
     foreach ($cart_items as $item) {
-        $subtotal += $item['qty'] * $item['price'];
+        // Calculate the price after discount
+        $productPrice = $item['price'];
+        $productDiscount = $item['discount'];
+        $priceAfterDiscount = $productPrice * (1 - $productDiscount / 100);
+        $subtotal += $item['qty'] * $priceAfterDiscount; // Calculate subtotal after discount
     }
 }
 
@@ -64,14 +67,19 @@ include '../views/navbar.php';
             <div class="divide-y divide-pink-100">
                 <?php foreach ($cart_items as $item): ?>
                     <?php
-                        $imageURL = (!empty($item['image'])) ? '../uploads/' . $item['image'] : 'https://via.placeholder.com/50x50?text=No+Image';
+                        // Calculate the price after discount
+                        $productPrice = $item['price'];
+                        $productDiscount = $item['discount'];
+                        $priceAfterDiscount = $productPrice * (1 - $productDiscount / 100);
+                        $priceFormatted = number_format($productPrice, 0, ',', '.');
+                        $priceAfterDiscountFormatted = number_format($priceAfterDiscount, 0, ',', '.');
                     ?>
-                    <div class="flex py-4 items-center hover:bg-pink-50 rounded-lg transition" data-id="<?= $item['id'] ?>" data-price="<?= $item['price'] ?>">
+                    <div class="flex py-4 items-center hover:bg-pink-50 rounded-lg transition" data-id="<?= $item['id'] ?>" data-price="<?= $priceAfterDiscount ?>">
                         <label class="flex items-center mr-4 cursor-pointer select-none">
                             <input type="checkbox" name="selected_items[]" value="<?= $item['id'] ?>" class="item-checkbox accent-pink-500 w-5 h-5 rounded-full border-2 border-pink-400 shadow-sm transition-all duration-150" onchange="updateDeleteBtn()">
                         </label>
                         <div class="w-20 h-20 flex-shrink-0 flex items-center justify-center border border-pink-100 rounded-lg bg-white mr-4 shadow-sm">
-                            <img src="<?= htmlspecialchars($imageURL) ?>" alt="" class="object-contain h-16 w-16 rounded-md" />
+                            <img src="<?= htmlspecialchars($item['image']) ? '../uploads/' . $item['image'] : 'https://via.placeholder.com/50x50?text=No+Image' ?>" alt="" class="object-contain h-16 w-16 rounded-md" />
                         </div>
                         <div class="flex-1">
                             <div class="flex items-start justify-between">
@@ -90,7 +98,13 @@ include '../views/navbar.php';
                                     <button type="button" class="text-xl text-gray-700 hover:text-pink-600 px-2 plus-btn" data-id="<?= $item['id'] ?>" style="background:none;border:none;">+</button>
                                 </div>
                                 <div class="ml-auto space-x-2 flex items-center">
-                                    <span class="text-lg font-bold text-pink-700 item-total" data-id="<?= $item['id'] ?>">Rp<?= number_format($item['qty'] * $item['price'], 0, ',', '.') ?></span>
+                                    <!-- Display price with or without discount -->
+                                    <?php if ($productDiscount > 0): ?>
+                                        <span class="line-through text-gray-500">Rp <?= $priceFormatted ?></span>
+                                        <span class="text-gray-900 font-semibold">Rp <?= $priceAfterDiscountFormatted ?></span>
+                                    <?php else: ?>
+                                        <span>Rp <?= $priceFormatted ?></span>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -113,6 +127,7 @@ include '../views/navbar.php';
     <a href="nowShop.php" class="inline-block mt-4 text-pink-600 hover:underline font-semibold"><i class="fas fa-arrow-left"></i>Continue Shopping</a>
 </div>
 <script>
+// Event listeners for quantity change and delete
 document.querySelectorAll('.plus-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         const id = this.dataset.id;
@@ -140,24 +155,9 @@ function removeCartItem(id) {
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                // Hapus baris dari DOM tanpa konfirmasi/alert
                 const row = document.querySelector('[data-id="'+id+'"]');
                 if (row) row.remove();
-                // Update subtotal
                 updateSubtotal();
-                // Update badge jika ada
-                if (data.cart_count !== undefined && document.getElementById('cart-count-badge')) {
-                    document.getElementById('cart-count-badge').textContent = data.cart_count;
-                }
-                // Jika sudah tidak ada item, tampilkan pesan kosong
-                if (document.querySelectorAll('.remove-btn').length === 0) {
-                    const cartBox = document.querySelector('.bg-white.rounded-2xl.shadow-lg');
-                    if (cartBox) cartBox.style.display = 'none';
-                    const emptyMsg = document.createElement('div');
-                    emptyMsg.className = 'text-center py-12 text-gray-400 bg-pink-50 rounded-lg shadow-inner';
-                    emptyMsg.textContent = 'Keranjang Anda kosong.';
-                    document.querySelector('.max-w-4xl.mx-auto.py-10.px-4').appendChild(emptyMsg);
-                }
             }
         });
 }
@@ -170,30 +170,17 @@ function updateQty(id, action) {
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                if (action === 'minus' && data.cart_count === 0) {
-                    location.reload();
-                    return;
-                } else {
-                    let qtyInput = document.querySelector('.qty-input[data-id="'+id+'"]');
-                    let itemDiv = document.querySelector('[data-id="'+id+'"]');
-                    let price = parseInt(itemDiv.getAttribute('data-price'));
-                    if (action === 'plus') {
-                        qtyInput.value = parseInt(qtyInput.value) + 1;
-                    } else if (action === 'minus' && parseInt(qtyInput.value) > 1) {
-                        qtyInput.value = parseInt(qtyInput.value) - 1;
-                    }
-                    // Update item total
-                    let itemTotal = document.querySelector('.item-total[data-id="'+id+'"]');
-                    itemTotal.textContent = 'Rp' + numberWithSeparator(qtyInput.value * price);
+                let qtyInput = document.querySelector('.qty-input[data-id="'+id+'"]');
+                let itemDiv = document.querySelector('[data-id="'+id+'"]');
+                let price = parseInt(itemDiv.getAttribute('data-price'));
+                if (action === 'plus') {
+                    qtyInput.value = parseInt(qtyInput.value) + 1;
+                } else if (action === 'minus' && parseInt(qtyInput.value) > 1) {
+                    qtyInput.value = parseInt(qtyInput.value) - 1;
                 }
-                // Update subtotal
+                let itemTotal = document.querySelector('.item-total[data-id="'+id+'"]');
+                itemTotal.textContent = 'Rp' + numberWithSeparator(qtyInput.value * price);
                 updateSubtotal();
-                // Update badge jika ada
-                if (data.cart_count !== undefined && document.getElementById('cart-count-badge')) {
-                    document.getElementById('cart-count-badge').textContent = data.cart_count;
-                }
-            } else {
-                alert(data.message || 'Gagal update keranjang.');
             }
         });
 }
@@ -253,12 +240,9 @@ document.getElementById('proceedCheckoutBtn')?.addEventListener('click', functio
 });
 
 function deleteSelectedItems() {
-    // Ambil semua checkbox yang dicentang
     const checked = Array.from(document.querySelectorAll('.item-checkbox:checked'));
     if (checked.length === 0) return;
-    //if (!confirm('Hapus item yang dipilih dari keranjang?')) return;
 
-    // Ambil id item yang dipilih
     const ids = checked.map(cb => cb.value);
 
     var fd = new FormData();
@@ -269,27 +253,13 @@ function deleteSelectedItems() {
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                // Hapus baris dari DOM
                 ids.forEach(id => {
                     const row = document.querySelector('[data-id="'+id+'"]');
                     if (row) row.remove();
                 });
-                // Jika sudah tidak ada item, reload halaman/cart
-                if (document.querySelectorAll('.remove-btn').length === 0) {
-                    location.reload();
-                    return;
-                }
-                // Update subtotal
                 updateSubtotal();
-                // Update badge jika ada
-                if (data.cart_count !== undefined && document.getElementById('cart-count-badge')) {
-                    document.getElementById('cart-count-badge').textContent = data.cart_count;
-                }
-                // Reset select all
                 document.getElementById('selectAll').checked = false;
                 updateDeleteBtn();
-            } else {
-                alert(data.message || 'Gagal menghapus item.');
             }
         });
 }

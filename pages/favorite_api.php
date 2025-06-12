@@ -24,7 +24,7 @@ try {
     } else {
         $stmt = $conn->prepare("DELETE FROM favorite WHERE user_id = ? AND product_id = ?");
         $stmt->execute([$user_id, $product_id]);
-        // TIDAK PERLU CEK rowCount(), tidak perlu pesan gagal.
+       
     }
 
     $countStmt = $conn->prepare("SELECT COUNT(*) FROM favorite WHERE user_id = ?");
@@ -36,7 +36,6 @@ try {
         'fav_count' => (int)$favCount
     ]);
 } catch (Exception $e) {
-    // Bahkan kalau error server, tetap tidak perlu alert ke user
     echo json_encode([
         'success' => true,
         'fav_count' => 0
