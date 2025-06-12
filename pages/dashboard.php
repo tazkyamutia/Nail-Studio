@@ -37,7 +37,7 @@ $stmt = $conn->query("
     JOIN user u ON u.id = c.user_id
     LEFT JOIN bukti_bayar b ON b.cart_id = c.id
     ORDER BY c.created_at DESC
-    LIMIT 20
+    LIMIT 40
 ");
 
 $orders = [];
