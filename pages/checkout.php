@@ -50,6 +50,11 @@ foreach ($cart_items as $item) {
     $subtotal += $item['qty'] * $item['price'];
 }
 
+// Ambil alamat user
+$stmt = $conn->prepare("SELECT id, address FROM address WHERE user_id = ?");
+$stmt->execute([$user_id]);
+$addresses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 // Proses pengurangan stok ketika bukti bayar berhasil diupload
 if (isset($_POST['process_payment']) && $_POST['process_payment'] == 'qris') {
     try {
@@ -96,7 +101,9 @@ include '../views/navbar.php';
     <style>
         .disabled { opacity: 0.5; pointer-events: none; }
         #qrisModal { display: none; }
+        [x-cloak] { display: none !important; }
     </style>
+    <script src="//unpkg.com/alpinejs" defer></script>
 </head>
 <body class="bg-gray-50 min-h-screen">
 <div class="max-w-3xl mx-auto py-10 px-4">
@@ -121,8 +128,12 @@ include '../views/navbar.php';
         <?php endif; ?>
     </div>
 
+    <!-- Payment Method Section -->
     <div class="bg-white rounded-lg shadow p-6 mb-8">
-        <h2 class="text-lg font-semibold mb-4">Select Payment Method</h2>
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold">Select payment options</h2>
+            <span class="text-sm text-gray-500">Pembayaran dienkripsi 🔒</span>
+        </div>
         <form id="payment-method-form" method="POST" onsubmit="return handlePaymentSubmit();">
             <div class="space-y-4">
                 <label class="flex items-center gap-3 cursor-pointer disabled opacity-50">
@@ -136,16 +147,51 @@ include '../views/navbar.php';
                     <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/QRIS_logo.svg" alt="QRIS Logo" class="w-24 h-24 object-contain" />
                 </label>
             </div>
-            <div class="flex justify-end mt-6">
-                <button type="submit" class="px-6 py-2 rounded bg-pink-600 text-white font-semibold hover:bg-pink-700 transition">
-                    Next
-                </button>
-            </div>
         </form>
     </div>
 
+    <!-- Alamat Pengiriman Section -->
+    <div class="bg-white rounded-lg shadow p-6 mb-8" x-data="{ showModal: false }">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold">Shipping Address</h2>
+            <button type="button" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-1 rounded text-sm font-semibold" @click="showModal = true">
+                Add New Address
+            </button>
+        </div>
+        <?php if (!empty($addresses)): ?>
+            <form id="address-form">
+                <div class="space-y-3">
+                    <?php foreach ($addresses as $i => $addr): ?>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="selected_address" value="<?= $addr['id'] ?>" <?= $i === 0 ? 'checked' : '' ?> class="accent-pink-500" />
+                            <span class="text-gray-700"><?= htmlspecialchars($addr['address']) ?></span>
+                        </label>
+                    <?php endforeach; ?>
+                </div>
+            </form>
+        <?php else: ?>
+            <div class="text-gray-500 mb-2">You don't have a saved address yet.</div>
+        <?php endif; ?>
+
+        <!-- Modal Tambah Alamat Baru -->
+        <div x-show="showModal" x-cloak class="fixed inset-0 flex items-center justify-center z-50">
+            <div class="fixed inset-0 bg-black bg-opacity-40" @click="showModal = false"></div>
+            <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md z-10">
+                <h3 class="text-lg font-semibold mb-2">Tambah Alamat Baru</h3>
+                <form method="post" action="add_address.php" class="space-y-4">
+                    <textarea name="address" rows="3" required class="w-full border rounded px-3 py-2"></textarea>
+                    <input type="hidden" name="type" value="shipping">
+                    <div class="flex justify-end gap-2">
+                        <button type="button" class="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300" @click="showModal = false">Batal</button>
+                        <button type="submit" class="px-4 py-2 rounded bg-pink-600 text-white hover:bg-pink-700">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal QRIS -->
-    <div id="qrisModal" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 px-2 md:px-64">
+    <div id="qrisModal" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 px-2 md:px-64" style="display:none;">
         <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-3xl">
             <div class="flex items-center gap-3 mb-4">
                 <h2 class="text-lg font-semibold">Bayar dengan</h2>
@@ -189,8 +235,12 @@ include '../views/navbar.php';
         </div>
     </div>
 
-    <div class="flex justify-end">
-        <a href="cart_page.php" class="px-5 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 mr-2">Back to Cart</a>
+    <!-- BOTTOM FLEX: Back to Cart & Next -->
+    <div class="flex justify-between items-center mt-8">
+        <a href="cart_page.php" class="px-5 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300">Back to Cart</a>
+        <button type="submit" form="payment-method-form" class="px-6 py-2 rounded bg-pink-600 text-white font-semibold hover:bg-pink-700 transition">
+            Next
+        </button>
     </div>
 </div>
 
