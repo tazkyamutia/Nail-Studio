@@ -287,8 +287,8 @@ include '../views/navbar.php';
                 <div class="bg-white rounded-xl p-6">
                 <h2 class="text-lg font-semibold text-gray-900 mb-1">Order history</h2>
                 <p class="text-xs text-gray-700">
-                 You haven't placed any orders yet.
-                <a href="orders.php" class="text-blue-600 underline ml-1 hover:text-blue-800 transition">detail</a>
+                    View your past orders and their details. 
+                    <a href="orders.php" class="text-blue-600 underline hover:text-blue-800 transition">Click here to view</a>.
                  </p>
             </div>
 
