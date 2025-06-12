@@ -100,12 +100,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
        Customer Service
       </h4>
       <ul class="space-y-2 text-[#4b4b4b]">
-       <li><a class="hover:underline" href="../pages/boking.php">Booking & Appointments</a></li>
-       <li><a class="hover:underline" href="#">Frequently Asked Questions</a></li>
-       <li><a class="hover:underline" href="#">Cancellation Policy</a></li>
-       <li><a class="hover:underline" href="#">Gift Cards</a></li>
+       <li><a class="hover:underline" href="../pages/boking.php">Discound</a></li>
+       <li><a class="hover:underline" href="../pages/service.php">Frequently Asked Questions</a></li>
        <li><a class="hover:underline" href="../pages/profile.php">My Account</a></li>
-       <li><a class="hover:underline" href="#">Payment Options</a></li>
+       <li><a class="hover:underline" href="../pages/payment.php">Payment Options</a></li>
       </ul>
      </div>
      <!-- Products -->
@@ -126,8 +124,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
        About Us
       </h4>
       <ul class="space-y-2 text-[#4b4b4b]">
-       <li><a class="hover:underline" href="#">Our Story</a></li>
-       <li><a class="hover:underline" href="#">Contact Us</a></li>
+       <li><a class="hover:underline" href="../pages/orders.php">Our Story</a></li>
+       <li><a class="hover:underline" href="../pages/service.php">Contact Us</a></li>
        <li><a class="hover:underline" href="../pages/addreview.php">Reviews</a></li>
       </ul>
      </div>
@@ -170,6 +168,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
       </div>
      </div>
     </div>
+     </div> 
   </footer>
  </div>
 

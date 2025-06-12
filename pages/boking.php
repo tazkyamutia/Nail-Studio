@@ -60,9 +60,12 @@
           brands. Find your favourites and new treasures, all at exceptional
           prices.
      </p>
-     <button class="btn-pink text-white text-sm font-semibold px-5 py-2 rounded-md hover:bg-pink-700 transition" type="button">
-      Shop sale now
-     </button>
+     <a href="discoud.php">
+    <button class="btn-pink text-white text-sm font-semibold px-5 py-2 rounded-md hover:bg-pink-700 transition" type="button">
+        Shop sale now
+    </button>
+</a>
+
     </div>
     <div class="relative rounded-md overflow-hidden">
      <img alt="Nail art gift box with pink and white ribbon and hearts on pink background" class="w-full h-auto object-cover rounded-md" height="250" src="https://storage.googleapis.com/a1aa/image/3727fd67-7ca1-42e4-c87c-081ec2cc631e.jpg" width="400"/>
