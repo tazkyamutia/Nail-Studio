@@ -58,7 +58,7 @@
    
     </div>
     <div class="hidden md:flex items-center space-x-6 text-xs font-semibold">
-      <a class="flex items-center space-x-1 hover:text-gray-300" href="tel:1234567890">
+      <a class="flex items-center space-x-1 hover:text-gray-300" href="tel:085847255010">
   <i class="fas fa-phone-alt text-[10px]"></i>
   <span>CONTACT</span>
 </a>

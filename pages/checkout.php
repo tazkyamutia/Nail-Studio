@@ -26,7 +26,7 @@ if (!empty($_POST['selected_items']) && is_array($_POST['selected_items'])) {
     $ids = array_map('intval', $_POST['selected_items']);
     if (!empty($ids)) {
         $in = implode(',', array_fill(0, count($ids), '?'));
-        $sql = "SELECT ci.qty, ci.price, ci.product_id AS id_product, p.namaproduct 
+        $sql = "SELECT ci.qty, ci.price, ci.product_id AS id_product, p.discount, p.namaproduct 
                 FROM cart_item ci
                 JOIN product p ON ci.product_id = p.id_product
                 WHERE ci.cart_id = ? AND ci.id IN ($in)";
@@ -37,9 +37,10 @@ if (!empty($_POST['selected_items']) && is_array($_POST['selected_items'])) {
     }
 } else {
     // Jika tidak ada selected_items, tampilkan semua item cart
-    $stmt = $conn->prepare("SELECT ci.qty, ci.price, ci.product_id AS id_product, p.namaproduct FROM cart_item ci
-        JOIN product p ON ci.product_id = p.id_product
-        WHERE ci.cart_id = ?");
+    $stmt = $conn->prepare("SELECT ci.qty, ci.price, ci.product_id AS id_product, p.discount, p.namaproduct 
+                            FROM cart_item ci
+                            JOIN product p ON ci.product_id = p.id_product
+                            WHERE ci.cart_id = ?");
     $stmt->execute([$cart_id]);
     $cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
@@ -47,41 +48,10 @@ if (!empty($_POST['selected_items']) && is_array($_POST['selected_items'])) {
 // Hitung subtotal
 $subtotal = 0;
 foreach ($cart_items as $item) {
-    $subtotal += $item['qty'] * $item['price'];
-}
-
-// Proses pengurangan stok ketika bukti bayar berhasil diupload
-if (isset($_POST['process_payment']) && $_POST['process_payment'] == 'qris') {
-    try {
-        $conn->beginTransaction();
-
-        // Update status cart menjadi 'Processing'
-        $updateCartStatus = $conn->prepare("UPDATE cart SET status = 'Processing' WHERE id = ?");
-        $updateCartStatus->execute([$cart_id]);
-
-        // Proses stok setiap item
-        foreach ($cart_items as $item) {
-            // Cek stok
-            $checkStock = $conn->prepare("SELECT stock FROM product WHERE id_product = ?");
-            $checkStock->execute([$item['id_product']]);
-            $currentStock = $checkStock->fetchColumn();
-
-            if ($currentStock < $item['qty']) {
-                throw new Exception("Stok produk {$item['namaproduct']} tidak mencukupi!");
-            }
-
-            // Kurangi stok
-            $stmtStock = $conn->prepare("UPDATE product SET stock = stock - ? WHERE id_product = ?");
-            $stmtStock->execute([$item['qty'], $item['id_product']]);
-        }
-
-        $conn->commit();
-        echo "<script>setTimeout(function(){ window.location.href = 'succes_page.php'; }, 2000);</script>";
-        exit;
-    } catch (Exception $e) {
-        $conn->rollback();
-        echo "<div class='text-center py-12 text-red-500'>Error: " . $e->getMessage() . "</div>";
-    }
+    $productPrice = $item['price'];
+    $productDiscount = $item['discount'];
+    $priceAfterDiscount = $productPrice * (1 - $productDiscount / 100);
+    $subtotal += $item['qty'] * $priceAfterDiscount;
 }
 
 include '../views/navbar.php';
@@ -108,9 +78,26 @@ include '../views/navbar.php';
         <?php else: ?>
             <ul class="divide-y divide-gray-200 mb-4">
                 <?php foreach ($cart_items as $item): ?>
+                    <?php
+                        // Calculate the price after discount
+                        $productPrice = $item['price'];
+                        $productDiscount = $item['discount'];
+                        $priceAfterDiscount = $productPrice * (1 - $productDiscount / 100);
+                        $priceFormatted = number_format($productPrice, 0, ',', '.');
+                        $priceAfterDiscountFormatted = number_format($priceAfterDiscount, 0, ',', '.');
+                    ?>
                     <li class="py-2 flex justify-between items-center">
                         <span><?= htmlspecialchars($item['namaproduct']) ?> <span class="text-xs text-gray-500">x<?= $item['qty'] ?></span></span>
-                        <span class="font-medium text-gray-800">Rp<?= number_format($item['qty'] * $item['price'], 0, ',', '.') ?></span>
+                        <span class="font-medium text-gray-800">
+                            <?php if ($productDiscount > 0): ?>
+                                <!-- Show original price if there's a discount -->
+                                <span class="line-through text-gray-500">Rp<?= $priceFormatted ?></span> 
+                                <span class="font-semibold text-gray-800">Rp<?= $priceAfterDiscountFormatted ?></span>
+                            <?php else: ?>
+                                <!-- Show only the regular price if no discount -->
+                                Rp<?= $priceFormatted ?>
+                            <?php endif; ?>
+                        </span>
                     </li>
                 <?php endforeach; ?>
             </ul>

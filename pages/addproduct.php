@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $category = $_POST['category'] ?? '';
     $stock = $_POST['stock'] ?? 0;
     $price = $_POST['price'] ?? 0;
+    $discount = $_POST['discount'] ?? 0; // Added discount field
     $status = $_POST['status'] ?? 'draft';
     $added = date('Y-m-d'); // Current date
     
@@ -103,15 +104,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     try {
-        // Insert new product
-        $sql = "INSERT INTO product (namaproduct, category, stock, price, status, image, added) 
-                VALUES (:namaproduct, :category, :stock, :price, :status, :image, :added)";
+        // Insert new product with discount included
+        $sql = "INSERT INTO product (namaproduct, category, stock, price, discount, status, image, added) 
+                VALUES (:namaproduct, :category, :stock, :price, :discount, :status, :image, :added)";
                 
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':namaproduct', $namaproduct);
         $stmt->bindParam(':category', $category);
         $stmt->bindParam(':stock', $stock);
         $stmt->bindParam(':price', $price);
+        $stmt->bindParam(':discount', $discount); // Bind discount field
         $stmt->bindParam(':status', $status);
         $stmt->bindParam(':image', $image);
         $stmt->bindParam(':added', $added);
@@ -155,7 +157,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h3>Product Information</h3>
             </div>
             <div class="card-body">
-                <!-- Note: Make sure the form action matches your actual file name -->
                 <form action="addproduct.php" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="namaproduct">Product Name</label>
@@ -169,7 +170,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <option value="nail tools">nail tools</option>
                             <option value="nail care">nail care</option>
                             <option value="nail kit">nail kit</option>
-                            
                         </select>
                     </div>
                     
@@ -181,6 +181,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="form-group">
                         <label for="price">Price (Rp)</label>
                         <input type="number" id="price" name="price" min="0" value="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="discount">Discount (%)</label>
+                        <input type="number" id="discount" name="discount" min="0" max="100" step="0.01" value="0" required>
                     </div>
                     
                     <div class="form-group">

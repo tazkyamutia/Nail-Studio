@@ -24,16 +24,19 @@ if (isset($_GET['ajax'])) {
 
         // Get cart items
         $stmt2 = $conn->prepare(
-            "SELECT p.namaproduct, ci.price, ci.qty 
+            "SELECT p.namaproduct, ci.price, ci.qty, p.discount
              FROM cart_item ci
              JOIN product p ON ci.product_id = p.id_product
              WHERE ci.cart_id = ?"
         );
         $stmt2->execute([$cart_id]);
         while ($item = $stmt2->fetch(PDO::FETCH_ASSOC)) {
+            $diskon = $item['discount'];  // Diskon produk
+            // Harga setelah diskon
+            $harga_per_item = $item['price'] - ($item['price'] * $diskon / 100); 
             $barang[] = $item['namaproduct'] . " x" . $item['qty']; // Show quantity with product name
-            $harga[]  = 'Rp ' . number_format($item['price'], 0, ',', '.');
-            $total   += $item['price'] * $item['qty']; // Multiply price by quantity to get the total
+            $harga[]  = 'Rp ' . number_format($harga_per_item, 0, ',', '.');
+            $total   += $harga_per_item * $item['qty']; // Multiply discounted price by quantity to get total
             $qty_total += $item['qty']; // Add to total quantity
         }
 
@@ -42,8 +45,9 @@ if (isset($_GET['ajax'])) {
             'pembeli' => $trans['pembeli'],
             'barang'  => $barang,
             'harga'   => $harga,
-            'total'   => 'Rp ' . number_format($total, 0, ',', '.'), // Display total price
-            'qty'     => $qty_total // Show total quantity
+            'total'   => 'Rp ' . number_format($total, 0, ',', '.'), // Display total price after discount
+            'qty'     => $qty_total, // Show total quantity
+            'grand_total' => 'Rp ' . number_format($total, 0, ',', '.')  // Grand total price per transaction
         ];
     }
     header('Content-Type: application/json');
@@ -61,13 +65,9 @@ include '../views/sidebar.php';
         <div class="left">
             <h1>Dashboard</h1>
             <ul class="breadcrumb">
-                <li>
-                    <a href="#">Dashboard</a>
-                </li>
+                <li><a href="#">Dashboard</a></li>
                 <li><i class='bx bx-chevron-right'></i></li>
-                <li>
-                    <a class="active" href="#">Transaction History</a>
-                </li>
+                <li><a class="active" href="#">Transaction History</a></li>
             </ul>
         </div>
     </div>
@@ -83,9 +83,11 @@ include '../views/sidebar.php';
                         <th>Harga per Item</th>
                         <th>Total Harga</th>
                         <th>Total Pembelian</th> <!-- New column for Quantity -->
+                        <th>Diskon</th> <!-- New column for Discount -->
+                        <th>Total Harga (Final)</th> <!-- Grand Total Price after discount -->
                     </tr>
                 </thead>
-               <tbody id="transactionTable">
+                <tbody id="transactionTable">
 <?php
 // 5 data awal (langsung tampil)
 $limit = 5;
@@ -104,17 +106,25 @@ while ($trans = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $qty_total = 0; // Total quantity for each transaction
 
     $stmt2 = $conn->prepare(
-        "SELECT p.namaproduct, ci.price, ci.qty 
+        "SELECT p.namaproduct, ci.price, ci.qty, p.discount 
          FROM cart_item ci
          JOIN product p ON ci.product_id = p.id_product
          WHERE ci.cart_id = ?"
     );
     $stmt2->execute([$cart_id]);
     while ($item = $stmt2->fetch(PDO::FETCH_ASSOC)) {
+        $diskon = $item['discount'];  // Diskon produk
+        // Harga setelah diskon
+        $harga_per_item = $item['price'] - ($item['price'] * $diskon / 100); // Harga setelah diskon
         $barang[] = $item['namaproduct'] . " x" . $item['qty']; // Display quantity along with product name
-        $harga[]  = 'Rp ' . number_format($item['price'], 0, ',', '.');
-        $total   += $item['price'] * $item['qty']; // Accumulate total price by multiplying with quantity
+        $harga[]  = 'Rp ' . number_format($harga_per_item, 0, ',', '.');
+        $total   += $harga_per_item * $item['qty']; // Accumulate total price by multiplying with quantity
         $qty_total += $item['qty']; // Accumulate total quantity
+
+        // === Display Discount ===
+        if ($diskon > 0) {
+            $harga[] = 'Disc: Rp ' . number_format(($item['price'] * $diskon / 100), 0, ',', '.'); // Show discount value
+        }
     }
 
     // === FILTER di sini: skip jika barang kosong ===
@@ -129,8 +139,17 @@ while ($trans = $stmt->fetch(PDO::FETCH_ASSOC)) {
     echo "<td><ul>";
     foreach ($harga as $h) echo "<li>$h</li>";
     echo "</ul></td>";
-    echo "<td>Rp ".number_format($total, 0, ',', '.')."</td>"; // Display total price
+    echo "<td>Rp ".number_format($total, 0, ',', '.')."</td>"; // Display total price after discount
     echo "<td>".$qty_total." items</td>"; // Display total quantity of items in this transaction
+    echo "<td>";
+    // Display total discount for each item in the transaction
+    foreach ($harga as $h) {
+        if (strpos($h, 'Disc:') !== false) {
+            echo $h . '<br>';
+        }
+    }
+    echo "</td>";
+    echo "<td>Rp ".number_format($total, 0, ',', '.')."</td>"; // Display Grand Total Price
     echo "</tr>";
 }
 ?>
@@ -145,6 +164,7 @@ while ($trans = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
 <?php include '../views/footer.php'; ?>
 <script>
+// JavaScript for loading more data with AJAX
 let offset = 5; // Sudah tampil 5 data awal
 const limit = 5;
 let selesai = false;
@@ -159,6 +179,8 @@ function renderTransactions(data) {
         html += `<td><ul>${row.harga.map(h => `<li>${h}</li>`).join('')}</ul></td>`;
         html += `<td>${row.total}</td>`;
         html += `<td>${row.qty} items</td>`; // Display total quantity of items
+        html += `<td>${row.discount}</td>`; // Display the discount for each item
+        html += `<td>${row.grand_total}</td>`; // Display Grand Total Price after discount
         html += `</tr>`;
     }
     // Hanya tambah data, tidak hapus data awal

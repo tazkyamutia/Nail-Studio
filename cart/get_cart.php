@@ -18,8 +18,8 @@ if (!$cart_id) {
     return;
 }
 
-// Ambil item cart
-$stmt = $conn->prepare("SELECT ci.id, ci.qty, ci.price, p.namaproduct, p.image FROM cart_item ci
+// Ambil item cart dan diskon produk
+$stmt = $conn->prepare("SELECT ci.id, ci.qty, ci.price, p.discount, p.namaproduct, p.image FROM cart_item ci
     JOIN product p ON ci.product_id = p.id_product
     WHERE ci.cart_id = ?");
 $stmt->execute([$cart_id]);
@@ -36,11 +36,16 @@ $total_savings = 0;
     <div class="divide-y divide-gray-200">
         <?php foreach ($cart_items as $item): ?>
         <?php
-            $subtotal += $item['qty'] * $item['price'];
+            // Calculate the price after discount
+            $productPrice = $item['price'];
+            $productDiscount = $item['discount'];
+            $priceAfterDiscount = $productPrice * (1 - $productDiscount / 100);
+            $priceFormatted = number_format($productPrice, 0, ',', '.');
+            $priceAfterDiscountFormatted = number_format($priceAfterDiscount, 0, ',', '.');
+            $subtotal += $item['qty'] * $priceAfterDiscount; // Calculate subtotal after discount
             $imageURL = (!empty($item['image'])) ? '../uploads/' . $item['image'] : 'https://via.placeholder.com/50x50?text=No+Image';
         ?>
         <div class="flex py-4 items-center hover:bg-pink-50 rounded-lg transition" data-id="<?= $item['id'] ?>">
-            <!-- Tidak ada checkbox/select -->
             <div class="w-20 h-20 flex-shrink-0 flex items-center justify-center border rounded-lg bg-white mr-4">
                 <img src="<?= htmlspecialchars($imageURL) ?>" alt="" class="object-contain h-16 w-16" />
             </div>
@@ -61,7 +66,13 @@ $total_savings = 0;
                         <button type="button" onclick="cartPlus(<?= $item['id'] ?>, this)" class="w-8 h-8 flex items-center justify-center text-xl text-gray-900 hover:text-pink-600">+</button>
                     </div>
                     <div class="ml-auto space-x-2 flex items-center">
-                        <span class="text-lg font-bold text-gray-900">Rp<?= number_format($item['price'], 0, ',', '.') ?></span>
+                        <!-- Display price with or without discount -->
+                        <?php if ($productDiscount > 0): ?>
+                            <span class="line-through text-gray-500">Rp <?= $priceFormatted ?></span>
+                            <span class="text-gray-900 font-semibold">Rp <?= $priceAfterDiscountFormatted ?></span>
+                        <?php else: ?>
+                            <span>Rp <?= $priceFormatted ?></span>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -75,26 +86,23 @@ $total_savings = 0;
     </div>
     </form>
     <script>
-    // Tidak ada kode select/select all/hapus selected
+    // Functionality for cart operations: delete, plus, minus, and quantity update
     function cartDelete(id, btn) {
         var fd = new FormData();
         fd.append('action', 'delete');
         fd.append('cart_item_id', id);
-        fetch((typeof BASE_CART !== "undefined" ? BASE_CART : '../cart/') + 'cart_api.php', {
+        fetch('../cart/cart_api.php', {
             method: 'POST',
             body: fd
         })
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                // Hapus elemen dari DOM
                 const row = document.querySelector('.flex[data-id="'+id+'"]');
                 if (row) row.remove();
-                // Update badge jika ada
                 if (data.cart_count !== undefined && document.getElementById('cart-count-badge')) {
                     document.getElementById('cart-count-badge').textContent = data.cart_count;
                 }
-                // Jika sudah kosong, reload modal (atau tampilkan pesan kosong)
                 if (document.querySelectorAll('.flex[data-id]').length === 0) {
                     location.reload();
                 }
@@ -107,11 +115,10 @@ $total_savings = 0;
         var fd = new FormData();
         fd.append('action', 'plus');
         fd.append('cart_item_id', id);
-        fetch((typeof BASE_CART !== "undefined" ? BASE_CART : '../cart/') + 'cart_api.php', { method: 'POST', body: fd })
+        fetch('../cart/cart_api.php', { method: 'POST', body: fd })
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    // Update qty input
                     let row = btn.closest('.flex');
                     let qtyInput = row.querySelector('.qty-input');
                     if (qtyInput) qtyInput.value = parseInt(qtyInput.value) + 1;
@@ -127,7 +134,7 @@ $total_savings = 0;
         var fd = new FormData();
         fd.append('action', 'minus');
         fd.append('cart_item_id', id);
-        fetch((typeof BASE_CART !== "undefined" ? BASE_CART : '../cart/') + 'cart_api.php', { method: 'POST', body: fd })
+        fetch('../cart/cart_api.php', { method: 'POST', body: fd })
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
@@ -147,7 +154,7 @@ $total_savings = 0;
         fd.append('action', 'update');
         fd.append('cart_item_id', id);
         fd.append('qty', qty);
-        fetch((typeof BASE_CART !== "undefined" ? BASE_CART : '../cart/') + 'cart_api.php', { method: 'POST', body: fd })
+        fetch('../cart/cart_api.php', { method: 'POST', body: fd })
             .then(res => res.json())
             .then(data => {
                 if (data.success) {

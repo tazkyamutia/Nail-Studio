@@ -15,18 +15,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tambah_stock'])) {
     exit;
 }
 
-// Handle update harga via AJAX
+// Handle update harga dan diskon via AJAX
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_harga'])) {
     $id = intval($_POST['id_product']);
     $price = intval($_POST['price']);
-    $stmt = $conn->prepare("UPDATE product SET price = ? WHERE id_product = ?");
-    $stmt->execute([$price, $id]);
+    $discount = intval($_POST['discount']); // Diskon yang diinputkan
+
+    // Hitung harga setelah diskon
+    $finalPrice = $price - ($price * $discount / 100);
+
+    $stmt = $conn->prepare("UPDATE product SET price = ?, discount = ? WHERE id_product = ?");
+    $stmt->execute([$finalPrice, $discount, $id]);
     echo json_encode(['success' => true]);
     exit;
 }
+//menambahkan discount
+
 
 // Ambil semua produk
-$stmt = $conn->prepare("SELECT id_product, namaproduct, category, stock, price, status FROM product ORDER BY id_product DESC");
+$stmt = $conn->prepare("SELECT id_product, namaproduct, category, stock, price, discount, status FROM product ORDER BY id_product DESC");
 $stmt->execute();
 $allProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -97,6 +104,7 @@ $products = array_slice($allProducts, $offset, $perPage);
                     <th>Kategori</th>
                     <th>Stock</th>
                     <th>Harga</th>
+                    <th>Diskon (%)</th> <!-- Menambahkan kolom Diskon -->
                     <th>Status</th>
                     <th>Stock</th>
                     <th>Harga</th>
@@ -106,11 +114,13 @@ $products = array_slice($allProducts, $offset, $perPage);
                 <?php foreach ($products as $row): ?>
                     <tr data-id="<?= $row['id_product'] ?>"
                         data-stock="<?= $row['stock'] ?>"
-                        data-price="<?= $row['price'] ?>">
+                        data-price="<?= $row['price'] ?>"
+                        data-discount="<?= $row['discount'] ?>"> <!-- Added data-discount -->
                         <td><?= htmlspecialchars($row['namaproduct']) ?></td>
                         <td><?= htmlspecialchars($row['category']) ?></td>
                         <td class="td-stock"><?= htmlspecialchars($row['stock']) ?></td>
                         <td class="td-price">Rp<?= number_format($row['price'], 0, ',', '.') ?></td>
+                        <td class="td-discount"><?= htmlspecialchars($row['discount']) ?>%</td> <!-- Display Diskon -->
                         <td>
                             <span class="badge-status 
                                 <?php
@@ -133,7 +143,8 @@ $products = array_slice($allProducts, $offset, $perPage);
                             <button type="button" class="btn-edit-harga btn-soft-green"
                                 data-id="<?= $row['id_product'] ?>"
                                 data-nama="<?= htmlspecialchars($row['namaproduct']) ?>"
-                                data-price="<?= $row['price'] ?>">
+                                data-price="<?= $row['price'] ?>"
+                                data-discount="<?= $row['discount'] ?>"> <!-- Added discount -->
                                 Ubah Harga
                             </button>
                         </td>
@@ -142,6 +153,7 @@ $products = array_slice($allProducts, $offset, $perPage);
             </tbody>
         </table>
     </div>
+
     <!-- Pagination -->
     <div class="pagination-container" style="text-align:center; margin-top:18px;">
         <?php if ($totalPages > 1): ?>
@@ -200,6 +212,10 @@ $products = array_slice($allProducts, $offset, $perPage);
             <div class="form-group">
                 <label for="modal_price_edit">Harga Baru (Rp)</label>
                 <input type="number" name="price" id="modal_price_edit" min="0" required>
+            </div>
+            <div class="form-group">
+                <label for="modal_discount_edit">Diskon (%)</label>
+                <input type="number" name="discount" id="modal_discount_edit" min="0" max="100" required>
             </div>
             <button type="submit" class="btn-save tw-btn-green">Simpan</button>
         </form>

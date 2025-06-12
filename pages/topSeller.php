@@ -118,10 +118,10 @@ function addToCart(productId) {
   .then(data => {
     if(typeof updateCartBadge === "function") updateCartBadge(data.cart_count);
     if(typeof openCartModal === "function") openCartModal();
-    // Tidak ada alert sama sekali, meskipun gagal!
+    
   })
   .catch(err => {
-    // Tidak ada alert sama sekali, apapun errornya!
+    
   });
 }
 
@@ -161,13 +161,13 @@ document.querySelectorAll('.favorite-btn').forEach(btn => {
             btn.setAttribute('aria-label', 'Tambah ke favorit');
           }
         }
-        // Tidak ada alert sama sekali
+       
       } catch (e) {
-        // Tidak ada alert sama sekali
+       
       }
     })
     .catch(err => {
-      // Tidak ada alert sama sekali
+     
     });
   });
 });

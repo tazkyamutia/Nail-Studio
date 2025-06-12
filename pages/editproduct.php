@@ -43,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $category = $_POST['category'] ?? '';
     $stock = $_POST['stock'] ?? 0;
     $price = $_POST['price'] ?? 0;
+    $discount = $_POST['discount'] ?? 0; // New discount field
     $status = $_POST['status'] ?? 'draft';
     $image = $product['image']; // Keep current image by default
     
@@ -85,6 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 category = :category, 
                 stock = :stock, 
                 price = :price, 
+                discount = :discount,  -- Add discount field
                 status = :status, 
                 image = :image 
                 WHERE id_product = :id";
@@ -94,6 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bindParam(':category', $category);
         $stmt->bindParam(':stock', $stock);
         $stmt->bindParam(':price', $price);
+        $stmt->bindParam(':discount', $discount); // Bind discount to database
         $stmt->bindParam(':status', $status);
         $stmt->bindParam(':image', $image);
         $stmt->bindParam(':id', $id);
@@ -160,6 +163,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="form-group">
                         <label for="price">Price (Rp)</label>
                         <input type="number" id="price" name="price" min="0" value="<?php echo htmlspecialchars($product['price']); ?>" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="discount">Discount (%)</label>
+                        <input type="number" id="discount" name="discount" min="0" max="100" step="0.01" value="<?php echo htmlspecialchars($product['discount']); ?>" required>
                     </div>
                     
                     <div class="form-group">
