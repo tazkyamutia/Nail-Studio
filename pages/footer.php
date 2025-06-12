@@ -1,40 +1,37 @@
 <?php
-
-$servername = "localhost"; 
-$username = "root"; 
-$password = ""; 
-$dbname = "nailstudio_db";
-
-// koneksi 
-$conn = new mysqli($servername, $username, $password, $dbname);
+require_once '../configdb.php';
 
 // Memeriksa koneksi
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if (!$conn) {
+    die("Connection failed: Unable to connect to database.");
 }
 
 // Mengecek apakah form telah disubmit
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
     $email = $_POST['email'];
 
     // Validasi email
     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $stmt = $conn->prepare("INSERT INTO newsletter_subscribers (email) VALUES (?)");
-        $stmt->bind_param("s", $email); 
+        try {
+            $stmt = $conn->prepare("INSERT INTO newsletter_subscribers (email) VALUES (:email)");
+            $stmt->bindParam(':email', $email, PDO::PARAM_STR);
 
-        if ($stmt->execute()) {
-            header("Location: footer.php?message=success");
-        } else {
+            if ($stmt->execute()) {
+                header("Location: footer.php?message=success");
+                exit;  // Penting: Gunakan exit setelah header untuk menghentikan eksekusi
+            } else {
+                header("Location: footer.php?message=error");
+                exit;
+            }
+        } catch (PDOException $e) {
             header("Location: footer.php?message=error");
+            exit;
         }
-
-        $stmt->close();
     } else {
         header("Location: footer.php?message=invalid_email");
+        exit;
     }
 }
-
-$conn->close();
 ?>
 
 <html lang="en">
@@ -121,7 +118,6 @@ $conn->close();
        <li><a class="hover:underline" href="../pages/nailTools.php">Nail tools</a></li>
        <li><a class="hover:underline" href="../pages/nailCare.php">Nail care</a></li>
        <li><a class="hover:underline" href="../pages/nailKit.php">Nail art kits</a></li>
-       
       </ul>
      </div>
      <!-- About Us -->
@@ -133,7 +129,6 @@ $conn->close();
        <li><a class="hover:underline" href="#">Our Story</a></li>
        <li><a class="hover:underline" href="#">Contact Us</a></li>
        <li><a class="hover:underline" href="../pages/addreview.php">Reviews</a></li>
-     
       </ul>
      </div>
      <!-- Company Info -->
@@ -166,42 +161,17 @@ $conn->close();
     </div>
     <!-- Bottom Bar -->
     <div class="mt-14 text-center text-[10px] text-[#4b4b4b]">
-  <div class="flex flex-col items-center space-y-4">
-    <div class="flex flex-wrap gap-4 justify-center">
-      <span>© 2025 Nail Art Studio</span>
-      <a class="hover:underline" href="#">Privacy Policy</a>
-      <a class="hover:underline" href="#">Terms of Service</a>
-      <a class="hover:underline" href="#">Security Policy</a>
+     <div class="flex flex-col items-center space-y-4">
+      <div class="flex flex-wrap gap-4 justify-center">
+       <span>© 2025 Nail Art Studio</span>
+       <a class="hover:underline" href="#">Privacy Policy</a>
+       <a class="hover:underline" href="#">Terms of Service</a>
+       <a class="hover:underline" href="#">Security Policy</a>
+      </div>
+     </div>
     </div>
-
-
-
-  </div>
-  <div class="bg-[#fff0f3] rounded-lg p-2 text-gray-1100 max-w-4xl mx-auto text-sm sm:text-base mt-12" style="font-feature-settings: 'liga' 0">
-
-
-<p class="font-semibold mb-3 text-base sm:text-lg">
- About Nail Art Studio
-</p>
-<p class="mb-3 leading-relaxed">
- Nail Art Studio is your premier destination for exquisite nail designs and professional nail care. We specialize in creating unique, trendy, and elegant nail art that enhances your personal style. Whether you want classic manicures, intricate hand-painted designs, or the latest gel and acrylic techniques, we have you covered.
-</p>
-<p class="mb-3 leading-relaxed">
- Our talented nail artists use only high-quality products and tools to ensure your nails look stunning and stay healthy. We offer a wide range of services including custom nail art, nail extensions, nail care treatments, and seasonal collections to keep your nails looking fresh and fashionable.
-
- treatments, and seasonal collections to keep your nails looking fresh and fashionable.
-</p>
-<p class="mb-3 leading-relaxed">
- At Nail Art Studio, we believe that nails are a form of self-expression and creativity. We work closely with each client to design nails that reflect their personality and preferences. Whether you want bold colors, delicate patterns, or sparkling embellishments, our team will bring your vision to life.
-</p>
-<p class="mb-3 leading-relaxed">
- Visit us for a relaxing and enjoyable nail care experience. Our studio maintains the highest standards of hygiene and customer service to ensure your visit is safe and pleasant. Discover the art of beautiful nails with Nail Art Studio today!
-
-</div>
-
-
-   </footer>
-  </div>
+  </footer>
+ </div>
 
 </body>
-</html> 
+</html>

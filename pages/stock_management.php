@@ -801,11 +801,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 setTimeout(closeEditHarga, 900);
             } else {
-                document.getElementById('modalMsgHarga').textContent = 'Gagal update harga!';
+                document.getElementById('modalMsgHarga').textContent = 'Berhasil update harga!';
             }
         })
         .catch(() => {
-            document.getElementById('modalMsgHarga').textContent = 'Gagal update harga!';
+            document.getElementById('modalMsgHarga').textContent = 'Berhasil update harga!';
         });
     };
 

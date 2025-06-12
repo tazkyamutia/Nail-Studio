@@ -1,0 +1,32 @@
+.status-icon {
+    background-color: #d1d5db; /* gray-300 */
+    transform: scale(0.9);
+    opacity: 0.5;
+    transition: background-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+    z-index: 10;
+}
+.status-icon.active {
+    background-color: #16a34a; /* green-600 */
+    transform: scale(1.05);
+    opacity: 1;
+    box-shadow: 0 0 15px rgba(22, 163, 74, 0.4);
+}
+.status-icon.active .fas {
+    animation: pop-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes pop-in {
+    0% { transform: scale(0.7); }
+    100% { transform: scale(1); }
+}
+.progress-line {
+    height: 4px;
+    background-color: #e5e7eb; /* gray-200 */
+    position: relative;
+    flex-grow: 1;
+}
+.progress-line-fill {
+    background-color: #16a34a; /* green-600 */
+    width: 0%;
+    height: 100%;
+    transition: width 0.8s ease-in-out;
+}
