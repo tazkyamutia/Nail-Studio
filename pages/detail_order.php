@@ -21,7 +21,7 @@ $stmt = $conn->prepare("
     SELECT c.id AS order_id, c.created_at AS order_date, c.order_status, u.fullname, a.address AS shipping_address
     FROM cart c
     JOIN user u ON c.user_id = u.id
-    LEFT JOIN address a ON u.id = a.user_id AND a.type = 'shipping'
+    LEFT JOIN address a ON c.user_id = a.user_id AND a.type = 'shipping'
     WHERE c.id = ? AND c.user_id = ?
 ");
 $stmt->execute([$order_id, $user_id]);
@@ -67,8 +67,10 @@ $payment_method = "QRIS";
     <title>Order Details</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <link href="../css/detailorder.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100" style="font-family: 'Poppins', sans-serif;">
 
     <div class="container mx-auto max-w-4xl py-20 px-4">
         <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
@@ -82,21 +84,30 @@ $payment_method = "QRIS";
                     <p class="text-gray-600"><?= htmlspecialchars($order['shipping_address'] ?? 'No address on file') ?></p>
                 </div>
                 <div class="text-left md:text-right">
-                    <p class="text-gray-500"><strong>Order ID:</strong> #<?= htmlspecialchars($order['order_id']) ?></p>
-                    <p class="text-gray-500"><strong>Order Date:</strong> <?= date('d M Y', strtotime($order['order_date'])) ?></p>
-                    <p class="text-gray-500"><strong>Payment Method:</strong> <?= htmlspecialchars($payment_method) ?></p>
+                    <p class="text-gray-500">Order ID: #<?= htmlspecialchars($order['order_id']) ?></p>
+                    <p class="text-gray-500">Order Date: <?= date('d M Y', strtotime($order['order_date'])) ?></p>
+                    <p class="text-gray-500">Payment Method: <?= htmlspecialchars($payment_method) ?></p>
                     <p class="text-xl font-bold text-gray-800 mt-2">Total: Rp<?= number_format($total_price, 0, ',', '.') ?></p>
                 </div>
             </div>
 
             <div class="mb-8">
-                <h3 class="text-lg font-semibold text-pink-700 mb-4">Order Status</h3>
-                <div class="flex items-center justify-between w-full">
-                    <div class="flex-1 text-center"><div class="mx-auto h-12 w-12 rounded-full flex items-center justify-center <?= $isPacked ? 'bg-green-500' : 'bg-gray-300' ?>"><i class="fas fa-box-open text-white text-xl"></i></div><p class="mt-2 text-sm font-medium <?= $isPacked ? 'text-green-600' : 'text-gray-500' ?>">Being packed</p></div>
-                    <div class="flex-1 h-1 <?= $isInProgress ? 'bg-green-500' : 'bg-gray-300' ?>"></div>
-                    <div class="flex-1 text-center"><div class="mx-auto h-12 w-12 rounded-full flex items-center justify-center <?= $isInProgress ? 'bg-green-500' : 'bg-gray-300' ?>"><i class="fas fa-truck text-white text-xl"></i></div><p class="mt-2 text-sm font-medium <?= $isInProgress ? 'text-green-600' : 'text-gray-500' ?>">In Progress</p></div>
-                    <div class="flex-1 h-1 <?= $isComplete ? 'bg-green-500' : 'bg-gray-300' ?>"></div>
-                    <div class="flex-1 text-center"><div class="mx-auto h-12 w-12 rounded-full flex items-center justify-center <?= $isComplete ? 'bg-green-500' : 'bg-gray-300' ?>"><i class="fas fa-check-circle text-white text-xl"></i></div><p class="mt-2 text-sm font-medium <?= $isComplete ? 'text-green-600' : 'text-gray-500' ?>">Complete</p></div>
+                <h3 class="text-lg font-semibold text-pink-700 mb-6">Order Status</h3>
+                <div class="flex items-start justify-between">
+                    <div class="flex-1 text-center">
+                        <div id="statusIcon1" class="status-icon mx-auto h-12 w-12 rounded-full flex items-center justify-center"><i class="fas fa-box-open text-white text-xl"></i></div>
+                        <p class="mt-2 text-sm font-medium">Being packed</p>
+                    </div>
+                    <div class="flex-1 px-2 pt-5"><div class="progress-line"><div id="progressBarFill1" class="progress-line-fill"></div></div></div>
+                    <div class="flex-1 text-center">
+                        <div id="statusIcon2" class="status-icon mx-auto h-12 w-12 rounded-full flex items-center justify-center"><i class="fas fa-truck text-white text-xl"></i></div>
+                        <p class="mt-2 text-sm font-medium">In Progress</p>
+                    </div>
+                    <div class="flex-1 px-2 pt-5"><div class="progress-line"><div id="progressBarFill2" class="progress-line-fill"></div></div></div>
+                    <div class="flex-1 text-center">
+                        <div id="statusIcon3" class="status-icon mx-auto h-12 w-12 rounded-full flex items-center justify-center"><i class="fas fa-check-circle text-white text-xl"></i></div>
+                        <p class="mt-2 text-sm font-medium">Complete</p>
+                    </div>
                 </div>
                 <p class="text-center mt-4 text-gray-600">Current status: <span class="font-bold text-gray-800"><?= htmlspecialchars($current_status_text) ?></span></p>
             </div>
@@ -127,5 +138,41 @@ $payment_method = "QRIS";
     </div>
 
     <?php include '../pages/footer.php'; ?>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const isPacked = <?= json_encode($isPacked) ?>;
+            const isInProgress = <?= json_encode($isInProgress) ?>;
+            const isComplete = <?= json_encode($isComplete) ?>;
+
+            const icon1 = document.getElementById('statusIcon1');
+            const icon2 = document.getElementById('statusIcon2');
+            const icon3 = document.getElementById('statusIcon3');
+            const progressBarFill1 = document.getElementById('progressBarFill1');
+            const progressBarFill2 = document.getElementById('progressBarFill2');
+
+            function activateStatus() {
+                setTimeout(() => {
+                    if (isPacked) icon1.classList.add('active');
+                }, 100);
+
+                setTimeout(() => {
+                    if (isInProgress) {
+                        progressBarFill1.style.width = '100%';
+                        setTimeout(() => icon2.classList.add('active'), 300);
+                    }
+                }, 600); 
+
+                setTimeout(() => {
+                    if (isComplete) {
+                        progressBarFill2.style.width = '100%';
+                        setTimeout(() => icon3.classList.add('active'), 300);
+                    }
+                }, 1100);
+            }
+
+            activateStatus();
+        });
+    </script>
 </body>
 </html>
