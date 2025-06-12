@@ -177,7 +177,7 @@ include '../views/navbar.php';
         <div x-show="showModal" x-cloak class="fixed inset-0 flex items-center justify-center z-50">
             <div class="fixed inset-0 bg-black bg-opacity-40" @click="showModal = false"></div>
             <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md z-10">
-                <h3 class="text-lg font-semibold mb-2">Tambah Alamat Baru</h3>
+                <h3 class="text-lg font-semibold mb-2">Add New Address</h3>
                 <form method="post" action="add_address.php" class="space-y-4">
                     <textarea name="address" rows="3" required class="w-full border rounded px-3 py-2"></textarea>
                     <input type="hidden" name="type" value="shipping">
