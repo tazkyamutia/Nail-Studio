@@ -120,7 +120,7 @@ $payment_method = "QRIS";
             </div>
             
             <div class="flex flex-col md:flex-row justify-between items-center mt-8 pt-6 border-t">
-                <a href="products.php" class="w-full md:w-auto text-center py-2 px-5 mb-2 md:mb-0 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 transition">Continue Shopping</a>
+                <a href="index.php" class="w-full md:w-auto text-center py-2 px-5 mb-2 md:mb-0 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 transition">Continue Shopping</a>
                 <button onClick="window.location.reload()" class="w-full md:w-auto text-center py-2 px-5 rounded-full bg-pink-500 text-white font-semibold hover:bg-pink-600 transition">Refresh Status</button>
             </div>
         </div>
