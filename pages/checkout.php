@@ -10,6 +10,18 @@ if (!isset($_SESSION['id'])) {
 
 $user_id = $_SESSION['id'];
 
+// Tambah alamat baru langsung di halaman ini (bukan ke add_address.php)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['address']) && isset($_POST['type']) && $_POST['type'] === 'shipping') {
+    $address = trim($_POST['address']);
+    if ($address !== '') {
+        $stmt = $conn->prepare("INSERT INTO address (user_id, address, type, created_at) VALUES (?, ?, 'shipping', NOW())");
+        $stmt->execute([$user_id, $address]);
+    }
+    // Redirect agar radio button langsung muncul
+    header("Location: checkout.php");
+    exit;
+}
+
 // Ambil cart aktif
 $stmt = $conn->prepare("SELECT id FROM cart WHERE user_id = ? AND status = 'active' LIMIT 1");
 $stmt->execute([$user_id]);
@@ -45,10 +57,13 @@ if (!empty($_POST['selected_items']) && is_array($_POST['selected_items'])) {
     $cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// Hitung subtotal
+// Hitung subtotal (harga setelah diskon)
 $subtotal = 0;
 foreach ($cart_items as $item) {
-    $subtotal += $item['qty'] * $item['price'];
+    $productPrice = $item['price'];
+    $productDiscount = $item['discount'];
+    $priceAfterDiscount = $productPrice * (1 - $productDiscount / 100);
+    $subtotal += $item['qty'] * $priceAfterDiscount;
 }
 
 // Proses pengurangan stok ketika bukti bayar berhasil diupload
@@ -84,6 +99,11 @@ if (isset($_POST['process_payment']) && $_POST['process_payment'] == 'qris') {
         echo "<div class='text-center py-12 text-red-500'>Error: " . $e->getMessage() . "</div>";
     }
 }
+
+// Ambil alamat pengguna SETELAH proses insert/redirect
+$stmt = $conn->prepare("SELECT * FROM address WHERE user_id = ? AND type = 'shipping'");
+$stmt->execute([$user_id]);
+$addresses = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 include '../views/navbar.php';
 ?>
@@ -191,7 +211,7 @@ include '../views/navbar.php';
             <div class="fixed inset-0 bg-black bg-opacity-40" @click="showModal = false"></div>
             <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md z-10">
                 <h3 class="text-lg font-semibold mb-2">Add New Address</h3>
-                <form method="post" action="add_address.php" class="space-y-4">
+                <form method="post" action="" class="space-y-4">
                     <textarea name="address" rows="3" required class="w-full border rounded px-3 py-2"></textarea>
                     <input type="hidden" name="type" value="shipping">
                     <div class="flex justify-end gap-2">
