@@ -1,16 +1,12 @@
-
 <?php
 session_start();
-
 include '../configdb.php';
 
-// SEARCH FAQ (dari tabel faq)
+// === SEARCH FAQ ===
 $search = '';
-$where = '';
+$where = '';//kondisi awal query
 $params = [];
 $faqs = [];
-
-
 
 if (isset($_GET['q']) && trim($_GET['q']) !== '') {
     $search = trim($_GET['q']);
@@ -18,7 +14,6 @@ if (isset($_GET['q']) && trim($_GET['q']) !== '') {
     $params[':search'] = "%$search%";
     $sql = "SELECT question, answer FROM faq $where ORDER BY id ASC";
 } else {
-    // Tampilkan hanya 4 pertanyaan jika tidak search
     $sql = "SELECT question, answer FROM faq ORDER BY id ASC LIMIT 3";
 }
 
@@ -26,7 +21,7 @@ $stmt = $conn->prepare($sql);
 $stmt->execute($params);
 $faqs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// HANDLE FORM SUBMIT (faq_questions)
+// === HANDLE FORM SUBMIT (faq_questions) ===
 $success = '';
 $error = '';
 if (isset($_POST['submit_question'])) {
@@ -42,12 +37,12 @@ if (isset($_POST['submit_question'])) {
         } else {
             $error = "Terjadi kesalahan saat mengirim pertanyaan. Coba lagi!";
         }
-    } else {x
+    } else {
         $error = "Pertanyaan tidak boleh kosong.";
     }
 }
 
-// Siapkan nama user untuk header
+// === Nama user untuk header ===
 $nama_user = 'Guest';
 if (isset($_SESSION['fullname']) && $_SESSION['fullname'] != '') {
     $nama_user = $_SESSION['fullname'];
@@ -56,7 +51,7 @@ if (isset($_SESSION['fullname']) && $_SESSION['fullname'] != '') {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1" name="viewport"/>
@@ -122,9 +117,13 @@ if (isset($_SESSION['fullname']) && $_SESSION['fullname'] != '') {
             </div>
           </div>
         <?php endforeach; ?>
+      <?php elseif ($search !== ''): ?>
+        <div>
+          <p class="text-[#a3a39a]">Pertanyaan yang kamu cari tidak ditemukan.</p>
+        </div>
       <?php else: ?>
         <div>
-          <p>Tidak ada data FAQ.</p>
+          <p class="text-[#a3a39a]">Belum ada FAQ.</p>
         </div>
       <?php endif; ?>
     </div>
@@ -145,7 +144,6 @@ if (isset($_SESSION['fullname']) && $_SESSION['fullname'] != '') {
    </section>
    <section class="md:w-1/2 flex justify-center items-center">
     <img src="../uploads/jara..jpg" alt="Manfaat About Us" width="400" style="height:auto;">
-
    </section>
   </main>
   <script>
@@ -164,7 +162,6 @@ if (isset($_SESSION['fullname']) && $_SESSION['fullname'] != '') {
       });
     });
   </script>
-  
 </body>
 </html>
 <?php $conn = null; ?>
