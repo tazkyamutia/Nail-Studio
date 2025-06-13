@@ -57,10 +57,13 @@ if (!empty($_POST['selected_items']) && is_array($_POST['selected_items'])) {
     $cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// Hitung subtotal
+// Hitung subtotal (harga setelah diskon)
 $subtotal = 0;
 foreach ($cart_items as $item) {
-    $subtotal += $item['qty'] * $item['price'];
+    $productPrice = $item['price'];
+    $productDiscount = $item['discount'];
+    $priceAfterDiscount = $productPrice * (1 - $productDiscount / 100);
+    $subtotal += $item['qty'] * $priceAfterDiscount;
 }
 
 // Proses pengurangan stok ketika bukti bayar berhasil diupload
