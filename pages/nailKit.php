@@ -1,7 +1,7 @@
 <?php
-include '../views/navbar.php';
+session_start();
+include '../views/navbar.php'; 
 require_once '../configdb.php';
-if (session_status() == PHP_SESSION_NONE) session_start();
 
 $user_id = $_SESSION['id'] ?? null;
 
@@ -15,8 +15,8 @@ $countResult = $conn->query($countSql);
 $totalRows = ($countResult !== false) ? $countResult->fetch(PDO::FETCH_ASSOC)['total'] : 0;
 $totalPages = ceil($totalRows / $limit);
 
-// Ambil produk
-$sql = "SELECT id_product, namaproduct, stock, price, status, image
+// Ambil produk yang memiliki diskon
+$sql = "SELECT id_product, namaproduct, stock, price, discount, status, image
         FROM product
         WHERE category = 'nail kit' 
           AND (status = 'published' OR status = 'low stock') 
@@ -34,12 +34,13 @@ if ($user_id) {
     $favIds = $favStmt->fetchAll(PDO::FETCH_COLUMN, 0);
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Nail kit</title>
+  <title>Nail Kit</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
   <style>
@@ -53,55 +54,55 @@ if ($user_id) {
 </head>
 <body class="min-h-screen">
 
- <!-- ====== LANDING PAGE SECTION ====== -->
-  <div class="bg-[#d7e6fb] w-full py-4">
-    <div class="max-w-5xl mx-auto px-4 rounded-lg bg-[#d7e6fb]">
-      <div class="inline-block mb-6">
-        <nav class="flex items-center space-x-2 text-gray-700 text-sm bg-white rounded-full px-3 py-1 select-none">
-          <a href="index.php" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-              viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M3 12l2-2m0 0l7-7 7 7M13 5v6h6" />
-            </svg>
-            <span class="text-xs">Home</span>
-          </a>
-          <span class="text-xs">&gt;</span>
-          <span class="text-gray-900 text-xs">Nail Kit</span>
-        </nav>
+<!-- ====== LANDING PAGE NAIL KIT ====== -->
+<div class="bg-[#d7e6fb] w-full py-4">
+  <div class="max-w-5xl mx-auto px-4 rounded-lg bg-[#d7e6fb]">
+    <div class="inline-block mb-6">
+      <nav class="flex items-center space-x-2 text-gray-700 text-sm bg-white rounded-full px-3 py-1 select-none">
+        <a href="index.php" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M3 12l2-2m0 0l7-7 7 7M13 5v6h6" />
+          </svg>
+          <span class="text-xs">Home</span>
+        </a>
+        <span class="text-xs">&gt;</span>
+        <span class="text-gray-900 text-xs">Nail Kit</span>
+      </nav>
+    </div>
+    <div class="max-w-5xl mx-auto pr-6 pl-2 py-4 bg-[#d7e6fb] rounded-lg">
+      <h1 class="text-3xl font-semibold text-gray-900 mb-3 text-left pl-0">Nail Kit</h1>
+      <p class="text-gray-900 mb-3 text-base max-w-full text-left pl-0">
+        Everything you need for perfect nails—at home or on the go!
+      </p>
+      <p class="text-gray-900 mb-3 text-base max-w-full text-left pl-0">
+        Discover our curated selection of nail kits. Whether you're a beginner or a nail art pro, our all-in-one sets come with all the essential tools to create a salon-quality manicure or pedicure, anytime, anywhere.
+      </p>
+      <div id="moreContent" class="text-gray-900 text-base max-w-full hidden mb-4 text-left pl-0">
+        From nail clippers and cuticle pushers to complete nail art toolkits, we offer kits tailored for every style and need. Achieve flawless nails at home—save time, save money, and unleash your creativity with our premium nail kits. Perfect as a gift, travel set, or to level up your self-care routine!
       </div>
-      <div class="max-w-5xl mx-auto pr-6 pl-2 py-4 bg-[#d7e6fb] rounded-lg">
-        <h1 class="text-3xl font-semibold text-gray-900 mb-3 text-left pl-0">Nail Kit</h1>
-        <p class="text-gray-900 mb-3 text-base max-w-full text-left pl-0">
-          Everything you need for perfect nails—at home or on the go!
-        </p>
-        <p class="text-gray-900 mb-3 text-base max-w-full text-left pl-0">
-          Discover our curated selection of nail kits. Whether you're a beginner or a nail art pro, our all-in-one sets come with all the essential tools to create a salon-quality manicure or pedicure, anytime, anywhere.
-        </p>
-        <div id="moreContent" class="text-gray-900 text-base max-w-full hidden mb-4 text-left pl-0">
-          From nail clippers and cuticle pushers to complete nail art toolkits, we offer kits tailored for every style and need. Achieve flawless nails at home—save time, save money, and unleash your creativity with our premium nail kits. Perfect as a gift, travel set, or to level up your self-care routine!
-        </div>
-        <div id="buttons" class="flex gap-4 justify-start pl-0">
-          <button onclick="showMore()" class="flex items-center space-x-1 text-pink-600 text-sm font-medium"
-            aria-label="Read more" id="readMoreBtn">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-              viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-            <span>Read more</span>
-          </button>
-          <button onclick="showLess()" class="hidden items-center space-x-1 text-blue-600 text-sm font-medium"
-            aria-label="Show less" id="showLessBtn">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-              viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
-            </svg>
-            <span>Show less</span>
-          </button>
-        </div>
+      <div id="buttons" class="flex gap-4 justify-start pl-0">
+        <button onclick="showMore()" class="flex items-center space-x-1 text-pink-600 text-sm font-medium"
+          aria-label="Read more" id="readMoreBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+          <span>Read more</span>
+        </button>
+        <button onclick="showLess()" class="hidden items-center space-x-1 text-blue-600 text-sm font-medium"
+          aria-label="Show less" id="showLessBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+          </svg>
+          <span>Show less</span>
+        </button>
       </div>
     </div>
   </div>
+</div>
 
 <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
     <?php foreach ($products as $product): ?>
@@ -112,32 +113,51 @@ if ($user_id) {
             : 'https://via.placeholder.com/220x220.png?text=No+Image';
         $productName = htmlspecialchars($product['namaproduct']);
         $productPrice = number_format($product['price'], 0, ',', '.');
+        $productDiscount = floatval($product['discount']); // Ambil diskon
+        $priceAfterDiscount = $product['price'] * (1 - $productDiscount / 100); // Mengurangi harga dengan diskon
+        $priceAfterDiscountFormatted = number_format($priceAfterDiscount, 0, ',', '.'); // Format harga diskon
+        $priceFormatted = number_format($product['price'], 0, ',', '.'); // Format harga normal
+
+        // Cek apakah produk memiliki diskon
+        if ($productDiscount > 0) {
+            $discountMessage = "<span class='text-red-500'>Diskon {$productDiscount}%</span>";
+        } else {
+            $discountMessage = "";
+        }
+
         $isFavorite = in_array($product['id_product'], $favIds);
         ?>
-       <div class="border border-gray-300 rounded-lg p-4 flex flex-col bg-white shadow-lg">
-    <div class="flex justify-center mb-4 h-48">
-        <img src="<?= $imageURL ?>" alt="<?= $productName ?>" class="h-full w-auto object-contain rounded-lg"/>
-    </div>
-    <div class="mb-2 font-semibold text-gray-900 text-base leading-snug flex-grow"><?= $productName ?></div>
-    <?php if ($product['stock'] > 0): ?>
-      <div class="mb-2 text-xs text-gray-500">Stok: <?= $product['stock'] ?></div>
-    <?php else: ?>
-      <div class="mb-2 text-xs text-red-400 font-semibold">Stok Habis</div>
-    <?php endif; ?>
-    <div class="flex items-center space-x-2 mb-4 text-gray-900 text-lg font-bold">Rp <?= $productPrice ?></div>
-    <div class="flex gap-2 mt-auto">
-        <button class="flex-1 bg-pink-600 hover:bg-pink-700 text-white py-2 rounded font-semibold" onclick="addToCart(<?= $product['id_product'] ?>)">Tambah ke Keranjang</button>
-        <button
-            class="w-12 flex items-center justify-center border border-gray-300 rounded text-pink-600 hover:text-pink-800 transition favorite-btn"
-            data-product-id="<?= $product['id_product'] ?>"
-            aria-label="<?= $isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit' ?>"
-            title="<?= $isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit' ?>"
-        >
-            <i class="<?= $isFavorite ? 'fas' : 'far' ?> fa-heart"></i>
-        </button>
-    </div>
-</div>
-
+        <div class="border border-gray-300 rounded-lg p-4 flex flex-col bg-white shadow-lg">
+            <div class="flex justify-center mb-4 h-48">
+                <img src="<?= $imageURL ?>" alt="<?= $productName ?>" class="h-full w-auto object-contain rounded-lg"/>
+            </div>
+            <div class="mb-2 font-semibold text-gray-900 text-base leading-snug flex-grow"><?= $productName ?></div>
+            <?php if ($product['stock'] > 0): ?>
+                <div class="mb-2 text-xs text-gray-500">Stok: <?= $product['stock'] ?></div>
+            <?php else: ?>
+                <div class="mb-2 text-xs text-red-400 font-semibold">Stok Habis</div>
+            <?php endif; ?>
+            <div class="flex items-center space-x-2 mb-4 text-gray-900 text-lg font-bold">
+                <?php if ($productDiscount > 0): ?>
+                    <span class="line-through text-gray-500">Rp <?= $priceFormatted ?></span> 
+                    <span>Rp <?= $priceAfterDiscountFormatted ?></span>
+                <?php else: ?>
+                    <span>Rp <?= $priceFormatted ?></span>
+                <?php endif; ?>
+            </div>
+            <div class="text-xs mb-4"><?= $discountMessage ?></div>
+            <div class="flex gap-2 mt-auto">
+                <button class="flex-1 bg-pink-600 hover:bg-pink-700 text-white py-2 rounded font-semibold" onclick="addToCart(<?= $product['id_product'] ?>)">Tambah ke Keranjang</button>
+                <button
+                    class="w-12 flex items-center justify-center border border-gray-300 rounded text-pink-600 hover:text-pink-800 transition favorite-btn"
+                    data-product-id="<?= $product['id_product'] ?>"
+                    aria-label="<?= $isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit' ?>"
+                    title="<?= $isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit' ?>"
+                >
+                    <i class="<?= $isFavorite ? 'fas' : 'far' ?> fa-heart"></i>
+                </button>
+            </div>
+        </div>
     <?php endforeach; ?>
 </div>
 
@@ -210,39 +230,19 @@ document.querySelectorAll('.favorite-btn').forEach(btn => {
     });
 });
 
-  
-    function showMore() {
-      document.getElementById('moreContent').classList.remove('hidden');
-      document.getElementById('readMoreBtn').classList.add('hidden');
-      document.getElementById('showLessBtn').classList.remove('hidden');
-    }
-    function showLess() {
-      document.getElementById('moreContent').classList.add('hidden');
-      document.getElementById('readMoreBtn').classList.remove('hidden');
-      document.getElementById('showLessBtn').classList.add('hidden');
-    }
-    function addToCart(productId) {
-      let fd = new FormData();
-      fd.append('product_id', productId);
-      fetch('../cart/add_to_cart.php', {
-        method: 'POST',
-        body: fd
-      })
-      .then(res => res.json())
-      .then(data => {
-        if(data.success) {
-          if(typeof updateCartBadge === "function") updateCartBadge(data.cart_count);
-          if(typeof openCartModal === "function") openCartModal();
-        } else {
-          alert('Failed to add to cart! ' + (data.message || ''));
-        }
-      })
-      .catch(err => {
-        alert('Connection error! ' + err);
-      });
-    }
-  </script>
+function showMore() {
+  document.getElementById('moreContent').classList.remove('hidden');
+  document.getElementById('readMoreBtn').classList.add('hidden');
+  document.getElementById('showLessBtn').classList.remove('hidden');
+}
+
+function showLess() {
+  document.getElementById('moreContent').classList.add('hidden');
+  document.getElementById('readMoreBtn').classList.remove('hidden');
+  document.getElementById('showLessBtn').classList.add('hidden');
+}
 </script>
+
 <?php include '../pages/footer.php'; ?>
 </body>
 </html>

@@ -5,16 +5,6 @@ require_once '../configdb.php';
 
 if (session_status() == PHP_SESSION_NONE) session_start();
 
-// Handle tambah stock via AJAX
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tambah_stock'])) {
-    $id = intval($_POST['id_product']);
-    $add_stock = intval($_POST['add_stock']);
-    $stmt = $conn->prepare("UPDATE product SET stock = stock + ? WHERE id_product = ?");
-    $stmt->execute([$add_stock, $id]);
-    echo json_encode(['success' => true]);
-    exit;
-}
-
 // Handle update harga dan diskon via AJAX
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_harga'])) {
     $id = intval($_POST['id_product']);
@@ -24,11 +14,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_harga'])) {
     // Hitung harga setelah diskon
     $finalPrice = $price - ($price * $discount / 100);
 
-    $stmt = $conn->prepare("UPDATE product SET price = ?, discount = ? WHERE id_product = ?");
-    $stmt->execute([$finalPrice, $discount, $id]);
-    echo json_encode(['success' => true]);
+    try {
+        $stmt = $conn->prepare("UPDATE product SET price = ?, discount = ? WHERE id_product = ?");
+        $stmt->execute([$finalPrice, $discount, $id]);
+        echo json_encode(['success' => true]);
+    } catch (PDOException $e) {
+        echo json_encode(['error' => $e->getMessage()]); // Menampilkan pesan error jika query gagal
+    }
     exit;
 }
+
+
 //menambahkan discount
 
 
@@ -199,6 +195,7 @@ $products = array_slice($allProducts, $offset, $perPage);
 <div id="modalBackdropStock" class="modal-backdrop" style="display:none;z-index:9998;"></div>
 
 <!-- Modal Edit Harga -->
+
 <div id="editHargaModal" class="modal-stock" style="display:none;z-index:9999;">
     <div class="modal-content">
         <span class="close-modal" id="closeEditHargaBtn" style="cursor:pointer;">&times;</span>
@@ -222,6 +219,7 @@ $products = array_slice($allProducts, $offset, $perPage);
         <div id="modalMsgHarga" style="margin-top:12px;"></div>
     </div>
 </div>
+
 <div id="modalBackdropHarga" class="modal-backdrop" style="display:none;z-index:9998;"></div>
 
 <style>
@@ -761,53 +759,65 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // Edit Harga Modal
-    document.querySelectorAll('.btn-edit-harga').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            document.getElementById('modal_id_product_harga').value = this.getAttribute('data-id');
-            document.getElementById('modal_nama_harga').value = this.getAttribute('data-nama');
-            document.getElementById('modal_price_edit').value = this.getAttribute('data-price');
-            document.getElementById('editHargaModal').style.display = 'flex';
-            document.getElementById('modalBackdropHarga').style.display = 'block';
-            document.getElementById('modalMsgHarga').textContent = '';
-        });
+document.querySelectorAll('.btn-edit-harga').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        document.getElementById('modal_id_product_harga').value = this.getAttribute('data-id');
+        document.getElementById('modal_nama_harga').value = this.getAttribute('data-nama');
+        document.getElementById('modal_price_edit').value = this.getAttribute('data-price');
+        document.getElementById('modal_discount_edit').value = this.getAttribute('data-discount');
+        document.getElementById('editHargaModal').style.display = 'flex';
+        document.getElementById('modalBackdropHarga').style.display = 'block';
+        document.getElementById('modalMsgHarga').textContent = '';
     });
-    document.getElementById('closeEditHargaBtn').onclick = closeEditHarga;
-    document.getElementById('modalBackdropHarga').onclick = closeEditHarga;
-    function closeEditHarga() {
-        document.getElementById('editHargaModal').style.display = 'none';
-        document.getElementById('modalBackdropHarga').style.display = 'none';
-    }
-    document.getElementById('editHargaForm').onsubmit = function(e) {
-        e.preventDefault();
-        const id = document.getElementById('modal_id_product_harga').value;
-        const price = document.getElementById('modal_price_edit').value;
-        const formData = new FormData();
-        formData.append('edit_harga', 1);
-        formData.append('id_product', id);
-        formData.append('price', price);
+});
 
-        fetch('stock_management.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById('modalMsgHarga').textContent = 'Harga berhasil diupdate!';
-                // Update harga di tabel
-                const row = document.querySelector('tr[data-id="'+id+'"]');
-                if (row) {
-                    row.querySelector('.td-price').textContent = 'Rp' + Number(price).toLocaleString('id-ID');
-                }
-                setTimeout(closeEditHarga, 900);
-            } else {
-                document.getElementById('modalMsgHarga').textContent = 'Berhasil update harga!';
+document.getElementById('closeEditHargaBtn').onclick = closeEditHarga;
+document.getElementById('modalBackdropHarga').onclick = closeEditHarga;
+
+function closeEditHarga() {
+    document.getElementById('editHargaModal').style.display = 'none';
+    document.getElementById('modalBackdropHarga').style.display = 'none';
+}
+
+document.getElementById('editHargaForm').onsubmit = function(e) {
+    e.preventDefault();
+    const id = document.getElementById('modal_id_product_harga').value;
+    const price = document.getElementById('modal_price_edit').value;
+    const discount = document.getElementById('modal_discount_edit').value;
+
+    console.log(`ID: ${id}, Price: ${price}, Discount: ${discount}`);  // Log data yang dikirim
+
+    const formData = new FormData();
+    formData.append('edit_harga', 1);
+    formData.append('id_product', id);
+    formData.append('price', price);
+    formData.append('discount', discount);
+
+    fetch('stock_management.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('modalMsgHarga').textContent = 'Harga berhasil diupdate!';
+            const row = document.querySelector('tr[data-id="'+id+'"]');
+            if (row) {
+                row.querySelector('.td-price').textContent = 'Rp' + Number(price).toLocaleString('id-ID');
+                row.querySelector('.td-discount').textContent = discount + '%'; // Update diskon
             }
-        })
-        .catch(() => {
-            document.getElementById('modalMsgHarga').textContent = 'Berhasil update harga!';
-        });
-    };
+            setTimeout(closeEditHarga, 900);
+        } else {
+            document.getElementById('modalMsgHarga').textContent = 'Terjadi kesalahan saat memperbarui harga.';
+            console.error(data.error);  // Menampilkan error di console jika ada
+        }
+    })
+    .catch(() => {
+        document.getElementById('modalMsgHarga').textContent = ' memperbarui harga.';
+    });
+};
+
+
 
     // Plus Minus for Jumlah Tambah Stock
     var minusBtn = document.getElementById('btnMinusStock');

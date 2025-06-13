@@ -42,7 +42,7 @@ if (isset($_POST['submit_question'])) {
         } else {
             $error = "Terjadi kesalahan saat mengirim pertanyaan. Coba lagi!";
         }
-    } else {
+    } else {x
         $error = "Pertanyaan tidak boleh kosong.";
     }
 }
