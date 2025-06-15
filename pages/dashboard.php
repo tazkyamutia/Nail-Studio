@@ -7,6 +7,7 @@ include '../configdb.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_id'], $_POST['new_status'])) {
     $update = $conn->prepare("UPDATE cart SET order_status = ? WHERE id = ?");
     $update->execute([$_POST['new_status'], $_POST['order_id']]);
+    // Setelah update, refresh halaman untuk menampilkan status terbaru
     header("Location: " . $_SERVER['PHP_SELF']);
     exit;
 }
@@ -30,7 +31,7 @@ $stmtSales = $conn->prepare("
 $stmtSales->execute();
 $total_sales = $stmtSales->fetch(PDO::FETCH_ASSOC)['total_sales'];
 
-// Ambil semua data order dari tabel cart (tanpa filter)
+// Ambil semua data order dari tabel cart 
 $stmt = $conn->query("
     SELECT 
         c.id, 
@@ -53,7 +54,6 @@ $stmt = $conn->query("
         c.created_at ASC
     LIMIT 40
 ");
-
 
 $orders = [];
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -139,57 +139,55 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     <div class="table-container">
         <h3>Recent Orders</h3>
         <table>
-          <thead>
-    <tr>
-        <th>ID Transaksi</th>
-        <th>Nama Pembeli</th>
-        <th>Tanggal Pembelian</th>
-        <th>Daftar Barang</th>
-        <th>Harga per Item</th>
-        <th>Total Harga</th>
-        <th>Bukti Bayar</th>
-        <th>Status</th>
-        <th>Action</th>
-    </tr>
-</thead>
-<tbody>
-<?php foreach ($orders as $order): ?>
-    <tr>
-        <td>#<?= str_pad($order['id'], 3, '0', STR_PAD_LEFT) ?></td>
-        <td><?= htmlspecialchars($order['fullname']) ?></td>
-        <td><?= date('d-m-Y', strtotime($order['order_date'])) ?></td>
-        <td><ul><?php foreach ($order['barang'] as $b) echo "<li>" . htmlspecialchars($b) . "</li>"; ?></ul></td>
-        <td><ul><?php foreach ($order['harga'] as $h) echo "<li>$h</li>"; ?></ul></td>
-        <td>Rp <?= number_format($order['total'], 0, ',', '.') ?></td>
-        <td>
-            <?php if ($order['file_path']): ?>
-                <a href="../uploads/<?= htmlspecialchars($order['file_path']) ?>" target="_blank" class="text-blue-600 underline">View</a>
-            <?php else: ?>
-                <span class="text-gray-400 text-sm">None</span>
-            <?php endif; ?>
-        </td>
-        <td>
-            <form method="post" action="">
-                <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
-                <select name="new_status" onchange="this.form.submit()"
-                    class="status-select status-<?= strtolower($order['order_status']) ?>">
-                    <?php
-                    $statuses = ['Pending', 'Processing', 'Shipped', 'Completed'];
-                    foreach ($statuses as $status): ?>
-                        <option value="<?= $status ?>" <?= $order['order_status'] == $status ? 'selected' : '' ?>>
-                            <?= $status ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </form>
-        </td>
-        <td>
-            <a href="order_detail.php?id=<?= $order['id'] ?>" class="text-sm bg-pink-600 text-white px-3 py-1 rounded hover:bg-pink-700 transition">Detail</a>
-        </td>
-    </tr>
-<?php endforeach; ?>
-</tbody>
-
+            <thead>
+                <tr>
+                    <th>ID Transaksi</th>
+                    <th>Nama Pembeli</th>
+                    <th>Tanggal Pembelian</th>
+                    <th>Daftar Barang</th>
+                    <th>Harga per Item</th>
+                    <th>Total Harga</th>
+                    <th>Bukti Bayar</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($orders as $order): ?>
+                    <tr>
+                        <td>#<?= str_pad($order['id'], 3, '0', STR_PAD_LEFT) ?></td>
+                        <td><?= htmlspecialchars($order['fullname']) ?></td>
+                        <td><?= date('d-m-Y', strtotime($order['order_date'])) ?></td>
+                        <td><ul><?php foreach ($order['barang'] as $b) echo "<li>" . htmlspecialchars($b) . "</li>"; ?></ul></td>
+                        <td><ul><?php foreach ($order['harga'] as $h) echo "<li>$h</li>"; ?></ul></td>
+                        <td>Rp <?= number_format($order['total'], 0, ',', '.') ?></td>
+                        <td>
+                            <?php if ($order['file_path']): ?>
+                                <a href="../uploads/<?= htmlspecialchars($order['file_path']) ?>" target="_blank" class="text-blue-600 underline">View</a>
+                            <?php else: ?>
+                                <span class="text-gray-400 text-sm">None</span>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <form method="post" action="">
+                                <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
+                                <select name="new_status" onchange="this.form.submit()" class="status-select status-<?= strtolower($order['order_status']) ?>">
+                                    <?php
+                                    $statuses = ['Pending', 'Processing', 'Shipped', 'Completed'];
+                                    foreach ($statuses as $status): ?>
+                                        <option value="<?= $status ?>" <?= $order['order_status'] == $status ? 'selected' : '' ?>>
+                                            <?= $status ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </form>
+                        </td>
+                        <td>
+                            <a href="order_detail.php?id=<?= $order['id'] ?>" class="text-sm bg-pink-600 text-white px-3 py-1 rounded hover:bg-pink-700 transition">Detail</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
         </table>
     </div>
 </main>
