@@ -20,11 +20,11 @@ foreach ($categories as $cat) {
     $sql = "
         SELECT 
             p.id_product, p.namaproduct, p.stock, p.price, p.status, p.image, p.category,
-            IFNULL(SUM(s.quantity), 0) AS total_sold
+            IFNULL(SUM(CASE 
+                WHEN s.sale_date BETWEEN :tgl_awal AND :tgl_akhir 
+                THEN s.quantity ELSE 0 END), 0) AS total_sold
         FROM product p
-        LEFT JOIN sales s 
-            ON p.id_product = s.id_product 
-            AND s.sale_date BETWEEN :tgl_awal AND :tgl_akhir
+        LEFT JOIN sales s ON p.id_product = s.id_product
         WHERE p.category = :cat AND (p.status = 'published' OR p.status = 'low stock') AND p.stock > 0
         GROUP BY p.id_product
         ORDER BY total_sold DESC, p.id_product ASC
@@ -207,7 +207,6 @@ document.querySelectorAll('.favorite-btn').forEach(function(btn){
                 btn.setAttribute('title', 'Tambah ke favorit');
                 btn.setAttribute('aria-label', 'Tambah ke favorit');
             }
-            // Update badge di navbar jika ada
             const favBadge = document.getElementById('favorite-badge');
             if(favBadge && data.fav_count !== undefined) favBadge.textContent = data.fav_count;
         } else {
