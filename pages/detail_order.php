@@ -4,7 +4,7 @@ include '../views/headers.php';
 require_once '../configdb.php';
 
 // Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['id'])) {
     header('Location: login.php');
     exit;
 }
