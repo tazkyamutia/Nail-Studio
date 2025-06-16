@@ -1,7 +1,6 @@
 <?php
-require_once '../configdb.php'; 
+require_once '../configdb.php';
 
-// Cek jika form disubmit
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $fullname    = $_POST['fullname'] ?? '';
   $email       = $_POST['email'] ?? '';
@@ -9,50 +8,57 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $position    = $_POST['position'] ?? '';
   $description = $_POST['description'] ?? '';
 
+  // Cek apakah email sudah terdaftar
+  $checkEmail = $conn->prepare("SELECT COUNT(*) FROM job_applications WHERE email = ?");
+  $checkEmail->execute([$email]);
+  $emailExists = $checkEmail->fetchColumn();
 
-   // email tidak boleh  2 q
-   $checkEmail = $conn->prepare("SELECT COUNT(*) FROM job_applications WHERE email = ?");
-   $checkEmail->execute([$email]);
-   $emailExists = $checkEmail->fetchColumn();
- 
-   if ($emailExists > 0) {
-     echo "<script>alert('alamat email telah digunkan, silakan gunakan email lain.');</script>";
-   } else {
+  if ($emailExists > 0) {
+    echo "<script>alert('Alamat email telah digunakan, silakan gunakan email lain.'); window.location.href='lamaran.php';</script>";
+    exit;
+  }
 
-  // Simpan file CV
+  // Validasi file CV
   if (isset($_FILES['cv']) && $_FILES['cv']['error'] === UPLOAD_ERR_OK) {
     $cv = $_FILES['cv'];
-    $cv_filename = basename($cv['name']);
-    $target_dir = "upload/";
-    $target_file = $target_dir . $cv_filename;
+    $cv_filename = pathinfo($cv['name'], PATHINFO_FILENAME);
+    $cv_ext = strtolower(pathinfo($cv['name'], PATHINFO_EXTENSION));
+    $cv_size = $cv['size'];
 
-    // Validasi ekstensi
-    if (strtolower(pathinfo($target_file, PATHINFO_EXTENSION)) !== "pdf") {
-      die("Only PDF files are allowed.");
+    if ($cv_ext !== 'pdf') {
+      echo "<script>alert('Hanya file PDF yang diperbolehkan.'); window.location.href='lamaran.php';</script>";
+      exit;
     }
 
-    // Upload file
+    if ($cv_size > 2 * 1024 * 1024) { // 2MB
+      echo "<script>alert('Ukuran file maksimal 2MB.'); window.location.href='lamaran.php';</script>";
+      exit;
+    }
+
+    // Rename file supaya unik
+    $new_filename = $cv_filename . '_' . time() . '.' . $cv_ext;
+    $target_dir = "upload/";
+    $target_file = $target_dir . $new_filename;
+
     if (move_uploaded_file($cv['tmp_name'], $target_file)) {
       $stmt = $conn->prepare("INSERT INTO job_applications (fullname, email, phone, position, description, cv_filename) VALUES (?, ?, ?, ?, ?, ?)");
-      $stmt->bind_param("ssssss", $fullname, $email, $phone, $position, $description, $cv_filename);
 
-      if ($stmt->execute()) {
-        echo "<script>alert('Application submitted successfully!');</script>";
+      if ($stmt->execute([$fullname, $email, $phone, $position, $description, $new_filename])) {
+        echo "<script>alert('Lamaran berhasil dikirim!'); window.location.href='lamaran.php';</script>";
       } else {
-        echo "<script>alert('Database error: " . $stmt->error . "');</script>";
+        echo "<script>alert('Terjadi kesalahan saat menyimpan data.'); window.location.href='lamaran.php';</script>";
       }
-      $stmt->close();
+
     } else {
-      echo "<script>alert('Failed to upload CV.');</script>";
+      echo "<script>alert('Gagal mengupload file CV.'); window.location.href='lamaran.php';</script>";
     }
+
   } else {
-    echo "<script>alert('Please upload a valid PDF CV.');</script>";
+    echo "<script>alert('Silakan upload CV dalam format PDF.'); window.location.href='lamaran.php';</script>";
   }
-}
 }
 
 $conn = null;
-
 ?>
 
 <?php include 'hehe.php'; ?>
