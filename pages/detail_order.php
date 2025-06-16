@@ -18,15 +18,18 @@ if (!isset($_GET['order_id']) || !is_numeric($_GET['order_id'])) {
 $user_id = $_SESSION['id'];
 $order_id = $_GET['order_id'];
 
-// Update order status to 'Processing' after payment success
-$stmt = $conn->prepare("UPDATE cart SET order_status = 'Processing' WHERE id = ? AND user_id = ?");
-$stmt->execute([$order_id, $user_id]);
-
-// Check if the order status was updated successfully
-if ($stmt->rowCount() > 0) {
-    $status_update_message = "Your order is now being processed.";
-} else {
-    $status_update_message = "There was an issue updating your order status.";
+// Update order status based on the admin's action
+if (isset($_POST['update_status'])) {
+    $new_status = $_POST['new_status'];
+    $stmt = $conn->prepare("UPDATE cart SET order_status = ? WHERE id = ? AND user_id = ?");
+    $stmt->execute([$new_status, $order_id, $user_id]);
+    
+    // Check if the order status was updated successfully
+    if ($stmt->rowCount() > 0) {
+        $status_update_message = "Your order status has been updated to '$new_status'.";
+    } else {
+        $status_update_message = "There was an issue updating your order status.";
+    }
 }
 
 // Fetch order details
@@ -96,8 +99,10 @@ $payment_method = "QRIS";
 
     <div class="container mx-auto max-w-4xl py-20 px-4">
         <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
-
-            <div class="mb-6"><h1 class="text-3xl font-bold text-gray-800">Order Details</h1><p class="text-gray-500">Track your order status and details below.</p></div>
+            <div class="mb-6">
+                <h1 class="text-3xl font-bold text-gray-800">Order Details</h1>
+                <p class="text-gray-500">Track your order status and details below.</p>
+            </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-b pb-6 mb-6">
                 <div>
@@ -111,7 +116,7 @@ $payment_method = "QRIS";
                     <p class="text-gray-500">Payment Method: <?= htmlspecialchars($payment_method) ?></p>
                     <p class="text-sm text-gray-600 line-through mt-2">Total Pesanan : Rp<?= number_format($total_price_before_discount, 0, ',', '.') ?></p>
                     <p class="text-sm text-gray-600 mt-2">Total Discount: Rp<?= number_format($total_discount, 0, ',', '.') ?></p>
-                     <p class="text-xl font-bold text-gray-800 mt-2">Total Pembayaran: Rp<?= number_format($total_price_after_discount, 0, ',', '.') ?></p>
+                    <p class="text-xl font-bold text-gray-800 mt-2">Total Pembayaran: Rp<?= number_format($total_price_after_discount, 0, ',', '.') ?></p>
                 </div>
             </div>
 
@@ -119,17 +124,31 @@ $payment_method = "QRIS";
                 <h3 class="text-lg font-semibold text-pink-700 mb-6">Order Status</h3>
                 <div class="flex items-start justify-between">
                     <div class="flex-1 text-center">
-                        <div id="statusIcon1" class="status-icon mx-auto h-12 w-12 rounded-full flex items-center justify-center"><i class="fas fa-box-open text-white text-xl"></i></div>
+                        <div id="statusIcon1" class="status-icon mx-auto h-12 w-12 rounded-full flex items-center justify-center">
+                            <i class="fas fa-box-open text-white text-xl"></i>
+                        </div>
                         <p class="mt-2 text-sm font-medium">Being packed</p>
                     </div>
-                    <div class="flex-1 px-2 pt-5"><div class="progress-line"><div id="progressBarFill1" class="progress-line-fill"></div></div></div>
+                    <div class="flex-1 px-2 pt-5">
+                        <div class="progress-line">
+                            <div id="progressBarFill1" class="progress-line-fill"></div>
+                        </div>
+                    </div>
                     <div class="flex-1 text-center">
-                        <div id="statusIcon2" class="status-icon mx-auto h-12 w-12 rounded-full flex items-center justify-center"><i class="fas fa-truck text-white text-xl"></i></div>
+                        <div id="statusIcon2" class="status-icon mx-auto h-12 w-12 rounded-full flex items-center justify-center">
+                            <i class="fas fa-truck text-white text-xl"></i>
+                        </div>
                         <p class="mt-2 text-sm font-medium">In Progress</p>
                     </div>
-                    <div class="flex-1 px-2 pt-5"><div class="progress-line"><div id="progressBarFill2" class="progress-line-fill"></div></div></div>
+                    <div class="flex-1 px-2 pt-5">
+                        <div class="progress-line">
+                            <div id="progressBarFill2" class="progress-line-fill"></div>
+                        </div>
+                    </div>
                     <div class="flex-1 text-center">
-                        <div id="statusIcon3" class="status-icon mx-auto h-12 w-12 rounded-full flex items-center justify-center"><i class="fas fa-check-circle text-white text-xl"></i></div>
+                        <div id="statusIcon3" class="status-icon mx-auto h-12 w-12 rounded-full flex items-center justify-center">
+                            <i class="fas fa-check-circle text-white text-xl"></i>
+                        </div>
                         <p class="mt-2 text-sm font-medium">Complete</p>
                     </div>
                 </div>
@@ -174,7 +193,7 @@ $payment_method = "QRIS";
     </div>
 
     <?php include '../pages/footer.php'; ?>
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const isPacked = <?= json_encode($isPacked) ?>;
@@ -189,20 +208,23 @@ $payment_method = "QRIS";
 
             function activateStatus() {
                 setTimeout(() => {
-                    if (isPacked) icon1.classList.add('active');
+                    if (isPacked) {
+                        icon1.classList.add('active');
+                        progressBarFill1.style.width = '100%';
+                    }
                 }, 100);
 
                 setTimeout(() => {
                     if (isInProgress) {
-                        progressBarFill1.style.width = '100%';
-                        setTimeout(() => icon2.classList.add('active'), 300);
+                        icon2.classList.add('active');
+                        progressBarFill2.style.width = '100%';
                     }
                 }, 600); 
 
                 setTimeout(() => {
                     if (isComplete) {
-                        progressBarFill2.style.width = '100%';
-                        setTimeout(() => icon3.classList.add('active'), 300);
+                        icon3.classList.add('active');
+                        progressBarFill2.classList.add('completed');
                     }
                 }, 1100);
             }
