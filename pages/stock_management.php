@@ -5,6 +5,7 @@ require_once '../configdb.php';
 
 if (session_status() == PHP_SESSION_NONE) session_start();
 
+<<<<<<< HEAD
 // Handle tambah stock 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tambah_stock'])) {
     $id = intval($_POST['id_product']);
@@ -16,7 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tambah_stock'])) {
 }
 
 // Handle update harga dan diskon 
+=======
 // Handle update harga dan diskon via AJAX
+>>>>>>> 46398e5dd2abf9a064a0c10968917424516f7d0c
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_harga'])) {
     $id = intval($_POST['id_product']);
     $price = intval($_POST['price']);
